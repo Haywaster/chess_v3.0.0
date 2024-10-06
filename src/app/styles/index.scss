@@ -1,0 +1,51 @@
+@import 'reset';
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
+
+:root {
+  font-family: Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --primary-color: #304ff1;
+  --primary-hover-color: #1f3b9b;
+  --primary-active-color: #1941c6;
+  --white: #fff;
+  --white-secondary: #f1f1f1;
+  --black: #000;
+  --black-secondary: #222;
+  --grey: #7b7b7b;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: var(--black);
+    background-color: var(--white);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: var(--white);
+    background-color: var(--black);
+  }
+}
