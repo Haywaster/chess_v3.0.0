@@ -1,14 +1,15 @@
 @import 'reset';
+@import 'themes/dark';
+@import 'themes/light';
 @import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
 
 :root {
   font-family: Roboto, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -34,18 +35,4 @@ body {
   flex-direction: column;
   place-items: center;
   min-height: 100vh;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: var(--black);
-    background-color: var(--white);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: var(--white);
-    background-color: var(--black);
-  }
 }

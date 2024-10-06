@@ -1,9 +1,9 @@
 import js from '@eslint/js'
 import globals from 'globals'
+import pluginReact from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tsEslint from 'typescript-eslint'
-import pluginReact from 'eslint-plugin-react'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import unusedImports from 'eslint-plugin-unused-imports'
 import styledA11y from 'eslint-plugin-styled-components-a11y'
@@ -24,6 +24,11 @@ export default tsEslint.config(
       globals: globals.browser,
       parserOptions: {
         project: 'tsconfig.app.json'
+      }
+    },
+    settings: {
+      react: {
+        version: 'detect'
       }
     },
     plugins: {
@@ -93,7 +98,7 @@ export default tsEslint.config(
           ignoreArrayIndexes: true,
           ignoreNumericLiteralTypes: true,
           ignoreReadonlyClassProperties: true,
-          ignore: [0, 1]
+          ignore: [0, 1, -1]
         }
       ]
     }

@@ -1,4 +1,4 @@
-import { AppRouter } from 'app/router'
+import { AppRouter } from 'shared/const/router'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './styles/index.scss'
