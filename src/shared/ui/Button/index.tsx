@@ -1,6 +1,10 @@
 import classNames from 'classnames'
-import type { ButtonHTMLAttributes, ReactElement, FC } from 'react'
-import { memo } from 'react'
+import {
+  memo,
+  type ButtonHTMLAttributes,
+  type FC,
+  type ReactElement
+} from 'react'
 
 import module from './Button.module.scss'
 

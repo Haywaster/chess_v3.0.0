@@ -1,16 +1,19 @@
+import { memo, type FC } from 'react'
 import styled from 'styled-components'
-import type { IFigure } from '../../Figure'
-import { Figure } from '../../Figure'
+
+import { Figure, type IFigure } from '../../Figure'
 import type { ICell } from '../model'
-import type { FC } from 'react'
-import { memo } from 'react'
 
 interface IProps extends ICell {
   figure?: IFigure
   isActive?: boolean
+  onFigureClick: (id: IFigure['id']) => void
+  activeFigure: IFigure['id'] | null
 }
 
-const CellWrapper = styled.div<Pick<IProps, 'isActive' | 'color'>>`
+type ICellWrapper = Pick<IProps, 'isActive' | 'color'>
+
+const CellWrapper = styled.div<ICellWrapper>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,12 +31,18 @@ const ActivePoint = styled.div`
 `
 
 export const Cell: FC<IProps> = memo(props => {
-  const { isActive, figure, ...cell } = props
+  const { isActive, figure, onFigureClick, activeFigure, ...cell } = props
 
   return (
     <CellWrapper isActive={isActive} color={cell.color}>
       {isActive && <ActivePoint />}
-      {figure && <Figure {...figure} />}
+      {figure && (
+        <Figure
+          onFigureClick={onFigureClick}
+          activeFigure={activeFigure}
+          {...figure}
+        />
+      )}
     </CellWrapper>
   )
 })

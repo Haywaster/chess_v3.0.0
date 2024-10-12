@@ -16,7 +16,7 @@ export default tsEslint.config(
       js.configs.recommended,
       ...tsEslint.configs.strict,
       eslintConfigPrettier,
-      importPlugin.flatConfigs.react
+      importPlugin.flatConfigs.recommended
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
@@ -29,6 +29,11 @@ export default tsEslint.config(
     settings: {
       react: {
         version: 'detect'
+      },
+      'import/resolver': {
+        typescript: {
+          project: 'tsconfig.app.json'
+        }
       }
     },
     plugins: {
@@ -58,7 +63,7 @@ export default tsEslint.config(
       'max-params': ['error', 4],
       '@typescript-eslint/consistent-type-imports': [
         'warn',
-        { prefer: 'type-imports', fixStyle: 'separate-type-imports' }
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports' }
       ],
       '@typescript-eslint/no-misused-promises': [
         'error',
@@ -104,7 +109,24 @@ export default tsEslint.config(
       'no-use-before-define': [
         'error',
         { functions: true, classes: true, variables: true }
-      ]
+      ],
+      'import/order': [
+        'warn',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object'
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true }
+        }
+      ],
+      'import/no-duplicates': ['warn', { 'prefer-inline': true }]
     }
   },
   {

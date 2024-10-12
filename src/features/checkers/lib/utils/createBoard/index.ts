@@ -1,7 +1,8 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import type { IBoard } from '../../../model'
 import { EVEN_NUMBER } from 'shared/const/numbers'
+
+import type { IBoard } from '../../../model'
 
 const FINAL_WHITE_ROW = 3
 const FIRST_ROW_WITHOUT_FIGURES = 4
@@ -30,21 +31,28 @@ export const createBoard = (): IBoard => {
           x: column,
           y: row,
           color: row <= FINAL_WHITE_ROW ? 'white' : 'black',
-          isStain: false
+          isStain: false,
+          cellId: cellIdCounter
         }
 
         return { ...figure, id: figureIdCounter++ }
       }
 
+      const newFigure = createFigure()
+
       const cell: ICell = {
+        id: cellIdCounter++,
         x: column,
         y: row,
-        id: cellIdCounter++,
         color: (row + column) % EVEN_NUMBER !== 0 ? 'white' : 'black'
       }
 
+      if (newFigure?.id !== undefined) {
+        cell.figureId = newFigure.id
+      }
+
       cells.push(cell)
-      figures.push(createFigure())
+      figures.push(newFigure)
     }
   }
 

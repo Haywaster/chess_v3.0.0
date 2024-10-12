@@ -1,11 +1,10 @@
+import { memo, type FC } from 'react'
 import styled from 'styled-components'
+
 import type { IFigure } from '../model'
-import type { FC } from 'react'
-import { memo } from 'react'
-import { useCheckers } from 'features/checkers/model'
 
 interface IFigureWrapper extends Pick<IFigure, 'color'> {
-  isActive?: boolean
+  $isActive?: boolean
 }
 
 const FigureWrapper = styled.div<IFigureWrapper>`
@@ -15,27 +14,26 @@ const FigureWrapper = styled.div<IFigureWrapper>`
   cursor: pointer;
   background-color: ${p =>
     p.color === 'white' ? 'var(--white-figure)' : 'var(--black-figure)'};
-  outline: ${p => p.isActive && '3px solid var(--red)'};
+  outline: ${p => p.$isActive && '3px solid var(--red)'};
   transition: outline 0.2s ease;
 `
 
-export const Figure: FC<IFigure> = memo(props => {
-  const { color, id } = props
-  const activeFigure = useCheckers(state => state.activeFigure)
-  const setActiveFigure = useCheckers(state => state.setActiveFigure)
+interface IProps extends IFigure {
+  activeFigure: IFigure['id'] | null
+  onFigureClick: (id: IFigure['id']) => void
+}
 
-  const handleClick = () => {
-    if (activeFigure === props.id) {
-      setActiveFigure(null)
-    } else {
-      setActiveFigure(props.id)
-    }
+export const Figure: FC<IProps> = memo(props => {
+  const { color, id, activeFigure, onFigureClick } = props
+
+  const handleClick = (): void => {
+    onFigureClick(id)
   }
 
   return (
     <FigureWrapper
       color={color}
-      isActive={activeFigure === id}
+      $isActive={activeFigure === id}
       onClick={handleClick}
     />
   )

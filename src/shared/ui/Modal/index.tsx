@@ -1,10 +1,17 @@
-import type { FC, ReactNode, MouseEvent } from 'react'
-import { useState, useEffect, useCallback, memo } from 'react'
+import classNames from 'classnames'
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+  type FC,
+  type MouseEvent,
+  type ReactNode
+} from 'react'
 
 import { Portal } from '../../lib'
 
 import module from './Modal.module.scss'
-import classNames from 'classnames'
 
 interface IProps {
   isOpen: boolean

@@ -1,8 +1,9 @@
-import type { FC } from 'react'
-import { Button } from 'shared/ui/Button'
-import { useSwitchTheme } from 'features/switchTheme/lib/useSwitchTheme'
+import { memo, type FC } from 'react'
 
-export const Header: FC = () => {
+import { useSwitchTheme } from 'features/switchTheme'
+import { Button } from 'shared/ui/Button'
+
+export const Header: FC = memo(() => {
   const toggleTheme = useSwitchTheme()
 
   return (
@@ -10,4 +11,4 @@ export const Header: FC = () => {
       <Button onClick={toggleTheme}>Switch theme</Button>
     </header>
   )
-}
+})
