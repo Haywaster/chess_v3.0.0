@@ -17,6 +17,7 @@ interface Action {
   reset: () => void
   setActiveFigure: (id: IFigure['id'] | null) => void
   setActiveCells: (cells: ICell['id'][]) => void
+  moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => void
 }
 
 const initialState: State = {
@@ -30,5 +31,40 @@ export const useCheckers = create<State & Action>(set => ({
   ...initialState,
   reset: () => set({ ...initialState }),
   setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),
-  setActiveCells: (cells: ICell['id'][]) => set({ activeCells: cells })
+  setActiveCells: (cells: ICell['id'][]) => set({ activeCells: cells }),
+  moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => {
+    set(state => {
+      const prevCellId = state.figures[figureId].cellId
+
+      const prevCell = {
+        ...state.cells[prevCellId]
+      }
+      delete prevCell.figureId
+
+      const newCell = {
+        ...state.cells[cellId],
+        figureId
+      }
+
+      const changedFigure = {
+        ...state.figures[figureId],
+        cellId,
+        x: state.cells[cellId].x,
+        y: state.cells[cellId].y
+      }
+
+      return {
+        ...state,
+        cells: {
+          ...state.cells,
+          [prevCellId]: prevCell,
+          [cellId]: newCell
+        },
+        figures: {
+          ...state.figures,
+          [figureId]: changedFigure
+        }
+      }
+    })
+  }
 }))

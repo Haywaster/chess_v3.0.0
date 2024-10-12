@@ -1,4 +1,4 @@
-import { useCallback, memo, type FC } from 'react'
+import { type FC, memo, useCallback } from 'react'
 import styled from 'styled-components'
 
 import { Cell, type ICell } from 'entities/Cell'
@@ -24,12 +24,27 @@ export const Board: FC<IProps> = memo(({ className }) => {
   const figures = useCheckers(state => state.figures)
   const activeFigure = useCheckers(state => state.activeFigure)
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
+  const activeCells = useCheckers(state => state.activeCells)
   const setActiveCells = useCheckers(state => state.setActiveCells)
+  const moveFigure = useCheckers(state => state.moveFigure)
 
-  const getActiveCells = (): ICell['id'][] => {
-    // const candinate: ICell[] = Object.values(cells).map(cell => {})
-    return []
-  }
+  const getActiveCells = useCallback(
+    (): ICell['id'][] =>
+      Object.values(cells)
+        .filter(cell => cell.figureId === undefined && cell.color === 'black')
+        .map(cell => cell.id),
+    [cells]
+  )
+
+  const onCellClick = useCallback(
+    (id: ICell['id']): void => {
+      if (activeFigure) {
+        setActiveFigure(null)
+        moveFigure(id, activeFigure)
+      }
+    },
+    [activeFigure, moveFigure, setActiveFigure]
+  )
 
   const onFigureClick = useCallback(
     (id: IFigure['id']): void => {
@@ -38,10 +53,10 @@ export const Board: FC<IProps> = memo(({ className }) => {
         setActiveCells([])
       } else {
         setActiveFigure(id)
-        getActiveCells()
+        setActiveCells(getActiveCells())
       }
     },
-    [activeFigure, setActiveCells, setActiveFigure]
+    [activeFigure, getActiveCells, setActiveCells, setActiveFigure]
   )
 
   return (
@@ -54,6 +69,8 @@ export const Board: FC<IProps> = memo(({ className }) => {
           }
           onFigureClick={onFigureClick}
           activeFigure={activeFigure}
+          isActive={activeCells.includes(cell.id) && activeFigure !== null}
+          onCellClick={onCellClick}
           {...cell}
         />
       ))}

@@ -126,7 +126,15 @@ export default tsEslint.config(
           alphabetize: { order: 'asc', caseInsensitive: true }
         }
       ],
-      'import/no-duplicates': ['warn', { 'prefer-inline': true }]
+      'import/no-duplicates': ['warn', { 'prefer-inline': true }],
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true
+        }
+      ]
     }
   },
   {

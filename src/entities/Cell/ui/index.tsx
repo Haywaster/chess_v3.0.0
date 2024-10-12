@@ -9,9 +9,12 @@ interface IProps extends ICell {
   isActive?: boolean
   onFigureClick: (id: IFigure['id']) => void
   activeFigure: IFigure['id'] | null
+  onCellClick: (id: ICell['id']) => void
 }
 
-type ICellWrapper = Pick<IProps, 'isActive' | 'color'>
+interface ICellWrapper extends Pick<IProps, 'color'> {
+  $isActive: IProps['isActive']
+}
 
 const CellWrapper = styled.div<ICellWrapper>`
   display: flex;
@@ -20,7 +23,7 @@ const CellWrapper = styled.div<ICellWrapper>`
   width: 100%;
   height: 100%;
   background-color: ${p => p.color};
-  cursor: ${p => p.isActive && 'pointer'};
+  cursor: ${p => p.$isActive && 'pointer'};
 `
 
 const ActivePoint = styled.div`
@@ -31,10 +34,23 @@ const ActivePoint = styled.div`
 `
 
 export const Cell: FC<IProps> = memo(props => {
-  const { isActive, figure, onFigureClick, activeFigure, ...cell } = props
+  const {
+    isActive,
+    figure,
+    onFigureClick,
+    activeFigure,
+    onCellClick,
+    ...cell
+  } = props
+
+  const handleClick = (): void => {
+    if (isActive) {
+      onCellClick(cell.id)
+    }
+  }
 
   return (
-    <CellWrapper isActive={isActive} color={cell.color}>
+    <CellWrapper $isActive={isActive} color={cell.color} onClick={handleClick}>
       {isActive && <ActivePoint />}
       {figure && (
         <Figure
