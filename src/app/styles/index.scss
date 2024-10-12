@@ -21,6 +21,11 @@
   --black: #000;
   --black-secondary: #222;
   --grey: #7b7b7b;
+  --red: #f44336;
+  --yellow-peach: #f8d29b;
+  --dark-red-gray: #5b3939;
+  --white-figure: var(--yellow-peach);
+  --black-figure: var(--dark-red-gray);
 }
 
 #root {
