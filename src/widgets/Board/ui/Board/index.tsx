@@ -19,6 +19,9 @@ interface IProps {
   className?: string
 }
 
+const leftDiffCellId = 7
+const rightDiffCellId = 9
+
 export const Board: FC<IProps> = memo(({ className }) => {
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
@@ -29,11 +32,39 @@ export const Board: FC<IProps> = memo(({ className }) => {
   const moveFigure = useCheckers(state => state.moveFigure)
 
   const getActiveCells = useCallback(
-    (): ICell['id'][] =>
+    (activeFigureId: IFigure['id']): ICell['id'][] =>
       Object.values(cells)
-        .filter(cell => cell.figureId === undefined && cell.color === 'black')
+        .filter(cell => {
+          const activeFigure = figures[activeFigureId]
+          const cellDifference = cell.id - activeFigure.cellId
+
+          const isWhiteMoveValid =
+            activeFigure.color === 'white' &&
+            (cellDifference === leftDiffCellId ||
+              cellDifference === rightDiffCellId)
+
+          const isBlackMoveValid =
+            activeFigure.color === 'black' &&
+            (cellDifference === -leftDiffCellId ||
+              cellDifference === -rightDiffCellId)
+
+          const isColorMoveValid = isWhiteMoveValid || isBlackMoveValid
+
+          const isDiagonalMoveValid =
+            Math.abs(activeFigure.x - cell.x) ===
+            Math.abs(activeFigure.y - cell.y)
+
+          const isStainMoveValid =
+            (!activeFigure.isStain && isColorMoveValid) || activeFigure.isStain
+
+          return (
+            cell.figureId === undefined &&
+            isDiagonalMoveValid &&
+            isStainMoveValid
+          )
+        })
         .map(cell => cell.id),
-    [cells]
+    [cells, figures]
   )
 
   const onCellClick = useCallback(
@@ -53,7 +84,7 @@ export const Board: FC<IProps> = memo(({ className }) => {
         setActiveCells([])
       } else {
         setActiveFigure(id)
-        setActiveCells(getActiveCells())
+        setActiveCells(getActiveCells(id))
       }
     },
     [activeFigure, getActiveCells, setActiveCells, setActiveFigure]
