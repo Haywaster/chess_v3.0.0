@@ -100,6 +100,10 @@ export default tsEslint.config(
           ignoreReadonlyClassProperties: true,
           ignore: [0, 1, -1]
         }
+      ],
+      'no-use-before-define': [
+        'error',
+        { functions: true, classes: true, variables: true }
       ]
     }
   },

@@ -10,6 +10,23 @@ interface IProps extends ICell {
   isActive?: boolean
 }
 
+const CellWrapper = styled.div<Pick<IProps, 'isActive' | 'color'>>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: ${p => p.color};
+  cursor: ${p => p.isActive && 'pointer'};
+`
+
+const ActivePoint = styled.div`
+  background-color: var(--red);
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+`
+
 export const Cell: FC<IProps> = memo(props => {
   const { isActive, figure, ...cell } = props
 
@@ -20,20 +37,3 @@ export const Cell: FC<IProps> = memo(props => {
     </CellWrapper>
   )
 })
-
-export const CellWrapper = styled.div<Pick<IProps, 'isActive' | 'color'>>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background-color: ${p => p.color};
-  cursor: ${p => p.isActive && 'pointer'};
-`
-
-export const ActivePoint = styled.div`
-  background-color: var(--red);
-  border-radius: 50%;
-  width: 5px;
-  height: 5px;
-`
