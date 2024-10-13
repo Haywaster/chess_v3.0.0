@@ -1,0 +1,1 @@
+export { CheckersBoard } from './CheckersBoard'
