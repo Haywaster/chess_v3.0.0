@@ -1,9 +1,10 @@
-import { type FC, memo, useCallback } from 'react'
+import { type FC, memo } from 'react'
 import styled from 'styled-components'
 
-import { Cell, type ICell } from 'entities/Cell'
-import type { IFigure } from 'entities/Figure'
+import { Cell } from 'entities/Cell'
+import { Figure, type IFigure } from 'entities/Figure'
 import { useCheckers } from 'features/checkers'
+import { useClick } from 'features/checkers/lib/hooks'
 
 const BoardWrapper = styled.div`
   display: grid;
@@ -19,92 +20,46 @@ interface IProps {
   className?: string
 }
 
-const leftDiffCellId = 7
-const rightDiffCellId = 9
-
 export const Board: FC<IProps> = memo(({ className }) => {
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
   const activeFigure = useCheckers(state => state.activeFigure)
-  const setActiveFigure = useCheckers(state => state.setActiveFigure)
   const activeCells = useCheckers(state => state.activeCells)
-  const setActiveCells = useCheckers(state => state.setActiveCells)
-  const moveFigure = useCheckers(state => state.moveFigure)
 
-  const getActiveCells = useCallback(
-    (activeFigureId: IFigure['id']): ICell['id'][] =>
-      Object.values(cells)
-        .filter(cell => {
-          const activeFigure = figures[activeFigureId]
-          const cellDifference = cell.id - activeFigure.cellId
+  const { onFigureClick, onCellClick, figureAnimation, animatedFigureId } =
+    useClick()
 
-          const isWhiteMoveValid =
-            activeFigure.color === 'white' &&
-            (cellDifference === leftDiffCellId ||
-              cellDifference === rightDiffCellId)
-
-          const isBlackMoveValid =
-            activeFigure.color === 'black' &&
-            (cellDifference === -leftDiffCellId ||
-              cellDifference === -rightDiffCellId)
-
-          const isColorMoveValid = isWhiteMoveValid || isBlackMoveValid
-
-          const isDiagonalMoveValid =
-            Math.abs(activeFigure.x - cell.x) ===
-            Math.abs(activeFigure.y - cell.y)
-
-          const isStainMoveValid =
-            (!activeFigure.isStain && isColorMoveValid) || activeFigure.isStain
-
-          return (
-            cell.figureId === undefined &&
-            isDiagonalMoveValid &&
-            isStainMoveValid
-          )
-        })
-        .map(cell => cell.id),
-    [cells, figures]
-  )
-
-  const onCellClick = useCallback(
-    (id: ICell['id']): void => {
-      if (activeFigure) {
-        setActiveFigure(null)
-        moveFigure(id, activeFigure)
-      }
-    },
-    [activeFigure, moveFigure, setActiveFigure]
-  )
-
-  const onFigureClick = useCallback(
-    (id: IFigure['id']): void => {
-      if (activeFigure === id) {
-        setActiveFigure(null)
-        setActiveCells([])
-      } else {
-        setActiveFigure(id)
-        setActiveCells(getActiveCells(id))
-      }
-    },
-    [activeFigure, getActiveCells, setActiveCells, setActiveFigure]
-  )
+  const hasFigure = (id: IFigure['id'] | undefined): IFigure | undefined => {
+    if (id !== undefined) {
+      return figures[id]
+    }
+  }
 
   return (
     <BoardWrapper className={className}>
-      {Object.values(cells).map(cell => (
-        <Cell
-          key={cell.id}
-          figure={
-            cell.figureId !== undefined ? figures[cell.figureId] : undefined
-          }
-          onFigureClick={onFigureClick}
-          activeFigure={activeFigure}
-          isActive={activeCells.includes(cell.id) && activeFigure !== null}
-          onCellClick={onCellClick}
-          {...cell}
-        />
-      ))}
+      {Object.values(cells).map(cell => {
+        const figure = hasFigure(cell.figureId)
+
+        return (
+          <Cell
+            key={cell.id}
+            isActive={activeCells.includes(cell.id) && activeFigure !== null}
+            onClick={onCellClick}
+            {...cell}
+          >
+            {figure && (
+              <Figure
+                onClick={onFigureClick}
+                activeFigure={activeFigure}
+                style={
+                  figure.id === animatedFigureId ? figureAnimation : undefined
+                }
+                {...figure}
+              />
+            )}
+          </Cell>
+        )
+      })}
     </BoardWrapper>
   )
 })

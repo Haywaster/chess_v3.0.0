@@ -1,15 +1,12 @@
-import { memo, type FC } from 'react'
+import { memo, type FC, type ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { Figure, type IFigure } from '../../Figure'
 import type { ICell } from '../model'
 
 interface IProps extends ICell {
-  figure?: IFigure
+  onClick: (id: ICell['id']) => void
   isActive?: boolean
-  onFigureClick: (id: IFigure['id']) => void
-  activeFigure: IFigure['id'] | null
-  onCellClick: (id: ICell['id']) => void
+  children?: ReactNode
 }
 
 interface ICellWrapper extends Pick<IProps, 'color'> {
@@ -17,9 +14,7 @@ interface ICellWrapper extends Pick<IProps, 'color'> {
 }
 
 const CellWrapper = styled.div<ICellWrapper>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   width: 100%;
   height: 100%;
   background-color: ${p => p.color};
@@ -27,6 +22,10 @@ const CellWrapper = styled.div<ICellWrapper>`
 `
 
 const ActivePoint = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: var(--red);
   border-radius: 50%;
   width: 5px;
@@ -34,31 +33,18 @@ const ActivePoint = styled.div`
 `
 
 export const Cell: FC<IProps> = memo(props => {
-  const {
-    isActive,
-    figure,
-    onFigureClick,
-    activeFigure,
-    onCellClick,
-    ...cell
-  } = props
+  const { isActive, onClick, children, ...cell } = props
 
   const handleClick = (): void => {
     if (isActive) {
-      onCellClick(cell.id)
+      onClick(cell.id)
     }
   }
 
   return (
     <CellWrapper $isActive={isActive} color={cell.color} onClick={handleClick}>
       {isActive && <ActivePoint />}
-      {figure && (
-        <Figure
-          onFigureClick={onFigureClick}
-          activeFigure={activeFigure}
-          {...figure}
-        />
-      )}
+      {children}
     </CellWrapper>
   )
 })
