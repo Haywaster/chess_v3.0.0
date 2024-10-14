@@ -5,7 +5,7 @@ import { type IFigure, ANIMATION_DURATION } from 'entities/Figure'
 import { DOUBLE, TRANSLATE_PCT } from 'shared/const/numbers'
 
 import { useCheckers } from '../../../model'
-import { useActiveCells } from '../useActiveCells'
+import { useGetVariants } from '../useGetVariants'
 
 const calculateTransform = (n: number): string =>
   `${TRANSLATE_PCT * (1 + DOUBLE * n)}%`
@@ -29,10 +29,11 @@ export const useClick = (): UseClick => {
   const figures = useCheckers(state => state.figures)
   const activeFigure = useCheckers(state => state.activeFigure)
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
-  const setActiveCells = useCheckers(state => state.setActiveCells)
+  const setCellsForMoving = useCheckers(state => state.setCellsForMoving)
+  const setKillingVariants = useCheckers(state => state.setKillingVariants)
   const moveFigure = useCheckers(state => state.moveFigure)
 
-  const getActiveCells = useActiveCells()
+  const getVariants = useGetVariants()
 
   const onCellClick = useCallback(
     async (id: ICell['id']): Promise<void> => {
@@ -69,13 +70,21 @@ export const useClick = (): UseClick => {
     (id: IFigure['id']): void => {
       if (activeFigure === id) {
         setActiveFigure(null)
-        setActiveCells([])
+        setCellsForMoving([])
       } else {
+        const { cellsForMoving, killingVariants } = getVariants(id)
         setActiveFigure(id)
-        setActiveCells(getActiveCells(id))
+        setCellsForMoving(cellsForMoving)
+        setKillingVariants(killingVariants)
       }
     },
-    [activeFigure, getActiveCells, setActiveCells, setActiveFigure]
+    [
+      activeFigure,
+      getVariants,
+      setActiveFigure,
+      setCellsForMoving,
+      setKillingVariants
+    ]
   )
 
   return {

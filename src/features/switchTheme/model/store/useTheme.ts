@@ -3,11 +3,11 @@ import { persist } from 'zustand/middleware'
 
 import type { Theme } from '../types'
 
-type State = {
+interface State {
   theme: Theme
 }
 
-type Action = {
+interface Action {
   setTheme: (theme: Theme) => void
 }
 

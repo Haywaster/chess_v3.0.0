@@ -4,34 +4,36 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { initialCells } from 'features/checkers/lib'
 import type { IBoard } from 'features/checkers/model'
+import type { IKillVariant } from 'features/checkers/model/types'
 
 interface State {
   figures: IBoard['figures']
   cells: IBoard['cells']
   activeFigure: IFigure['id'] | null
-  activeCells: ICell['id'][]
-  candidateFigures: IFigure['id'][]
+  cellsForMoving: ICell['id'][]
+  killingVariants: IKillVariant[]
 }
 
 interface Action {
   reset: () => void
   setActiveFigure: (id: IFigure['id'] | null) => void
-  setActiveCells: (cells: ICell['id'][]) => void
+  setCellsForMoving: (cells: ICell['id'][]) => void
+  setKillingVariants: (variants: IKillVariant[]) => void
   moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => void
 }
 
 const initialState: State = {
   ...initialCells,
   activeFigure: null,
-  activeCells: [],
-  candidateFigures: []
+  cellsForMoving: [], // ячейки для перемещения
+  killingVariants: [] // варианты срубки
 }
 
 export const useCheckers = create<State & Action>(set => ({
   ...initialState,
   reset: () => set({ ...initialState }),
   setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),
-  setActiveCells: (cells: ICell['id'][]) => set({ activeCells: cells }),
+  setCellsForMoving: (cells: ICell['id'][]) => set({ cellsForMoving: cells }),
   moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => {
     set(state => {
       const prevCellId = state.figures[figureId].cellId
@@ -66,5 +68,7 @@ export const useCheckers = create<State & Action>(set => ({
         }
       }
     })
-  }
+  },
+  setKillingVariants: (variants: IKillVariant[]) =>
+    set({ killingVariants: variants })
 }))

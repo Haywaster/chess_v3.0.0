@@ -12,7 +12,7 @@ interface UseActiveCells {
   (activeFigureId: IFigure['id']): ICell['id'][]
 }
 
-export const useActiveCells = (): UseActiveCells => {
+export const useCellsForMoving = (): UseActiveCells => {
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
 

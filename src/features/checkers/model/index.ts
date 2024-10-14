@@ -1,2 +1,2 @@
-export type { IBoard } from './types'
+export type { IBoard, IKillVariant } from './types'
 export * from './store'
