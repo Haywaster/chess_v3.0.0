@@ -94,5 +94,3 @@ export const useClick = (): UseClick => {
     animatedFigureId
   }
 }
-
-// commit
