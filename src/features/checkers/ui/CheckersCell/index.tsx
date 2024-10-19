@@ -37,7 +37,7 @@ export const CheckersCell: FC<IProps> = memo(props => {
   const isActive =
     activeFigure !== null &&
     (cellsForMoving.includes(cell.id) ||
-      killingVariants.some(variant => variant.finishCellId === cell.id))
+      killingVariants.flat().some(variant => variant.finishCellId === cell.id))
 
   return (
     <Cell key={cell.id} isActive={isActive} onClick={onCellClick} {...cell}>

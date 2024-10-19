@@ -1,2 +1,3 @@
-export { initialCells } from './createBoard'
+export { initialCells, boardCellsIds } from './createBoard'
 export { isMoveValid } from './isMoveValid'
+export { getKillVariants } from './getKillVariant'

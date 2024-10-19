@@ -11,14 +11,14 @@ interface State {
   cells: IBoard['cells']
   activeFigure: IFigure['id'] | null
   cellsForMoving: ICell['id'][]
-  killingVariants: IKillVariant[]
+  killingVariants: IKillVariant[][]
 }
 
 interface Action {
   reset: () => void
   setActiveFigure: (id: IFigure['id'] | null) => void
   setCellsForMoving: (cells: ICell['id'][]) => void
-  setKillingVariants: (variants: IKillVariant[]) => void
+  setKillingVariants: (variants: IKillVariant[][]) => void
   moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => void
 }
 
@@ -69,6 +69,6 @@ export const useCheckers = create<State & Action>(set => ({
       }
     })
   },
-  setKillingVariants: (variants: IKillVariant[]) =>
+  setKillingVariants: (variants: IKillVariant[][]) =>
     set({ killingVariants: variants })
 }))

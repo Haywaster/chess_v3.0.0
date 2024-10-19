@@ -2,15 +2,13 @@ import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { boardCellsIds } from 'features/checkers/lib/utils/createBoard'
-import { DOUBLE } from 'shared/const/numbers'
 
-import { useCheckers, type IKillVariant } from '../../../model'
-import { isMoveValid } from '../../utils'
+import { useCheckers, type IKillVariant, type IBoard } from '../../../model'
+import { isMoveValid, getKillVariants } from '../../utils'
 
 interface Variants {
   cellsForMoving: ICell['id'][]
-  killingVariants: IKillVariant[]
+  killingVariants: IKillVariant[][]
 }
 
 interface UseGetVariants {
@@ -24,7 +22,7 @@ export const useGetVariants = (): UseGetVariants => {
   return useCallback(
     activeFigureId => {
       const cellsForMoving: ICell['id'][] = []
-      const killingVariants: IKillVariant[] = []
+      const killingVariants: IKillVariant[][] = []
 
       const activeFigure = figures[activeFigureId]
 
@@ -39,28 +37,17 @@ export const useGetVariants = (): UseGetVariants => {
 
         if (isMoveValid(activeFigure, cell)) {
           cellsForMoving.push(cell.id)
+          return
         }
 
         // kill figure logic
-        const isEnemyFigure =
-          Math.abs(cell.x - activeFigure.x) === 1 &&
-          cell.figureId &&
-          figures[cell.figureId].color !== activeFigure.color
-        const isCandidateNotBoard =
-          isEnemyFigure && !boardCellsIds.includes(cell.id)
+        const board: IBoard = { figures, cells }
+        const variants = getKillVariants(activeFigure, board, cell)
 
-        if (isCandidateNotBoard) {
-          const afterCellId = DOUBLE * cell.id - activeFigure.cellId
-          const isAfterCellFree = !cells[afterCellId].figureId
-
-          if (isAfterCellFree) {
-            const variant: IKillVariant = {
-              figure: cell.figureId as IFigure['id'],
-              finishCellId: cells[afterCellId].id
-            }
-
+        if (variants.length !== 0) {
+          variants.forEach(variant => {
             killingVariants.push(variant)
-          }
+          })
         }
       })
 
