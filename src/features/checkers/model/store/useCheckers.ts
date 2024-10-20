@@ -34,33 +34,32 @@ export const useCheckers = create<State & Action>(set => ({
   reset: () => set({ ...initialState }),
   setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),
   setCellsForMoving: (cells: ICell['id'][]) => set({ cellsForMoving: cells }),
-  moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => {
+  moveFigure: (startCellId: ICell['id'], finishCellId: ICell['id']) => {
     set(state => {
-      const prevCellId = state.figures[figureId].cellId
+      const figureId = state.cells[startCellId].figureId
 
-      const prevCell = {
-        ...state.cells[prevCellId]
+      if (figureId === undefined) {
+        return state
       }
+
+      const prevCell = { ...state.cells[startCellId] }
       delete prevCell.figureId
 
-      const newCell = {
-        ...state.cells[cellId],
-        figureId
-      }
+      const newCell = { ...state.cells[finishCellId], figureId }
 
       const changedFigure = {
         ...state.figures[figureId],
-        cellId,
-        x: state.cells[cellId].x,
-        y: state.cells[cellId].y
+        cellId: finishCellId,
+        x: newCell.x,
+        y: newCell.y
       }
 
       return {
         ...state,
         cells: {
           ...state.cells,
-          [prevCellId]: prevCell,
-          [cellId]: newCell
+          [startCellId]: prevCell,
+          [finishCellId]: newCell
         },
         figures: {
           ...state.figures,

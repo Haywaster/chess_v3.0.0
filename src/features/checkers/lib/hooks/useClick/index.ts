@@ -1,14 +1,11 @@
 import { type CSSProperties, useCallback, useState } from 'react'
 
 import type { ICell } from 'entities/Cell'
-import { type IFigure, ANIMATION_DURATION } from 'entities/Figure'
-import { DOUBLE, TRANSLATE_PCT } from 'shared/const/numbers'
+import { type IFigure } from 'entities/Figure'
 
 import { useCheckers } from '../../../model'
 import { useGetVariants } from '../useGetVariants'
-
-const calculateTransform = (n: number): string =>
-  `${TRANSLATE_PCT * (1 + DOUBLE * n)}%`
+import { useMoveFigure } from '../useMoveFigure'
 
 interface UseClick {
   onCellClick: (id: ICell['id']) => Promise<void>
@@ -18,53 +15,50 @@ interface UseClick {
 }
 
 export const useClick = (): UseClick => {
-  const [animatedFigureId, setAnimatedFigureId] = useState<
-    IFigure['id'] | null
-  >(null)
-  const [figureAnimation, setFigureAnimation] = useState<
-    CSSProperties | undefined
-  >(undefined)
-
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
   const activeFigure = useCheckers(state => state.activeFigure)
+  const killingVariants = useCheckers(state => state.killingVariants)
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
   const setCellsForMoving = useCheckers(state => state.setCellsForMoving)
   const setKillingVariants = useCheckers(state => state.setKillingVariants)
-  const moveFigure = useCheckers(state => state.moveFigure)
+  const [animatedFigureId, setAnimatedFigureId] = useState<
+    IFigure['id'] | null
+  >(null)
 
   const getVariants = useGetVariants()
+  const { figureAnimation, moveAnimate } = useMoveFigure()
 
-  const onCellClick = useCallback(
-    async (id: ICell['id']): Promise<void> => {
-      if (activeFigure) {
-        setActiveFigure(null)
-        setAnimatedFigureId(activeFigure)
+  const onCellClick = async (id: ICell['id']): Promise<void> => {
+    if (activeFigure) {
+      setActiveFigure(null)
+      setAnimatedFigureId(activeFigure)
 
-        const animationStyles: CSSProperties = {
-          left: calculateTransform(cells[id].x - figures[activeFigure].x),
-          top: calculateTransform(cells[id].y - figures[activeFigure].y)
+      const killVariant = killingVariants.find(
+        variant => variant[variant.length - 1].finishCellId === id
+      )
+
+      if (killVariant) {
+        for (const v of killVariant) {
+          const index = killVariant.indexOf(v)
+          const startCell =
+            index === 0
+              ? cells[figures[activeFigure].cellId]
+              : cells[killVariant[index - 1].finishCellId]
+          const finishCell = cells[v.finishCellId]
+
+          await moveAnimate(startCell, finishCell)
         }
-        setFigureAnimation(animationStyles)
+      } else {
+        const startCell = cells[figures[activeFigure].cellId]
+        const finishCell = cells[id]
 
-        await new Promise<void>(res => {
-          setTimeout(() => {
-            setFigureAnimation(undefined)
-            setAnimatedFigureId(null)
-            res()
-          }, ANIMATION_DURATION)
-        })
-
-        await new Promise<void>(res => {
-          setTimeout(() => {
-            moveFigure(id, activeFigure)
-            res()
-          })
-        })
+        await moveAnimate(startCell, finishCell)
       }
-    },
-    [activeFigure, cells, figures, moveFigure, setActiveFigure]
-  )
+
+      setAnimatedFigureId(null)
+    }
+  }
 
   const onFigureClick = useCallback(
     (id: IFigure['id']): void => {
