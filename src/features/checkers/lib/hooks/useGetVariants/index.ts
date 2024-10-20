@@ -40,7 +40,6 @@ export const useGetVariants = (): UseGetVariants => {
           return
         }
 
-        // kill figure logic
         const board: IBoard = { figures, cells }
         const variants = getKillVariants(activeFigure, board, cell)
 

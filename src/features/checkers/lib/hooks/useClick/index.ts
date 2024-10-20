@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
 import { type IFigure } from 'entities/Figure'
@@ -10,8 +10,6 @@ import { useMoveFigure } from '../useMoveFigure'
 interface UseClick {
   onCellClick: (id: ICell['id']) => Promise<void>
   onFigureClick: (id: IFigure['id']) => void
-  figureAnimation: CSSProperties | undefined
-  animatedFigureId: IFigure['id'] | null
 }
 
 export const useClick = (): UseClick => {
@@ -22,17 +20,13 @@ export const useClick = (): UseClick => {
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
   const setCellsForMoving = useCheckers(state => state.setCellsForMoving)
   const setKillingVariants = useCheckers(state => state.setKillingVariants)
-  const [animatedFigureId, setAnimatedFigureId] = useState<
-    IFigure['id'] | null
-  >(null)
 
   const getVariants = useGetVariants()
-  const { figureAnimation, moveAnimate } = useMoveFigure()
+  const moveAnimate = useMoveFigure()
 
   const onCellClick = async (id: ICell['id']): Promise<void> => {
     if (activeFigure) {
       setActiveFigure(null)
-      setAnimatedFigureId(activeFigure)
 
       const killVariant = killingVariants.find(
         variant => variant[variant.length - 1].finishCellId === id
@@ -55,8 +49,6 @@ export const useClick = (): UseClick => {
 
         await moveAnimate(startCell, finishCell)
       }
-
-      setAnimatedFigureId(null)
     }
   }
 
@@ -65,6 +57,7 @@ export const useClick = (): UseClick => {
       if (activeFigure === id) {
         setActiveFigure(null)
         setCellsForMoving([])
+        setKillingVariants([])
       } else {
         const { cellsForMoving, killingVariants } = getVariants(id)
         setActiveFigure(id)
@@ -81,10 +74,5 @@ export const useClick = (): UseClick => {
     ]
   )
 
-  return {
-    onCellClick,
-    onFigureClick,
-    figureAnimation,
-    animatedFigureId
-  }
+  return { onCellClick, onFigureClick }
 }

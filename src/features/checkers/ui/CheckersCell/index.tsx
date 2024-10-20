@@ -10,27 +10,19 @@ interface IProps {
   onFigureClick: (id: IFigure['id']) => void
   cell: ICell
   figure?: IFigure
-  animatedFigureId: IFigure['id'] | null
-  figureAnimation: CSSProperties | undefined
 }
 
 export const CheckersCell: FC<IProps> = memo(props => {
-  const {
-    onCellClick,
-    onFigureClick,
-    cell,
-    figure,
-    animatedFigureId,
-    figureAnimation
-  } = props
+  const { onCellClick, onFigureClick, cell, figure } = props
 
   const activeFigure = useCheckers(state => state.activeFigure)
   const cellsForMoving = useCheckers(state => state.cellsForMoving)
   const killingVariants = useCheckers(state => state.killingVariants)
+  const animatedFigure = useCheckers(state => state.animatedFigure)
 
   const getAnimatedStyles = (id: IFigure['id']): CSSProperties | undefined => {
-    if (id === animatedFigureId) {
-      return figureAnimation
+    if (id === animatedFigure.id) {
+      return animatedFigure.styles
     }
   }
 

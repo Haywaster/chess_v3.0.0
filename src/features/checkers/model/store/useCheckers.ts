@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { create } from 'zustand'
 
 import type { ICell } from 'entities/Cell'
@@ -12,6 +13,10 @@ interface State {
   activeFigure: IFigure['id'] | null
   cellsForMoving: ICell['id'][]
   killingVariants: IKillVariant[][]
+  animatedFigure: {
+    id: IFigure['id'] | null
+    styles: CSSProperties | undefined
+  }
 }
 
 interface Action {
@@ -20,13 +25,21 @@ interface Action {
   setCellsForMoving: (cells: ICell['id'][]) => void
   setKillingVariants: (variants: IKillVariant[][]) => void
   moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => void
+  setAnimatedFigure: (
+    id: IFigure['id'] | null,
+    styles: CSSProperties | undefined
+  ) => void
 }
 
 const initialState: State = {
   ...initialCells,
   activeFigure: null,
   cellsForMoving: [], // ячейки для перемещения
-  killingVariants: [] // варианты срубки
+  killingVariants: [], // варианты срубки
+  animatedFigure: {
+    id: null,
+    styles: undefined
+  }
 }
 
 export const useCheckers = create<State & Action>(set => ({
@@ -34,6 +47,10 @@ export const useCheckers = create<State & Action>(set => ({
   reset: () => set({ ...initialState }),
   setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),
   setCellsForMoving: (cells: ICell['id'][]) => set({ cellsForMoving: cells }),
+  setAnimatedFigure: (
+    id: IFigure['id'] | null,
+    styles: CSSProperties | undefined
+  ) => set({ animatedFigure: { id, styles } }),
   moveFigure: (startCellId: ICell['id'], finishCellId: ICell['id']) => {
     set(state => {
       const figureId = state.cells[startCellId].figureId
@@ -55,7 +72,6 @@ export const useCheckers = create<State & Action>(set => ({
       }
 
       return {
-        ...state,
         cells: {
           ...state.cells,
           [startCellId]: prevCell,
