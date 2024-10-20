@@ -5,6 +5,7 @@ import type { IFigure } from '../model'
 
 interface IFigureWrapper extends Pick<IFigure, 'color'> {
   $isActive?: boolean
+  $isKilling?: boolean
 }
 
 const FigureWrapper = styled.div<IFigureWrapper>`
@@ -21,16 +22,18 @@ const FigureWrapper = styled.div<IFigureWrapper>`
     p.color === 'white' ? 'var(--white-figure)' : 'var(--black-figure)'};
   outline: ${p => p.$isActive && '3px solid var(--red)'};
   transition: all 0.2s ease;
+  opacity: ${p => (p.$isKilling ? 0 : 1)};
 `
 
 interface IProps extends IFigure {
   activeFigure: IFigure['id'] | null
   onClick: (id: IFigure['id']) => void
   style?: CSSProperties
+  isKilling?: boolean
 }
 
 export const Figure: FC<IProps> = memo(props => {
-  const { color, id, activeFigure, onClick, style } = props
+  const { color, id, activeFigure, onClick, style, isKilling } = props
 
   const handleClick = (): void => onClick(id)
 
@@ -38,6 +41,7 @@ export const Figure: FC<IProps> = memo(props => {
     <FigureWrapper
       color={color}
       $isActive={activeFigure === id}
+      $isKilling={isKilling}
       onClick={handleClick}
       style={style}
     />

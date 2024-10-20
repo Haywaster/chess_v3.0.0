@@ -5,12 +5,12 @@ import { CheckersBoard } from 'features/checkers'
 
 const BoardWrapper = styled.div`
   display: grid;
-  transform: scale(-1, 1) rotate(180deg);
+  transform: scale(1, -1);
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
   width: 500px;
   height: 500px;
-  border: 5px solid var(--black-secondary);
+  border: 5px solid var(--border-color);
 `
 
 interface IProps {

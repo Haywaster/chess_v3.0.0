@@ -17,6 +17,7 @@ interface State {
     id: IFigure['id'] | null
     styles: CSSProperties | undefined
   }
+  killingFigure: IFigure['id'] | null
 }
 
 interface Action {
@@ -29,6 +30,8 @@ interface Action {
     id: IFigure['id'] | null,
     styles: CSSProperties | undefined
   ) => void
+  setKillingFigure: (id: IFigure['id'] | null) => void
+  killFigure: (id: IFigure['id']) => void
 }
 
 const initialState: State = {
@@ -39,7 +42,8 @@ const initialState: State = {
   animatedFigure: {
     id: null,
     styles: undefined
-  }
+  },
+  killingFigure: null
 }
 
 export const useCheckers = create<State & Action>(set => ({
@@ -51,6 +55,25 @@ export const useCheckers = create<State & Action>(set => ({
     id: IFigure['id'] | null,
     styles: CSSProperties | undefined
   ) => set({ animatedFigure: { id, styles } }),
+  setKillingFigure: (id: IFigure['id'] | null) => set({ killingFigure: id }),
+  setKillingVariants: (variants: IKillVariant[][]) =>
+    set({ killingVariants: variants }),
+  killFigure: (id: IFigure['id']) => {
+    set(state => {
+      const figure = state.figures[id]
+      const cell = state.cells[figure.cellId]
+
+      delete cell.figureId
+      delete state.figures[id]
+
+      return {
+        cells: {
+          ...state.cells,
+          [figure.cellId]: cell
+        }
+      }
+    })
+  },
   moveFigure: (startCellId: ICell['id'], finishCellId: ICell['id']) => {
     set(state => {
       const figureId = state.cells[startCellId].figureId
@@ -83,7 +106,5 @@ export const useCheckers = create<State & Action>(set => ({
         }
       }
     })
-  },
-  setKillingVariants: (variants: IKillVariant[][]) =>
-    set({ killingVariants: variants })
+  }
 }))

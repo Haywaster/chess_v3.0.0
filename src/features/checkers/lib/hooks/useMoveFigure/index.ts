@@ -20,7 +20,7 @@ export const useMoveFigure = (): UseMoveFigure => {
   const setAnimatedFigure = useCheckers(state => state.setAnimatedFigure)
 
   return async (startCell: ICell, finishCell: ICell): Promise<void> => {
-    // Задержка установлена для того, чтобы фигура успела отрендериться после предыдущего перемещения
+    // Задержка установлена для того, чтобы фигура успела отрендериться на своем новом месте
     await new Promise<void>(res => {
       setTimeout((): void => {
         res()

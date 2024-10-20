@@ -19,6 +19,7 @@ export const CheckersCell: FC<IProps> = memo(props => {
   const cellsForMoving = useCheckers(state => state.cellsForMoving)
   const killingVariants = useCheckers(state => state.killingVariants)
   const animatedFigure = useCheckers(state => state.animatedFigure)
+  const killingFigure = useCheckers(state => state.killingFigure)
 
   const getAnimatedStyles = (id: IFigure['id']): CSSProperties | undefined => {
     if (id === animatedFigure.id) {
@@ -38,6 +39,7 @@ export const CheckersCell: FC<IProps> = memo(props => {
           onClick={onFigureClick}
           activeFigure={activeFigure}
           style={getAnimatedStyles(figure.id)}
+          isKilling={killingFigure === figure.id}
           {...figure}
         />
       )}

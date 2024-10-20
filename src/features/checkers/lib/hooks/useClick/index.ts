@@ -20,6 +20,8 @@ export const useClick = (): UseClick => {
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
   const setCellsForMoving = useCheckers(state => state.setCellsForMoving)
   const setKillingVariants = useCheckers(state => state.setKillingVariants)
+  const setKillingFigure = useCheckers(state => state.setKillingFigure)
+  const killFigure = useCheckers(state => state.killFigure)
 
   const getVariants = useGetVariants()
   const moveAnimate = useMoveFigure()
@@ -37,15 +39,18 @@ export const useClick = (): UseClick => {
         }, [])
 
         if (killVariant.length !== 0) {
-          for (const v of killVariant) {
-            const index = killVariant.indexOf(v)
+          for (const variant of killVariant) {
+            const index = killVariant.indexOf(variant)
             const startCell =
               index === 0
                 ? cells[figures[activeFigure].cellId]
                 : cells[killVariant[index - 1].finishCellId]
-            const finishCell = cells[v.finishCellId]
+            const finishCell = cells[variant.finishCellId]
 
+            setKillingFigure(variant.figure)
             await moveAnimate(startCell, finishCell)
+            killFigure(variant.figure)
+            setKillingFigure(null)
           }
         } else {
           const startCell = cells[figures[activeFigure].cellId]
@@ -59,9 +64,11 @@ export const useClick = (): UseClick => {
       activeFigure,
       cells,
       figures,
+      killFigure,
       killingVariants,
       moveAnimate,
-      setActiveFigure
+      setActiveFigure,
+      setKillingFigure
     ]
   )
 

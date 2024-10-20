@@ -134,7 +134,8 @@ export default tsEslint.config(
           allowTypedFunctionExpressions: true,
           allowHigherOrderFunctions: true
         }
-      ]
+      ],
+      '@typescript-eslint/no-dynamic-delete': 'off'
     }
   },
   {
