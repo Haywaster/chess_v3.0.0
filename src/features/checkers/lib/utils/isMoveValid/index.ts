@@ -9,12 +9,12 @@ const isCellAfterFigure = (
   cell: ICell
 ): boolean => {
   const { cells, figures } = board
-  const difference = activeFigure.x - cell.x // Показывает, как далеко расположена ячейка
+  const xDifference = activeFigure.x - cell.x // Показывает, как далеко расположена ячейка
   const idDifference = figures[activeFigure.id].cellId - cell.id
-  const directionId = idDifference / Math.abs(difference)
+  const directionId = idDifference / Math.abs(xDifference)
   let isFigure = false
 
-  for (let i = 1; i < Math.abs(difference); i++) {
+  for (let i = 1; i < Math.abs(xDifference); i++) {
     if ('figureId' in cells[activeFigure.cellId - i * directionId]) {
       isFigure = true
       break

@@ -1,9 +1,9 @@
-import { type ICell } from 'entities/Cell'
+import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { DOUBLE } from 'shared/const/numbers'
 
 import { boardCellsIds } from '../../../const'
 import type { IBoard, IKillVariant } from '../../../model'
+import { calcFigureKill, calcStainKill } from '../calcKill'
 
 const getKillVariant = (
   activeFigure: IFigure,
@@ -13,22 +13,16 @@ const getKillVariant = (
   const { figures, cells } = board
 
   const isEnemyFigure =
-    Math.abs(cell.x - activeFigure.x) === 1 &&
-    cell.figureId &&
-    figures[cell.figureId].color !== activeFigure.color
-  const isCandidateNotBoard = isEnemyFigure && !boardCellsIds.includes(cell.id)
+    cell.figureId && figures[cell.figureId].color !== activeFigure.color
+  const isBorderCandidate = boardCellsIds.includes(cell.id)
 
-  if (isCandidateNotBoard) {
-    const afterCellId = DOUBLE * cell.id - activeFigure.cellId
-    const isAfterCellFree = !('figureId' in cells[afterCellId])
-
-    if (isAfterCellFree) {
-      return {
-        figure: cell.figureId as IFigure['id'],
-        finishCellId: cells[afterCellId].id
-      }
-    }
+  if (!isEnemyFigure || isBorderCandidate) {
+    return
   }
+
+  return !activeFigure.isStain
+    ? calcFigureKill(cells, activeFigure, cell)
+    : calcStainKill(cells, activeFigure, cell)
 }
 
 export const getKillVariants = (

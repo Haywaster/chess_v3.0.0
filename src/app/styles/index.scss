@@ -2,7 +2,6 @@
 @forward 'themes/dark';
 @forward 'themes/light';
 @forward 'classes';
-@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap';
 
 :root {
   font-family: Roboto, Arial, sans-serif;
@@ -10,7 +9,7 @@
   font-weight: 400;
   color-scheme: light dark;
   font-synthesis: none;
-  text-rendering: optimizelegibility;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 

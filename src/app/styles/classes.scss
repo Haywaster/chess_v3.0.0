@@ -2,12 +2,12 @@
   svg {
     &[fill],
     *[fill] {
-      fill: currentcolor;
+      fill: currentColor;
     }
 
     &[stroke],
     *[stroke] {
-      stroke: currentcolor;
+      stroke: currentColor;
     }
   }
 }
