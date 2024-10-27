@@ -35,12 +35,13 @@ export const useGetVariants = (): UseGetVariants => {
           return
         }
 
-        if (isMoveValid(activeFigure, cell)) {
+        const board: IBoard = { figures, cells }
+
+        if (isMoveValid(board, activeFigure, cell)) {
           cellsForMoving.push(cell.id)
           return
         }
 
-        const board: IBoard = { figures, cells }
         const variants = getKillVariants(activeFigure, board, cell)
 
         if (variants.length !== 0) {

@@ -2,8 +2,8 @@ import { type ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { DOUBLE } from 'shared/const/numbers'
 
+import { boardCellsIds } from '../../../const'
 import type { IBoard, IKillVariant } from '../../../model'
-import { boardCellsIds } from '../../utils'
 
 const getKillVariant = (
   activeFigure: IFigure,

@@ -3,9 +3,10 @@ import { create } from 'zustand'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { initialCells } from 'features/checkers/lib'
-import type { IBoard } from 'features/checkers/model'
-import type { IKillVariant } from 'features/checkers/model/types'
+
+import { initialCells } from '../../const'
+import { makeFigureStain } from '../../lib'
+import type { IBoard, IKillVariant } from '../types'
 
 interface State {
   figures: IBoard['figures']
@@ -90,6 +91,7 @@ export const useCheckers = create<State & Action>(set => ({
       const changedFigure = {
         ...state.figures[figureId],
         cellId: finishCellId,
+        isStain: makeFigureStain(state.figures[figureId], newCell),
         x: newCell.x,
         y: newCell.y
       }

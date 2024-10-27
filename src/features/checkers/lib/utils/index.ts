@@ -1,3 +1,4 @@
-export { initialCells, boardCellsIds } from './createBoard'
+export { createBoard } from './createBoard'
 export { isMoveValid } from './isMoveValid'
 export { getKillVariants } from './getKillVariant'
+export { makeFigureStain } from './makeFigureStain'

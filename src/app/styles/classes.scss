@@ -1,0 +1,13 @@
+.svgColor {
+  svg {
+    &[fill],
+    *[fill] {
+      fill: currentcolor;
+    }
+
+    &[stroke],
+    *[stroke] {
+      stroke: currentcolor;
+    }
+  }
+}

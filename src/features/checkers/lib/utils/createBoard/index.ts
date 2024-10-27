@@ -1,13 +1,12 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { EVEN_NUMBER } from 'shared/const/numbers'
+import { BOARD_SIZE, EVEN_NUMBER } from 'shared/const/numbers'
 
 import type { IBoard } from '../../../model'
 
 const FINAL_WHITE_ROW = 3
 const FIRST_ROW_WITHOUT_FIGURES = 4
 const SECOND_ROW_WITHOUT_FIGURES = 5
-const BOARD_SIZE = 8
 
 export const createBoard = (): IBoard => {
   const cells: ICell[] = []
@@ -64,11 +63,3 @@ export const createBoard = (): IBoard => {
     figures: Object.fromEntries(newFigures.map(figure => [figure.id, figure]))
   }
 }
-
-export const initialCells = createBoard()
-
-const borders = [1, BOARD_SIZE]
-
-export const boardCellsIds = Object.values(initialCells.cells)
-  .filter(cell => borders.includes(cell.x) || borders.includes(cell.y))
-  .map(cell => cell.id)

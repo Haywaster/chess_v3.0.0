@@ -1,11 +1,13 @@
 import { memo, type FC, type CSSProperties } from 'react'
 import styled from 'styled-components'
 
+import Crown from '../assets/crown.svg?react'
 import type { IFigure } from '../model'
 
 interface IFigureWrapper extends Pick<IFigure, 'color'> {
   $isActive?: boolean
   $isKilling?: boolean
+  $isStain?: boolean
 }
 
 const FigureWrapper = styled.div<IFigureWrapper>`
@@ -23,6 +25,16 @@ const FigureWrapper = styled.div<IFigureWrapper>`
   outline: ${p => p.$isActive && '3px solid var(--red)'};
   transition: all 0.2s ease;
   opacity: ${p => (p.$isKilling ? 0 : 1)};
+  color: ${p => (p.color === 'white' ? 'var(--black)' : 'var(--yellow)')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > svg {
+    width: 70%;
+    height: auto;
+    transform: scale(1, -1);
+  }
 `
 
 interface IProps extends IFigure {
@@ -33,17 +45,20 @@ interface IProps extends IFigure {
 }
 
 export const Figure: FC<IProps> = memo(props => {
-  const { color, id, activeFigure, onClick, style, isKilling } = props
+  const { color, id, activeFigure, onClick, style, isKilling, isStain } = props
 
   const handleClick = (): void => onClick(id)
 
   return (
     <FigureWrapper
+      className="svgColor"
       color={color}
       $isActive={activeFigure === id}
       $isKilling={isKilling}
       onClick={handleClick}
       style={style}
-    />
+    >
+      {isStain && <Crown />}
+    </FigureWrapper>
   )
 })
