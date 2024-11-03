@@ -3,13 +3,14 @@ import type { IFigure } from 'entities/Figure'
 
 import { boardCellsIds } from '../../../const'
 import type { IBoard, IKillVariant } from '../../../model'
-import { calcFigureKill, calcStainKill } from '../calcKill'
+import { calcFigureKill, calcStainKill2 } from '../calcKill'
+import { makeFigureStain } from '../makeFigureStain'
 
 const getKillVariant = (
   activeFigure: IFigure,
   cell: ICell,
   board: IBoard
-): IKillVariant | undefined => {
+): IKillVariant | IKillVariant[] | undefined => {
   const { figures, cells } = board
 
   const isEnemyFigure =
@@ -22,7 +23,7 @@ const getKillVariant = (
 
   return !activeFigure.isStain
     ? calcFigureKill(cells, activeFigure, cell)
-    : calcStainKill(cells, activeFigure, cell)
+    : calcStainKill2(cells, activeFigure, cell)
 }
 
 export const getKillVariants = (
@@ -32,31 +33,42 @@ export const getKillVariants = (
   variants: IKillVariant[] = []
 ): IKillVariant[][] => {
   const { cells } = board
+  const allVariants: IKillVariant[][] = variants.length === 0 ? [] : [variants]
 
   const processVariant = (variant: IKillVariant): IKillVariant[][] => {
     const newCell: ICell = cells[variant.finishCellId]
+
     const pseudoActiveFigure: IFigure = {
       ...activeFigure,
+      isStain: makeFigureStain(activeFigure, newCell),
       x: newCell.x,
       y: newCell.y,
       cellId: newCell.id
     }
     const newVariants: IKillVariant[] = [...variants, variant]
-
     return getKillVariants(pseudoActiveFigure, board, newCell, newVariants)
   }
 
+  const processAndAddVariants = (variant: IKillVariant): void => {
+    const newVariants = processVariant(variant)
+    allVariants.push(...newVariants)
+  }
+
+  // Условие для самого первого поиска вариантов
   if (variants.length === 0) {
     const variant = getKillVariant(activeFigure, cell, board)
 
     if (!variant) {
-      return []
+      return allVariants
     }
 
-    return processVariant(variant)
-  }
+    if (!Array.isArray(variant)) {
+      return processVariant(variant)
+    }
 
-  const allVariants: IKillVariant[][] = [variants]
+    variant.forEach(processAndAddVariants)
+    return allVariants
+  }
 
   Object.values(cells).forEach(cell => {
     const diagonalCondition =
@@ -68,9 +80,19 @@ export const getKillVariants = (
 
     const variant = getKillVariant(activeFigure, cell, board)
 
-    if (variant && !variants.some(item => item.figure === variant.figure)) {
-      const newVariants = processVariant(variant)
-      newVariants.forEach(v => allVariants.push(v))
+    if (!variant) {
+      return allVariants
+    }
+
+    if (!Array.isArray(variant)) {
+      if (!variants.some(item => item.figure === variant.figure)) {
+        return processAndAddVariants(variant)
+      }
+    } else {
+      if (!variants.some(item => variant.some(v => v.figure === item.figure))) {
+        variant.forEach(processAndAddVariants)
+        return allVariants
+      }
     }
   })
 
