@@ -31,8 +31,8 @@ export const useClick = (): UseClick => {
       if (activeFigure) {
         setActiveFigure(null)
 
-        const killVariants = killingVariants.filter(variant =>
-          variant.some(v => v.finishCellId === id)
+        const killVariants = killingVariants.filter(
+          variant => variant[variant.length - 1].finishCellId === id
         )
         const killVariant = killVariants.reduce((longest, current) => {
           return current.length > longest.length ? current : longest

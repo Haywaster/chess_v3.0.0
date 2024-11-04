@@ -3,7 +3,7 @@ import type { IFigure } from 'entities/Figure'
 
 import { boardCellsIds } from '../../../const'
 import type { IBoard, IKillVariant } from '../../../model'
-import { calcFigureKill, calcStainKill2 } from '../calcKill'
+import { calcFigureKill, calcStainKillManyCells } from '../calcKill'
 import { makeFigureStain } from '../makeFigureStain'
 
 const getKillVariant = (
@@ -23,7 +23,7 @@ const getKillVariant = (
 
   return !activeFigure.isStain
     ? calcFigureKill(cells, activeFigure, cell)
-    : calcStainKill2(cells, activeFigure, cell)
+    : calcStainKillManyCells(cells, activeFigure, cell)
 }
 
 export const getKillVariants = (
@@ -70,6 +70,7 @@ export const getKillVariants = (
     return allVariants
   }
 
+  // Если найден первый вариант, придется искать новые по всей доске
   Object.values(cells).forEach(cell => {
     const diagonalCondition =
       Math.abs(cell.x - activeFigure.x) === Math.abs(cell.y - activeFigure.y)

@@ -27,7 +27,7 @@ export const calcFigureKill = (
 }
 
 // Остановка сразу после фигуры
-export const calcStainKill = (
+export const calcStainKillSingleCell = (
   cells: IBoard['cells'],
   activeFigure: IFigure,
   cell: ICell
@@ -53,7 +53,8 @@ export const calcStainKill = (
   }
 }
 
-export const calcStainKill2 = (
+// Остановка в любом месте после фигуры
+export const calcStainKillManyCells = (
   cells: IBoard['cells'],
   activeFigure: IFigure,
   cell: ICell
@@ -65,17 +66,13 @@ export const calcStainKill2 = (
   const beforeCellId = cell.id - directionId
 
   const isBeforeCellFree =
-    beforeCellId === activeFigure.cellId
-      ? true
-      : !('figureId' in cells[beforeCellId])
+    beforeCellId === activeFigure.cellId || !('figureId' in cells[beforeCellId])
 
-  const afterFreeCells = []
+  const afterFreeCells: ICell[] = []
+  let afterCellId = cell.id + directionId
+  const limitId = afterCellId > cell.id ? Object.keys(cells).length : 0
 
-  for (
-    let afterCellId = cell.id + directionId;
-    afterCellId < Object.keys(cells).length;
-    afterCellId += directionId
-  ) {
+  while (Math.abs(afterCellId - limitId) > 0) {
     if ('figureId' in cells[afterCellId]) {
       break
     }
@@ -86,14 +83,13 @@ export const calcStainKill2 = (
     }
 
     afterFreeCells.push(cells[afterCellId])
+    afterCellId += directionId
   }
 
   if (isBeforeCellFree && afterFreeCells.length) {
-    return afterFreeCells.map(freeCell => {
-      return {
-        figure: cell.figureId as IFigure['id'],
-        finishCellId: freeCell.id
-      }
-    })
+    return afterFreeCells.map(freeCell => ({
+      figure: cell.figureId as IFigure['id'],
+      finishCellId: freeCell.id
+    }))
   }
 }
