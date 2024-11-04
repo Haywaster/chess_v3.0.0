@@ -2,14 +2,19 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
 import { boardCellsIds } from '../../../const'
-import type { IBoard, IKillVariant } from '../../../model'
-import { calcFigureKill, calcStainKillManyCells } from '../calcKill'
+import type { IBoard, IKillVariant, Rules } from '../../../model'
+import {
+  calcFigureKill,
+  calcStainKillManyCells,
+  calcStainKillSingleCell
+} from '../calcKill'
 import { makeFigureStain } from '../makeFigureStain'
 
 const getKillVariant = (
   activeFigure: IFigure,
   cell: ICell,
-  board: IBoard
+  board: IBoard,
+  rules: Record<Rules, boolean>
 ): IKillVariant | IKillVariant[] | undefined => {
   const { figures, cells } = board
 
@@ -23,14 +28,18 @@ const getKillVariant = (
 
   return !activeFigure.isStain
     ? calcFigureKill(cells, activeFigure, cell)
-    : calcStainKillManyCells(cells, activeFigure, cell)
+    : rules.stopAfterKill
+      ? calcStainKillSingleCell(cells, activeFigure, cell)
+      : calcStainKillManyCells(cells, activeFigure, cell)
 }
 
 export const getKillVariants = (
   activeFigure: IFigure,
   board: IBoard,
   cell: ICell,
+  rules: Record<Rules, boolean>,
   variants: IKillVariant[] = []
+  // eslint-disable-next-line max-params
 ): IKillVariant[][] => {
   const { cells } = board
   const allVariants: IKillVariant[][] = variants.length === 0 ? [] : [variants]
@@ -46,7 +55,13 @@ export const getKillVariants = (
       cellId: newCell.id
     }
     const newVariants: IKillVariant[] = [...variants, variant]
-    return getKillVariants(pseudoActiveFigure, board, newCell, newVariants)
+    return getKillVariants(
+      pseudoActiveFigure,
+      board,
+      newCell,
+      rules,
+      newVariants
+    )
   }
 
   const processAndAddVariants = (variant: IKillVariant): void => {
@@ -56,7 +71,7 @@ export const getKillVariants = (
 
   // Условие для самого первого поиска вариантов
   if (variants.length === 0) {
-    const variant = getKillVariant(activeFigure, cell, board)
+    const variant = getKillVariant(activeFigure, cell, board, rules)
 
     if (!variant) {
       return allVariants
@@ -79,7 +94,7 @@ export const getKillVariants = (
       return
     }
 
-    const variant = getKillVariant(activeFigure, cell, board)
+    const variant = getKillVariant(activeFigure, cell, board, rules)
 
     if (!variant) {
       return allVariants

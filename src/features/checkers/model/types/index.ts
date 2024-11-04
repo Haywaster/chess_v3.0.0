@@ -10,3 +10,9 @@ export interface IKillVariant {
   finishCellId: ICell['id']
   figure: IFigure['id']
 }
+
+export type Rules =
+  | 'requireKill'
+  | 'behindKill'
+  | 'killMaxFigure'
+  | 'stopAfterKill'

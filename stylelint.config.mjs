@@ -1,10 +1,13 @@
 /** @type {import('stylelint').Config} */
+
+const camelCase = '^[a-z][a-zA-Z0-9]+$';
+
 export default {
   extends: 'stylelint-config-standard-scss',
   plugins: ['stylelint-order'],
   rules: {
     'selector-class-pattern': [
-      '^[a-z][a-zA-Z0-9]+$',
+      camelCase,
       {
         resolveNestedSelectors: true
       }
@@ -14,6 +17,7 @@ export default {
       {
         camelCaseSvgKeywords: true
       }
-    ]
+    ],
+    'scss/dollar-variable-pattern': camelCase
   }
 }

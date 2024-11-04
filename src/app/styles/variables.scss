@@ -1,0 +1,27 @@
+$fontFamilyMain: 'Inter', 'Arial', sans-serif;
+$fontLineBase: 150%;
+$fontSizeM: 16px;
+$fontWeightM: 400;
+$fontSizeL: 24px;
+$fontWeightL: 700;
+
+:root {
+  // Цвета
+  --primary-color: #304ff1;
+  --primary-hover-color: #1941c6;
+  --primary-active-color: #1f3b9b;
+  --white: #fff;
+  --white-secondary: #f1f1f1;
+  --black: #000;
+  --black-secondary: #222;
+  --grey: #7b7b7b;
+  --red: #f44336;
+  --yellow-peach: #f8d29b;
+  --dark-red-gray: #5b3939;
+  --yellow: #fcd700;
+  --gray-blue: #82c9d07a;
+
+  // Шрифты
+  --font-main: #{$fontWeightM} #{$fontSizeM} / #{$fontLineBase} #{$fontFamilyMain};
+  --font-large: #{$fontWeightL} #{$fontSizeL} / #{$fontLineBase} #{$fontFamilyMain};
+}

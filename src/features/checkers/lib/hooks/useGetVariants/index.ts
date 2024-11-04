@@ -18,6 +18,7 @@ interface UseGetVariants {
 export const useGetVariants = (): UseGetVariants => {
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
+  const rules = useCheckers(state => state.rules)
 
   return useCallback(
     activeFigureId => {
@@ -42,7 +43,7 @@ export const useGetVariants = (): UseGetVariants => {
           return
         }
 
-        const variants = getKillVariants(activeFigure, board, cell)
+        const variants = getKillVariants(activeFigure, board, cell, rules)
 
         if (variants.length !== 0) {
           variants.forEach(variant => {
@@ -56,6 +57,6 @@ export const useGetVariants = (): UseGetVariants => {
         killingVariants
       }
     },
-    [cells, figures]
+    [cells, figures, rules]
   )
 }

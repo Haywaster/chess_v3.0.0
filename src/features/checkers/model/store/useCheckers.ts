@@ -4,12 +4,13 @@ import { create } from 'zustand'
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
-import { initialCells } from '../../const'
+import { initialCells, ruleDefaults } from '../../const'
 import { makeFigureStain } from '../../lib'
-import type { IBoard, IKillVariant } from '../types'
+import type { IBoard, IKillVariant, Rules } from '../types'
 
 interface State {
   rulesModal: boolean
+  rules: Record<Rules, boolean>
   figures: IBoard['figures']
   cells: IBoard['cells']
   activeFigure: IFigure['id'] | null
@@ -23,6 +24,7 @@ interface State {
 }
 
 interface Action {
+  changeRule: (rule: Rules, value: boolean) => void
   toggleRulesModal: () => void
   reset: () => void
   setActiveFigure: (id: IFigure['id'] | null) => void
@@ -39,6 +41,7 @@ interface Action {
 
 const initialState: State = {
   ...initialCells,
+  rules: ruleDefaults,
   rulesModal: false,
   activeFigure: null,
   cellsForMoving: [], // ячейки для перемещения
@@ -52,6 +55,8 @@ const initialState: State = {
 
 export const useCheckers = create<State & Action>(set => ({
   ...initialState,
+  changeRule: (rule: Rules, value: boolean) =>
+    set(state => ({ rules: { ...state.rules, [rule]: value } })),
   toggleRulesModal: () => set(state => ({ rulesModal: !state.rulesModal })),
   reset: () => set({ ...initialState }),
   setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),

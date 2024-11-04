@@ -2,6 +2,7 @@
 @forward 'themes/dark';
 @forward 'themes/light';
 @forward 'classes';
+@forward 'variables';
 
 :root {
   font-family: Roboto, Arial, sans-serif;
@@ -13,20 +14,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --primary-color: #304ff1;
-  --primary-hover-color: #1941c6;
-  --primary-active-color: #1f3b9b;
-  --white: #fff;
-  --white-secondary: #f1f1f1;
-  --black: #000;
-  --black-secondary: #222;
-  --grey: #7b7b7b;
-  --red: #f44336;
-  --yellow-peach: #f8d29b;
-  --dark-red-gray: #5b3939;
-  --yellow: #fcd700;
-  --blue: #82c9d07a;
-  --header-bg: var(--blue);
+  --header-bg: var(--gray-blue);
   --white-figure: var(--yellow-peach);
   --black-figure: var(--dark-red-gray);
   --border-color: var(--black-secondary);
@@ -44,4 +32,5 @@ body {
   flex-direction: column;
   place-items: center;
   min-height: 100vh;
+  font: var(--font-main);
 }
