@@ -9,6 +9,7 @@ import { makeFigureStain } from '../../lib'
 import type { IBoard, IKillVariant } from '../types'
 
 interface State {
+  rulesModal: boolean
   figures: IBoard['figures']
   cells: IBoard['cells']
   activeFigure: IFigure['id'] | null
@@ -22,6 +23,7 @@ interface State {
 }
 
 interface Action {
+  toggleRulesModal: () => void
   reset: () => void
   setActiveFigure: (id: IFigure['id'] | null) => void
   setCellsForMoving: (cells: ICell['id'][]) => void
@@ -37,6 +39,7 @@ interface Action {
 
 const initialState: State = {
   ...initialCells,
+  rulesModal: false,
   activeFigure: null,
   cellsForMoving: [], // ячейки для перемещения
   killingVariants: [], // варианты срубки
@@ -49,6 +52,7 @@ const initialState: State = {
 
 export const useCheckers = create<State & Action>(set => ({
   ...initialState,
+  toggleRulesModal: () => set(state => ({ rulesModal: !state.rulesModal })),
   reset: () => set({ ...initialState }),
   setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),
   setCellsForMoving: (cells: ICell['id'][]) => set({ cellsForMoving: cells }),

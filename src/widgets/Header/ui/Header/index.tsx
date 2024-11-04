@@ -1,14 +1,28 @@
 import { memo, type FC } from 'react'
+import styled from 'styled-components'
 
-import { useSwitchTheme } from 'features/switchTheme'
-import { Button } from 'shared/ui/Button'
+import { CheckersRulesBtn } from 'features/checkers'
+import { SwitchButton } from 'features/switchTheme'
+
+const StyledHeader = styled.header`
+  padding: 10px;
+  margin: 10px;
+  background-color: var(--header-bg);
+  border-radius: 10px;
+`
+
+const BtnsWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`
 
 export const Header: FC = memo(() => {
-  const toggleTheme = useSwitchTheme()
-
   return (
-    <header>
-      <Button onClick={toggleTheme}>Switch theme</Button>
-    </header>
+    <StyledHeader>
+      <BtnsWrapper>
+        <SwitchButton />
+        <CheckersRulesBtn />
+      </BtnsWrapper>
+    </StyledHeader>
   )
 })

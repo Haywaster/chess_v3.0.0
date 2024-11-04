@@ -1,5 +1,5 @@
-import { memo, type FC, type ReactNode } from 'react'
-import styled from 'styled-components'
+import { memo, type FC, type ReactNode, type KeyboardEventHandler } from 'react'
+import styled, { css } from 'styled-components'
 
 import type { ICell } from '../model'
 
@@ -18,7 +18,16 @@ const CellWrapper = styled.div<ICellWrapper>`
   width: 100%;
   height: 100%;
   background-color: ${p => p.color};
-  cursor: ${p => p.$isActive && 'pointer'};
+
+  ${p =>
+    p.$isActive &&
+    css`
+      cursor: pointer;
+
+      &:focus-visible {
+        border: 3px dashed var(--white);
+      }
+    `}
 `
 
 const ActivePoint = styled.div`
@@ -41,8 +50,23 @@ export const Cell: FC<IProps> = memo(props => {
     }
   }
 
+  const handlerEnterDown: KeyboardEventHandler<HTMLDivElement> | undefined = (
+    e
+  ): void => {
+    if (e.key === 'Enter') {
+      handleClick()
+    }
+  }
+
   return (
-    <CellWrapper $isActive={isActive} color={cell.color} onClick={handleClick}>
+    <CellWrapper
+      tabIndex={isActive ? 0 : undefined}
+      role={isActive ? 'button' : undefined}
+      $isActive={isActive}
+      color={cell.color}
+      onClick={handleClick}
+      onKeyDown={handlerEnterDown}
+    >
       {isActive && <ActivePoint />}
       {children}
     </CellWrapper>

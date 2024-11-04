@@ -14,8 +14,8 @@
   -moz-osx-font-smoothing: grayscale;
 
   --primary-color: #304ff1;
-  --primary-hover-color: #1f3b9b;
-  --primary-active-color: #1941c6;
+  --primary-hover-color: #1941c6;
+  --primary-active-color: #1f3b9b;
   --white: #fff;
   --white-secondary: #f1f1f1;
   --black: #000;
@@ -25,6 +25,8 @@
   --yellow-peach: #f8d29b;
   --dark-red-gray: #5b3939;
   --yellow: #fcd700;
+  --blue: #82c9d07a;
+  --header-bg: var(--blue);
   --white-figure: var(--yellow-peach);
   --black-figure: var(--dark-red-gray);
   --border-color: var(--black-secondary);

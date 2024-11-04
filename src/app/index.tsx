@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-import { AppRouter } from 'shared/const/router'
+import { AppRouter } from './router'
 import './styles/index.scss'
 
 const router = createBrowserRouter(AppRouter)

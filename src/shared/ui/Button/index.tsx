@@ -1,15 +1,13 @@
-import classNames from 'classnames'
 import {
   memo,
   type ButtonHTMLAttributes,
   type FC,
   type ReactElement
 } from 'react'
+import styled from 'styled-components'
 
-import module from './Button.module.scss'
-
-type BtnSize = 'lg' | 'sm' | 'xs'
-type BtnMode = 'primary' | 'secondary' | 'outline' | 'ghost'
+import { base, size, mode, icon } from './styles'
+import type { BtnMode, BtnSize } from './types.ts'
 
 interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isActive?: boolean
@@ -19,27 +17,36 @@ interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactElement | string
 }
 
+interface IStyledProps extends Omit<IProps, 'isActive' | 'icon'> {
+  $isActive?: boolean
+  $icon?: boolean
+}
+
+const ButtonWrapper = styled.button<IStyledProps>`
+  ${base}
+  ${props => props.size && size[props.size]}
+  ${props => props.mode && mode[props.mode]}
+  ${props => props.$icon && icon}
+`
+
 export const Button: FC<IProps> = memo(props => {
   const {
-    icon,
-    children,
     isActive,
+    icon,
     size = 'lg',
     mode = 'primary',
-    className,
     type = 'button',
     ...rest
   } = props
 
-  const clazz = classNames(
-    module.button,
-    { [module.icon]: icon, [module.active]: isActive },
-    [module[size], module[mode], className]
-  )
-
   return (
-    <button type={type} className={clazz} {...rest}>
-      {children}
-    </button>
+    <ButtonWrapper
+      $isActive={isActive}
+      $icon={icon}
+      type={type}
+      mode={mode}
+      size={size}
+      {...rest}
+    />
   )
 })

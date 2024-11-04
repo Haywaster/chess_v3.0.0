@@ -1,5 +1,10 @@
-import { memo, type FC, type CSSProperties } from 'react'
-import styled from 'styled-components'
+import {
+  memo,
+  type FC,
+  type CSSProperties,
+  type KeyboardEventHandler
+} from 'react'
+import styled, { css } from 'styled-components'
 
 import Crown from '../assets/crown.svg?react'
 import type { IFigure } from '../model'
@@ -22,13 +27,22 @@ const FigureWrapper = styled.div<IFigureWrapper>`
   cursor: pointer;
   background-color: ${p =>
     p.color === 'white' ? 'var(--white-figure)' : 'var(--black-figure)'};
-  outline: ${p => p.$isActive && '3px solid var(--red)'};
   transition: all 0.2s ease;
   opacity: ${p => (p.$isKilling ? 0 : 1)};
   color: ${p => (p.color === 'white' ? 'var(--black)' : 'var(--yellow)')};
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &:focus-visible {
+    outline: 2px solid var(--white);
+  }
+
+  ${p =>
+    p.$isActive &&
+    css`
+      outline: 3px solid var(--red);
+    `}
 
   & > svg {
     width: 70%;
@@ -49,13 +63,24 @@ export const Figure: FC<IProps> = memo(props => {
 
   const handleClick = (): void => onClick(id)
 
+  const enterHandler: KeyboardEventHandler<HTMLDivElement> | undefined = (
+    e
+  ): void => {
+    if (e.key === 'Enter') {
+      handleClick()
+    }
+  }
+
   return (
     <FigureWrapper
       className="svgColor"
+      tabIndex={0}
       color={color}
       $isActive={activeFigure === id}
       $isKilling={isKilling}
       onClick={handleClick}
+      onKeyDown={enterHandler}
+      role="button"
       style={style}
     >
       {isStain && <Crown />}
