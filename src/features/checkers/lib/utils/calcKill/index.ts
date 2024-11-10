@@ -1,15 +1,20 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { boardCellsIds } from 'features/checkers/const'
-import type { IBoard, IKillVariant } from 'features/checkers/model'
+import type { IBoard, IKillVariant, Rules } from 'features/checkers/model'
 import { DOUBLE } from 'shared/const/numbers'
+
+import { calcFigureMove } from '../calcFigureMove'
 
 export const calcFigureKill = (
   cells: IBoard['cells'],
   activeFigure: IFigure,
-  cell: ICell
+  cell: ICell,
+  rules: Record<Rules, boolean>
 ): IKillVariant | undefined => {
-  const moveCondition = Math.abs(cell.x - activeFigure.x) === 1
+  const moveCondition = rules.behindKill
+    ? Math.abs(cell.x - activeFigure.x) === 1
+    : calcFigureMove(activeFigure, cell)
 
   if (!moveCondition) {
     return

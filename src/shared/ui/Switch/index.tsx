@@ -55,28 +55,27 @@ const StyledSwitch = styled.label<IStyledProps>`
     `}
 `
 
-export const Switch: FC<ISwitch> = memo(
-  ({ id, initialChecked = false, onChange, label }) => {
-    const [checked, setChecked] = useState(initialChecked)
+export const Switch: FC<ISwitch> = memo(props => {
+  const { id, initialChecked = false, onChange, label } = props
+  const [checked, setChecked] = useState(initialChecked)
 
-    const toggleSwitch = (): void => {
-      setChecked(prev => !prev)
-      onChange({ id, checked: !checked })
-    }
-
-    return (
-      <StyledSwitch $checked={checked}>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={toggleSwitch}
-          style={{ display: 'none' }}
-        />
-        <Track>
-          <Toggle />
-        </Track>
-        <span>{label}</span>
-      </StyledSwitch>
-    )
+  const toggleSwitch = (): void => {
+    setChecked(prev => !prev)
+    onChange({ id, checked: !checked })
   }
-)
+
+  return (
+    <StyledSwitch $checked={checked}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={toggleSwitch}
+        style={{ display: 'none' }}
+      />
+      <Track>
+        <Toggle />
+      </Track>
+      <span>{label}</span>
+    </StyledSwitch>
+  )
+})

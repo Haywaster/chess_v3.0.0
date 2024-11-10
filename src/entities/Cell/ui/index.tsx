@@ -6,6 +6,7 @@ import type { ICell } from '../model'
 interface IProps extends ICell {
   onClick: (id: ICell['id']) => void
   isActive?: boolean
+  isWayCell?: boolean
   children?: ReactNode
 }
 
@@ -30,7 +31,11 @@ const CellWrapper = styled.div<ICellWrapper>`
     `}
 `
 
-const ActivePoint = styled.div`
+interface IActivePoint {
+  disabled: IProps['isWayCell']
+}
+
+const ActivePoint = styled.div<IActivePoint>`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -39,10 +44,16 @@ const ActivePoint = styled.div`
   border-radius: 50%;
   width: 5px;
   height: 5px;
+
+  ${p =>
+    p.disabled &&
+    css`
+      background-color: var(--grey);
+    `}
 `
 
 export const Cell: FC<IProps> = memo(props => {
-  const { isActive, onClick, children, ...cell } = props
+  const { isActive, isWayCell, onClick, children, ...cell } = props
 
   const handleClick = (): void => {
     if (isActive) {
@@ -67,7 +78,7 @@ export const Cell: FC<IProps> = memo(props => {
       onClick={handleClick}
       onKeyDown={handlerEnterDown}
     >
-      {isActive && <ActivePoint />}
+      {(isActive || isWayCell) && <ActivePoint disabled={isWayCell} />}
       {children}
     </CellWrapper>
   )

@@ -14,7 +14,7 @@ export const boardCellsIds = Object.values(initialCells.cells)
 
 export const ruleTitles: Record<Rules, string> = {
   behindKill: 'Рубить назад',
-  killMaxFigure: 'Рубить все доступные фигуры',
+  killMaxFigure: 'Рубить фигуры по-максимуму',
   requireKill: 'Рубить обязательно',
   stopAfterKill: 'Остановить дамку после срубленной фигуры'
 }

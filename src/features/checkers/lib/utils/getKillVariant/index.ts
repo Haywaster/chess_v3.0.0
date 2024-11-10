@@ -27,7 +27,7 @@ const getKillVariant = (
   }
 
   return !activeFigure.isStain
-    ? calcFigureKill(cells, activeFigure, cell)
+    ? calcFigureKill(cells, activeFigure, cell, rules)
     : rules.stopAfterKill
       ? calcStainKillSingleCell(cells, activeFigure, cell)
       : calcStainKillManyCells(cells, activeFigure, cell)
@@ -46,7 +46,7 @@ export const getKillVariants = (
 
   const processVariant = (variant: IKillVariant): IKillVariant[][] => {
     const newCell: ICell = cells[variant.finishCellId]
-
+    const newVariants: IKillVariant[] = [...variants, variant]
     const pseudoActiveFigure: IFigure = {
       ...activeFigure,
       isStain: makeFigureStain(activeFigure, newCell),
@@ -54,7 +54,7 @@ export const getKillVariants = (
       y: newCell.y,
       cellId: newCell.id
     }
-    const newVariants: IKillVariant[] = [...variants, variant]
+
     return getKillVariants(
       pseudoActiveFigure,
       board,

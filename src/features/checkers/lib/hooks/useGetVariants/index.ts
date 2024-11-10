@@ -2,6 +2,8 @@ import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
+import { deepEqual } from 'shared/lib/utils/deepEqual.ts'
+import { keepLargestArrays } from 'shared/lib/utils/keepLargestArrays.ts'
 
 import { useCheckers, type IKillVariant, type IBoard } from '../../../model'
 import { isMoveValid, getKillVariants } from '../../utils'
@@ -46,9 +48,31 @@ export const useGetVariants = (): UseGetVariants => {
         const variants = getKillVariants(activeFigure, board, cell, rules)
 
         if (variants.length !== 0) {
-          variants.forEach(variant => {
-            killingVariants.push(variant)
-          })
+          if (rules.killMaxFigure) {
+            const maxKillVariants: IKillVariant[][] = []
+
+            variants.forEach((currentVariant, index) => {
+              let isCandidate: boolean = currentVariant.length === 1 || false
+              const lastVariant = currentVariant[currentVariant.length - 1]
+
+              variants.forEach((otherVariant, i) => {
+                if (index === i) {
+                  return
+                }
+                isCandidate = !otherVariant.some(v => deepEqual(v, lastVariant))
+              })
+
+              if (isCandidate) {
+                maxKillVariants.push(currentVariant)
+              }
+            })
+
+            keepLargestArrays(maxKillVariants).forEach(variant =>
+              killingVariants.push(variant)
+            )
+          } else {
+            variants.forEach(variant => killingVariants.push(variant))
+          }
         }
       })
 
