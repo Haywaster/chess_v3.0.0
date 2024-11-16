@@ -1,1 +1,2 @@
-export { useClick } from './useClick'
+export { useFigureClick } from './useFigureClick'
+export { useCellClick } from './useCellClick'

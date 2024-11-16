@@ -20,6 +20,7 @@ export const CheckersCell: FC<IProps> = memo(props => {
   const killingVariants = useCheckers(state => state.killingVariants)
   const animatedFigure = useCheckers(state => state.animatedFigure)
   const killingFigure = useCheckers(state => state.killingFigure)
+  const requiredFigures = useCheckers(state => state.requiredFigures)
 
   const getAnimatedStyles = (id: IFigure['id']): CSSProperties | undefined => {
     if (id === animatedFigure.id) {
@@ -53,6 +54,7 @@ export const CheckersCell: FC<IProps> = memo(props => {
           activeFigure={activeFigure}
           style={getAnimatedStyles(figure.id)}
           isKilling={killingFigure === figure.id}
+          isRequired={requiredFigures.includes(figure.id)}
           {...figure}
         />
       )}

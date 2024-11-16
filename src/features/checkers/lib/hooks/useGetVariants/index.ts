@@ -2,8 +2,7 @@ import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { deepEqual } from 'shared/lib/utils/deepEqual.ts'
-import { keepLargestArrays } from 'shared/lib/utils/keepLargestArrays.ts'
+import { keepLargestArrays } from 'shared/lib'
 
 import { useCheckers, type IKillVariant, type IBoard } from '../../../model'
 import { isMoveValid, getKillVariants } from '../../utils'
@@ -21,6 +20,7 @@ export const useGetVariants = (): UseGetVariants => {
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
   const rules = useCheckers(state => state.rules)
+  const requiredFigures = useCheckers(state => state.requiredFigures)
 
   return useCallback(
     activeFigureId => {
@@ -39,6 +39,13 @@ export const useGetVariants = (): UseGetVariants => {
         }
 
         const board: IBoard = { figures, cells }
+        const requireKillCondition =
+          requiredFigures.includes(activeFigureId) &&
+          isMoveValid(board, activeFigure, cell)
+
+        if (requireKillCondition) {
+          return
+        }
 
         if (isMoveValid(board, activeFigure, cell)) {
           cellsForMoving.push(cell.id)
@@ -49,25 +56,7 @@ export const useGetVariants = (): UseGetVariants => {
 
         if (variants.length !== 0) {
           if (rules.killMaxFigure) {
-            const maxKillVariants: IKillVariant[][] = []
-
-            variants.forEach((currentVariant, index) => {
-              let isCandidate: boolean = currentVariant.length === 1 || false
-              const lastVariant = currentVariant[currentVariant.length - 1]
-
-              variants.forEach((otherVariant, i) => {
-                if (index === i) {
-                  return
-                }
-                isCandidate = !otherVariant.some(v => deepEqual(v, lastVariant))
-              })
-
-              if (isCandidate) {
-                maxKillVariants.push(currentVariant)
-              }
-            })
-
-            keepLargestArrays(maxKillVariants).forEach(variant =>
+            keepLargestArrays(variants).forEach(variant =>
               killingVariants.push(variant)
             )
           } else {
@@ -81,6 +70,6 @@ export const useGetVariants = (): UseGetVariants => {
         killingVariants
       }
     },
-    [cells, figures, rules]
+    [cells, figures, requiredFigures, rules]
   )
 }

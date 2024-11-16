@@ -13,6 +13,7 @@ interface IFigureWrapper extends Pick<IFigure, 'color'> {
   $isActive?: boolean
   $isKilling?: boolean
   $isStain?: boolean
+  $isRequired?: boolean
 }
 
 const FigureWrapper = styled.div<IFigureWrapper>`
@@ -39,6 +40,12 @@ const FigureWrapper = styled.div<IFigureWrapper>`
   }
 
   ${p =>
+    p.$isRequired &&
+    css`
+      outline: 3px solid var(--green);
+    `}
+
+  ${p =>
     p.$isActive &&
     css`
       outline: 3px solid var(--red);
@@ -56,10 +63,20 @@ interface IProps extends IFigure {
   onClick: (id: IFigure['id']) => void
   style?: CSSProperties
   isKilling?: boolean
+  isRequired?: boolean
 }
 
 export const Figure: FC<IProps> = memo(props => {
-  const { color, id, activeFigure, onClick, style, isKilling, isStain } = props
+  const {
+    color,
+    id,
+    activeFigure,
+    onClick,
+    style,
+    isKilling,
+    isStain,
+    isRequired
+  } = props
 
   const handleClick = (): void => onClick(id)
 
@@ -78,6 +95,7 @@ export const Figure: FC<IProps> = memo(props => {
       color={color}
       $isActive={activeFigure === id}
       $isKilling={isKilling}
+      $isRequired={isRequired}
       onClick={handleClick}
       onKeyDown={enterHandler}
       role="button"

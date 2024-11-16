@@ -1,35 +1,36 @@
 import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
-import { type IFigure } from 'entities/Figure'
 
-import { useCheckers } from '../../../model'
-import { useGetVariants } from '../useGetVariants'
+import { type IBoard, useCheckers } from '../../../model'
+import { useGetRequiredFigures } from '../useGetRequiredFigures'
 import { useMoveFigure } from '../useMoveFigure'
 
-interface UseClick {
-  onCellClick: (id: ICell['id']) => Promise<void>
-  onFigureClick: (id: IFigure['id']) => void
-}
-
-export const useClick = (): UseClick => {
+export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
   const cells = useCheckers(state => state.cells)
   const figures = useCheckers(state => state.figures)
   const activeFigure = useCheckers(state => state.activeFigure)
   const killingVariants = useCheckers(state => state.killingVariants)
+  const stepColor = useCheckers(state => state.stepColor)
+  const rules = useCheckers(state => state.rules)
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
-  const setCellsForMoving = useCheckers(state => state.setCellsForMoving)
-  const setKillingVariants = useCheckers(state => state.setKillingVariants)
   const setKillingFigure = useCheckers(state => state.setKillingFigure)
   const killFigure = useCheckers(state => state.killFigure)
+  const setStepColor = useCheckers(state => state.setStepColor)
+  const setRequiredFigures = useCheckers(state => state.setRequiredFigures)
 
-  const getVariants = useGetVariants()
   const moveAnimate = useMoveFigure()
+  const getRequiredFigures = useGetRequiredFigures()
 
-  const onCellClick = useCallback(
+  return useCallback(
     async (id: ICell['id']): Promise<void> => {
       if (activeFigure) {
         setActiveFigure(null)
+        setStepColor(null)
+
+        if (rules.requireKill) {
+          setRequiredFigures([])
+        }
 
         const killVariants = killingVariants.filter(
           variant => variant[variant.length - 1].finishCellId === id
@@ -58,41 +59,32 @@ export const useClick = (): UseClick => {
 
           await moveAnimate(startCell, finishCell)
         }
+
+        setStepColor(stepColor === 'white' ? 'black' : 'white')
+
+        if (rules.requireKill) {
+          const cells = useCheckers.getState().cells
+          const figures = useCheckers.getState().figures
+          const board: IBoard = { cells, figures }
+
+          getRequiredFigures(board)
+        }
       }
     },
     [
       activeFigure,
       cells,
       figures,
+      getRequiredFigures,
       killFigure,
       killingVariants,
       moveAnimate,
+      rules.requireKill,
       setActiveFigure,
-      setKillingFigure
+      setKillingFigure,
+      setRequiredFigures,
+      setStepColor,
+      stepColor
     ]
   )
-
-  const onFigureClick = useCallback(
-    (id: IFigure['id']): void => {
-      if (activeFigure === id) {
-        setActiveFigure(null)
-        setCellsForMoving([])
-        setKillingVariants([])
-      } else {
-        const { cellsForMoving, killingVariants } = getVariants(id)
-        setActiveFigure(id)
-        setCellsForMoving(cellsForMoving)
-        setKillingVariants(killingVariants)
-      }
-    },
-    [
-      activeFigure,
-      getVariants,
-      setActiveFigure,
-      setCellsForMoving,
-      setKillingVariants
-    ]
-  )
-
-  return { onCellClick, onFigureClick }
 }

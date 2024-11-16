@@ -3,9 +3,10 @@ import { create } from 'zustand'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
+import { killFigureFromBoard } from 'features/checkers/lib/utils/killFigureFromBoard'
 
 import { initialCells, ruleDefaults } from '../../const'
-import { makeFigureStain } from '../../lib'
+import { changeBoardAfterMove } from '../../lib'
 import type { IBoard, IKillVariant, Rules } from '../types'
 
 interface State {
@@ -21,6 +22,8 @@ interface State {
     styles: CSSProperties | undefined
   }
   killingFigure: IFigure['id'] | null
+  stepColor: IFigure['color'] | null
+  requiredFigures: IFigure['id'][]
 }
 
 interface Action {
@@ -37,6 +40,8 @@ interface Action {
   ) => void
   setKillingFigure: (id: IFigure['id'] | null) => void
   killFigure: (id: IFigure['id']) => void
+  setStepColor: (color: IFigure['color'] | null) => void
+  setRequiredFigures: (figures: IFigure['id'][]) => void
 }
 
 const initialState: State = {
@@ -46,76 +51,40 @@ const initialState: State = {
   activeFigure: null,
   cellsForMoving: [], // ячейки для перемещения
   killingVariants: [], // варианты срубки
+  requiredFigures: [], // фигуры, которые обязательно должны рубить
   animatedFigure: {
     id: null,
     styles: undefined
   },
-  killingFigure: null
+  killingFigure: null,
+  stepColor: 'white'
 }
 
 export const useCheckers = create<State & Action>(set => ({
   ...initialState,
-  changeRule: (rule: Rules, value: boolean) =>
+  changeRule: (rule, value) =>
     set(state => ({ rules: { ...state.rules, [rule]: value } })),
   toggleRulesModal: () => set(state => ({ rulesModal: !state.rulesModal })),
   reset: () => set({ ...initialState }),
-  setActiveFigure: (id: IFigure['id'] | null) => set({ activeFigure: id }),
-  setCellsForMoving: (cells: ICell['id'][]) => set({ cellsForMoving: cells }),
-  setAnimatedFigure: (
-    id: IFigure['id'] | null,
-    styles: CSSProperties | undefined
-  ) => set({ animatedFigure: { id, styles } }),
-  setKillingFigure: (id: IFigure['id'] | null) => set({ killingFigure: id }),
-  setKillingVariants: (variants: IKillVariant[][]) =>
-    set({ killingVariants: variants }),
-  killFigure: (id: IFigure['id']) => {
+  setActiveFigure: id => set({ activeFigure: id }),
+  setCellsForMoving: cells => set({ cellsForMoving: cells }),
+  setAnimatedFigure: (id, styles) => set({ animatedFigure: { id, styles } }),
+  setKillingFigure: id => set({ killingFigure: id }),
+  setKillingVariants: variants => set({ killingVariants: variants }),
+  setStepColor: color => set({ stepColor: color }),
+  setRequiredFigures: figures => set({ requiredFigures: figures }),
+  killFigure: id => {
     set(state => {
-      const figure = state.figures[id]
-      const cell = state.cells[figure.cellId]
-
-      delete cell.figureId
-      delete state.figures[id]
-
+      const board: IBoard = { cells: state.cells, figures: state.figures }
       return {
-        cells: {
-          ...state.cells,
-          [figure.cellId]: cell
-        }
+        cells: killFigureFromBoard(id, board)
       }
     })
   },
-  moveFigure: (startCellId: ICell['id'], finishCellId: ICell['id']) => {
+  moveFigure: (startCellId, finishCellId) => {
     set(state => {
-      const figureId = state.cells[startCellId].figureId
-
-      if (figureId === undefined) {
-        return state
-      }
-
-      const prevCell = { ...state.cells[startCellId] }
-      delete prevCell.figureId
-
-      const newCell = { ...state.cells[finishCellId], figureId }
-
-      const changedFigure = {
-        ...state.figures[figureId],
-        cellId: finishCellId,
-        isStain: makeFigureStain(state.figures[figureId], newCell),
-        x: newCell.x,
-        y: newCell.y
-      }
-
-      return {
-        cells: {
-          ...state.cells,
-          [startCellId]: prevCell,
-          [finishCellId]: newCell
-        },
-        figures: {
-          ...state.figures,
-          [figureId]: changedFigure
-        }
-      }
+      const board: IBoard = { cells: state.cells, figures: state.figures }
+      return changeBoardAfterMove(startCellId, finishCellId, board)
     })
   }
 }))

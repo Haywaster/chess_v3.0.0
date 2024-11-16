@@ -22,6 +22,6 @@ export const ruleTitles: Record<Rules, string> = {
 export const ruleDefaults: Record<Rules, boolean> = {
   behindKill: true,
   killMaxFigure: false,
-  requireKill: false,
+  requireKill: true,
   stopAfterKill: false
 }
