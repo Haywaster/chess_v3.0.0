@@ -26,7 +26,6 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
     async (id: ICell['id']): Promise<void> => {
       if (activeFigure) {
         setActiveFigure(null)
-        setStepColor(null)
 
         if (rules.requireKill) {
           setRequiredFigures([])

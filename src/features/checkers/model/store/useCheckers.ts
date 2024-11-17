@@ -22,7 +22,7 @@ interface State {
     styles: CSSProperties | undefined
   }
   killingFigure: IFigure['id'] | null
-  stepColor: IFigure['color'] | null
+  stepColor: IFigure['color']
   requiredFigures: IFigure['id'][]
 }
 
@@ -40,7 +40,7 @@ interface Action {
   ) => void
   setKillingFigure: (id: IFigure['id'] | null) => void
   killFigure: (id: IFigure['id']) => void
-  setStepColor: (color: IFigure['color'] | null) => void
+  setStepColor: (color: IFigure['color']) => void
   setRequiredFigures: (figures: IFigure['id'][]) => void
 }
 

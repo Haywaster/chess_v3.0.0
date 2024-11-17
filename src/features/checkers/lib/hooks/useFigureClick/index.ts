@@ -8,6 +8,7 @@ import { useGetVariants } from '../useGetVariants'
 export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const figures = useCheckers(state => state.figures)
   const activeFigure = useCheckers(state => state.activeFigure)
+  const animatedFigure = useCheckers(state => state.animatedFigure)
   const stepColor = useCheckers(state => state.stepColor)
   const requiredFigures = useCheckers(state => state.requiredFigures)
   const setActiveFigure = useCheckers(state => state.setActiveFigure)
@@ -19,7 +20,9 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   return useCallback(
     (id: IFigure['id']): void => {
       if (
-        (stepColor === figures[id].color && requiredFigures.length === 0) ||
+        (stepColor === figures[id].color &&
+          requiredFigures.length === 0 &&
+          animatedFigure.id === null) ||
         requiredFigures.includes(id)
       ) {
         if (activeFigure === id) {
@@ -36,6 +39,7 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
     },
     [
       activeFigure,
+      animatedFigure.id,
       figures,
       getVariants,
       requiredFigures,
