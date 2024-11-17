@@ -11,6 +11,7 @@ const CenteredBoard = styled(Board)`
 
 const StyledMain = styled.main`
   margin-top: 30px;
+  padding: 0 10px;
 `
 
 export const Main: FC = () => {

@@ -2,11 +2,20 @@ import { type FC, memo } from 'react'
 import styled from 'styled-components'
 
 import { CheckersBoard, useCheckers } from 'features/checkers'
-import { useRotateBoard } from 'features/rotateBoard/model'
+import { useRotateBoard } from 'features/rotateBoard'
+
+import { HorizontalOrder } from '../HorizontalOrder'
+import { VerticalOrder } from '../VerticalOrder'
+
+const MainBoard = styled.div`
+  display: grid;
+  grid-template: repeat(2, min-content) / repeat(2, min-content);
+  justify-content: center;
+`
 
 interface IBoardWrapperProps {
   className?: string
-  $rotate?: boolean
+  $isRotate?: boolean
 }
 
 const BoardWrapper = styled.div<IBoardWrapperProps>`
@@ -16,7 +25,7 @@ const BoardWrapper = styled.div<IBoardWrapperProps>`
   width: 500px;
   height: 500px;
   border: 5px solid var(--border-color);
-  rotate: ${p => p.$rotate && '-180deg'};
+  rotate: ${p => p.$isRotate && '-180deg'};
   transition: rotate 1s ease;
 `
 
@@ -28,12 +37,15 @@ export const Board: FC<IProps> = memo(({ className }) => {
   const stepColor = useCheckers(state => state.stepColor)
   const rotate = useRotateBoard(state => state.rotate)
 
+  const isRotate = rotate && stepColor === 'black'
+
   return (
-    <BoardWrapper
-      className={className}
-      $rotate={rotate && stepColor === 'black'}
-    >
-      <CheckersBoard />
-    </BoardWrapper>
+    <MainBoard>
+      <VerticalOrder isRotate={isRotate} />
+      <BoardWrapper className={className} $isRotate={isRotate}>
+        <CheckersBoard />
+      </BoardWrapper>
+      <HorizontalOrder isRotate={isRotate} />
+    </MainBoard>
   )
 })
