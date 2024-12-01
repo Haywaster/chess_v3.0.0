@@ -24,7 +24,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
 
   return useCallback(
     async (id: ICell['id']): Promise<void> => {
-      if (activeFigure) {
+      if (activeFigure !== null) {
         setActiveFigure(null)
 
         if (rules.requireKill) {

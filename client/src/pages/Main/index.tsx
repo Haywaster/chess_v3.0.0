@@ -1,4 +1,4 @@
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { CheckersRulesModal } from 'features/checkers'
@@ -14,7 +14,29 @@ const StyledMain = styled.main`
   padding: 0 10px;
 `
 
+
 export const Main: FC = () => {
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8080');
+    
+    ws.onopen = () => {
+      console.log('Соединение установлено');
+      ws.send('Hello, server!');
+    }
+    
+    ws.onclose = () => {
+      console.log('Соединение закрыто');
+    }
+    
+    ws.onmessage = (event) => {
+      console.log(event.data);
+    }
+    
+    return () => {
+      ws.close();
+    }
+  }, [])
+  
   return (
     <>
       <Header />

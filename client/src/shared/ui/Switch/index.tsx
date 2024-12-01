@@ -71,6 +71,7 @@ export const Switch: FC<ISwitch> = memo(props => {
         checked={checked}
         onChange={toggleSwitch}
         style={{ display: 'none' }}
+        name={id}
       />
       <Track>
         <Toggle />
