@@ -6,17 +6,16 @@ import {
   useState,
   type FC,
   type MouseEvent,
-  type ReactNode
+  type PropsWithChildren
 } from 'react'
 
 import { Portal } from '../../lib'
 
 import module from './Modal.module.scss'
 
-interface IProps {
+interface IProps extends PropsWithChildren {
   isOpen: boolean
   onClose?: () => void
-  children: ReactNode
   lazy?: boolean
   className?: string
 }

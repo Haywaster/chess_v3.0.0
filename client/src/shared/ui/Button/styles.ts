@@ -7,6 +7,7 @@ export const base = css`
   width: fit-content;
   border-radius: 4px;
   transition: background-color 0.2s ease-in-out;
+  text-decoration: none;
 
   &:disabled {
     opacity: 0.7;
@@ -46,12 +47,10 @@ export const mode: Record<BtnMode, RuleSet<object>> = {
     }
   `,
   outline: css`
-    background-color: transparent;
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
   `,
   ghost: css`
-    background-color: transparent;
     color: var(--primary-color);
   `
 }
@@ -76,9 +75,12 @@ export const icon = css`
   &.xs {
     padding: 4px;
   }
+`
 
-  &.primary > svg path,
-  rect {
-    stroke: var(--primary-text-color);
-  }
+// isLink
+export const isLink = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: initial;
 `

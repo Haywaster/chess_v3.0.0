@@ -1,3 +1,5 @@
 export enum RouterPath {
-  Home = '/'
+  Home = '/',
+  Checkers = '/checkers',
+  Chess = '/chess'
 }
