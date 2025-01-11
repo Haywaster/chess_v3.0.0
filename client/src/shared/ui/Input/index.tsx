@@ -26,10 +26,6 @@ const StyledInput = styled.input`
   }
 `
 
-const InputContainer = styled.div`
-  margin: 10px 0;
-`
-
 const Label = styled.label`
   margin-bottom: 5px;
   font-size: 14px;
@@ -39,9 +35,9 @@ const Label = styled.label`
 
 export const Input: FC<InputProps> = ({ label, ...props }) => {
   return (
-    <InputContainer>
+    <div>
       {label && <Label>{label}</Label>}
       <StyledInput {...props} />
-    </InputContainer>
+    </div>
   )
 }

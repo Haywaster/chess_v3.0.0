@@ -8,6 +8,9 @@ import { VideoLinks } from 'widgets/VideoLinks/ui/VideoLinks'
 
 const StyledMain = styled.main`
   margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `
 
 const Title = styled.h1`
