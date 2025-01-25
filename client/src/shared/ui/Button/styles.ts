@@ -1,6 +1,8 @@
 import { css, type RuleSet } from 'styled-components'
 
-import type { BtnMode, BtnSize } from './types.ts'
+import type { Size } from 'shared/types'
+
+import type { BtnMode } from './types.ts'
 
 // base
 export const base = css`
@@ -16,7 +18,7 @@ export const base = css`
 `
 
 // size
-export const size: Record<BtnSize, RuleSet<object>> = {
+export const size: Record<Size, RuleSet<object>> = {
   lg: css`
     height: 48px;
     padding: 8px 16px;

@@ -2,10 +2,10 @@ import { type FC, memo } from 'react'
 import { Link, type LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { type IGame } from 'widgets/VideoLinks'
+import { type IVideoLink } from '../../model'
 
 interface IProps extends Omit<LinkProps, 'to'> {
-  game: IGame
+  videoLink: IVideoLink
 }
 
 const StyledLink = styled(Link)`
@@ -59,10 +59,12 @@ const StyledParagraph = styled.h3`
 const videoElements = [StyledVideoBg, StyledVideoMain]
 
 export const VideoLink: FC<IProps> = memo(props => {
-  const { game, ...linkProps } = props
+  const { videoLink, ...linkProps } = props
+
+  const { title, route } = videoLink
 
   return (
-    <StyledLink to={game.route} {...linkProps}>
+    <StyledLink to={route} {...linkProps}>
       {videoElements.map((VideoItem, index) => (
         <VideoItem
           key={index}
@@ -70,10 +72,10 @@ export const VideoLink: FC<IProps> = memo(props => {
           muted
           loop
           typeof="video/webp"
-          src={`${game.title}.webm`}
+          src={`${title}.webm`}
         />
       ))}
-      <StyledParagraph>{game.title}</StyledParagraph>
+      <StyledParagraph>{title}</StyledParagraph>
     </StyledLink>
   )
 })

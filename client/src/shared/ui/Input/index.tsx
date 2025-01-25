@@ -5,7 +5,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
 }
 
-const StyledInput = styled.input`
+const StyledInput = styled.input.attrs({ type: 'text' })`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
