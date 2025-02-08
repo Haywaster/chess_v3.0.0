@@ -1,6 +1,7 @@
 import {
   type ChangeEventHandler,
   type FC,
+  memo,
   type MouseEventHandler,
   useState
 } from 'react'
@@ -18,7 +19,13 @@ const SLICE = 2
 
 const uniqGameId = Math.random().toString(RADIX).slice(SLICE)
 
-export const ChooseGame: FC = () => {
+interface IProps {
+  onError: () => void
+}
+
+export const ChooseGame: FC<IProps> = memo(props => {
+  const { onError } = props
+
   const [username, setUsername] = useState<string>('')
   const [modalLink, setModalLink] = useState<RouterPath | null>(null)
 
@@ -29,6 +36,7 @@ export const ChooseGame: FC = () => {
   const clickHandler: MouseEventHandler<HTMLAnchorElement> = (e): void => {
     if (username === '') {
       e.preventDefault()
+      onError()
       return
     }
     const candidateLink = e.currentTarget.pathname as RouterPath
@@ -44,7 +52,7 @@ export const ChooseGame: FC = () => {
 
   return (
     <Flex direction="column">
-      <Input onChange={inputChangeHandler} />
+      <Input value={username} onChange={inputChangeHandler} />
       <VideoLinks videoLinks={games} onClick={clickHandler} />
       <WelcomeModal
         username={username}
@@ -55,4 +63,4 @@ export const ChooseGame: FC = () => {
       />
     </Flex>
   )
-}
+})

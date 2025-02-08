@@ -1,1 +1,1 @@
-export { ChooseGame } from './ChooseGame'
+export { ChooseGameWithTitle } from './ChooseGameWithTitle'

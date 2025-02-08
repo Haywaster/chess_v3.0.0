@@ -6,30 +6,24 @@ import { CheckersRulesBtn } from 'features/checkers'
 import { RotateBoardBtn } from 'features/rotateBoard'
 import { SwitchButton } from 'features/switchTheme'
 import { RouterPath } from 'shared/const/router'
+import { Flex } from 'shared/ui/Flex'
 
-const StyledHeader = styled.header`
-  display: flex;
-  justify-content: space-between;
+const StyledHeader = styled(Flex)`
   padding: 10px;
   background-color: var(--header-bg);
   border-radius: 10px;
 `
 
-const ButtonsWrapper = styled.div`
-  display: flex;
-  gap: 10px;
-`
-
 const CheckersHeader: FC = memo(() => {
   return (
     <>
-      <ButtonsWrapper>
+      <Flex size="xs">
         <SwitchButton />
         <CheckersRulesBtn />
-      </ButtonsWrapper>
-      <ButtonsWrapper>
+      </Flex>
+      <Flex size="xs">
         <RotateBoardBtn />
-      </ButtonsWrapper>
+      </Flex>
     </>
   )
 })
@@ -57,5 +51,9 @@ export const Header: FC = memo(() => {
     }
   })()
 
-  return <StyledHeader>{currentHeader}</StyledHeader>
+  return (
+    <StyledHeader as="header" justify="space-between">
+      {currentHeader}
+    </StyledHeader>
+  )
 })

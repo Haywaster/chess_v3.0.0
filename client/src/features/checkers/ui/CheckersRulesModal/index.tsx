@@ -1,6 +1,7 @@
 import { type ComponentProps, type FC, useCallback } from 'react'
 import styled from 'styled-components'
 
+import { Flex } from 'shared/ui/Flex'
 import { Modal } from 'shared/ui/Modal'
 import { Switch } from 'shared/ui/Switch'
 
@@ -11,11 +12,8 @@ const ModalStyled = styled(Modal)`
   color: var(--black);
 `
 
-const Container = styled.div`
+const Container = styled(Flex)`
   margin-top: 15px;
-  display: flex;
-  gap: 8px;
-  flex-direction: column;
 `
 
 export const CheckersRulesModal: FC = () => {
@@ -34,7 +32,7 @@ export const CheckersRulesModal: FC = () => {
   return (
     <ModalStyled isOpen={rulesModal} onClose={toggleRulesModal}>
       <h3 className="title">Checkers rules</h3>
-      <Container>
+      <Container direction="column" size="xs">
         {Object.entries(rules).map(([key, value]) => (
           <Switch
             key={key}
