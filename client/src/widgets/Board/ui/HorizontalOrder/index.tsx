@@ -30,5 +30,5 @@ interface IProps {
 }
 
 export const HorizontalOrder: FC<IProps> = memo(({ isRotate }) => {
-  return <HorizontalOrderStyled values={horizontalCells} $isRotate={isRotate} />
+  return <HorizontalOrderStyled $isRotate={isRotate} values={horizontalCells} />
 })

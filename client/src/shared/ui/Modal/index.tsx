@@ -61,10 +61,10 @@ export const Modal: FC<IProps> = memo(props => {
   return (
     <Portal>
       <div className={classNames(module.modal, mods)}>
-        <div onClick={onClose} className={module.overlay}>
+        <div className={module.overlay} onClick={onClose}>
           <div
-            onClick={onContentClick}
             className={classNames(module.content, className)}
+            onClick={onContentClick}
           >
             {children}
           </div>

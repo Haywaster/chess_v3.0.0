@@ -50,11 +50,11 @@ export const CheckersCell: FC<IProps> = memo(props => {
     >
       {figure && (
         <Figure
-          onClick={onFigureClick}
           activeFigure={activeFigure}
-          style={getAnimatedStyles(figure.id)}
           isKilling={killingFigure === figure.id}
           isRequired={requiredFigures.includes(figure.id)}
+          style={getAnimatedStyles(figure.id)}
+          onClick={onFigureClick}
           {...figure}
         />
       )}

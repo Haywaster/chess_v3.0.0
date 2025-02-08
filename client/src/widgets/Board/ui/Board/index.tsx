@@ -42,7 +42,7 @@ export const Board: FC<IProps> = memo(({ className }) => {
   return (
     <MainBoard>
       <VerticalOrder isRotate={isRotate} />
-      <BoardWrapper className={className} $isRotate={isRotate}>
+      <BoardWrapper $isRotate={isRotate} className={className}>
         <CheckersBoard />
       </BoardWrapper>
       <HorizontalOrder isRotate={isRotate} />

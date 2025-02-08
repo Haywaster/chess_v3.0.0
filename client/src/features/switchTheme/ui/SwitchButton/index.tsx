@@ -18,7 +18,7 @@ export const SwitchButton: FC = () => {
   const icon = theme === 'light' ? <Sun /> : <Moon />
 
   return (
-    <StyledButton size="sm" mode="outline" icon onClick={toggleTheme}>
+    <StyledButton icon mode="outline" size="sm" onClick={toggleTheme}>
       {icon}
     </StyledButton>
   )

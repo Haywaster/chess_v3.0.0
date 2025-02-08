@@ -55,10 +55,10 @@ export const ChooseGame: FC<IProps> = memo(props => {
       <Input value={username} onChange={inputChangeHandler} />
       <VideoLinks videoLinks={games} onClick={clickHandler} />
       <WelcomeModal
-        username={username}
-        uniqueGameLink={uniqueGameLink}
         game={game}
         isOpen={!!modalLink}
+        uniqueGameLink={uniqueGameLink}
+        username={username}
         onClose={closeModal}
       />
     </Flex>

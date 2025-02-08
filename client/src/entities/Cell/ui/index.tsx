@@ -71,10 +71,10 @@ export const Cell: FC<IProps> = memo(props => {
 
   return (
     <CellWrapper
-      tabIndex={isActive ? 0 : undefined}
-      role={isActive ? 'button' : undefined}
       $isActive={isActive}
       color={cell.color}
+      role={isActive ? 'button' : undefined}
+      tabIndex={isActive ? 0 : undefined}
       onClick={handleClick}
       onKeyDown={handlerEnterDown}
     >

@@ -38,8 +38,8 @@ export const CheckersRulesModal: FC = () => {
             key={key}
             id={key}
             initialChecked={value}
-            onChange={changeHandler}
             label={ruleTitles[key as Rules]}
+            onChange={changeHandler}
           />
         ))}
       </Container>

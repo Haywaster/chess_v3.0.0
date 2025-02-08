@@ -22,7 +22,7 @@ export const VideoLinks: FC<IProps> = memo(props => {
   return (
     <Container as="nav">
       {videoLinks.map(item => (
-        <VideoLink videoLink={item} key={item.route} onClick={onClick} />
+        <VideoLink key={item.route} videoLink={item} onClick={onClick} />
       ))}
     </Container>
   )

@@ -35,11 +35,11 @@ export const RotateBoardBtn: FC = () => {
 
   return (
     <StyledButton
+      icon
+      $isRotate={rotate}
       className="svgColor"
       size="sm"
-      icon
       onClick={toggleRotate}
-      $isRotate={rotate}
     >
       <ArrowCircle />
     </StyledButton>

@@ -22,14 +22,14 @@ export const OrderCellWrapper: FC<IProps> = memo(props => {
   const { values, className } = props
 
   return (
-    <List as="ul" size={0} className={className}>
+    <List as="ul" className={className} size={0}>
       {values.map(item => (
         <ListItem
+          key={item}
           align="center"
-          justify="center"
           as="li"
           className="title"
-          key={item}
+          justify="center"
         >
           {item}
         </ListItem>

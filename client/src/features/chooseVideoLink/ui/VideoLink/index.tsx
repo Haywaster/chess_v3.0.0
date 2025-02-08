@@ -69,10 +69,10 @@ export const VideoLink: FC<IProps> = memo(props => {
         <VideoItem
           key={index}
           autoPlay
-          muted
           loop
-          typeof="video/webp"
+          muted
           src={`${title}.webm`}
+          typeof="video/webp"
         />
       ))}
       <StyledParagraph>{title}</StyledParagraph>

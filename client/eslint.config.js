@@ -135,7 +135,16 @@ export default tsEslint.config(
           allowHigherOrderFunctions: true
         }
       ],
-      '@typescript-eslint/no-dynamic-delete': 'off'
+      '@typescript-eslint/no-dynamic-delete': 'off',
+      'react/jsx-sort-props': [
+        'warn',
+        {
+          callbacksLast: true,
+          shorthandFirst: true,
+          reservedFirst: ['key', 'ref'],
+          multiline: 'last'
+        }
+      ]
     }
   },
   {

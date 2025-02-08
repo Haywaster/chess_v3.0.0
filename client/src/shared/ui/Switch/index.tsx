@@ -67,11 +67,11 @@ export const Switch: FC<ISwitch> = memo(props => {
   return (
     <StyledSwitch $checked={checked}>
       <input
-        type="checkbox"
         checked={checked}
-        onChange={toggleSwitch}
-        style={{ display: 'none' }}
         name={id}
+        style={{ display: 'none' }}
+        type="checkbox"
+        onChange={toggleSwitch}
       />
       <Track>
         <Toggle />

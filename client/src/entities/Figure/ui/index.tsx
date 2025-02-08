@@ -90,16 +90,16 @@ export const Figure: FC<IProps> = memo(props => {
 
   return (
     <FigureWrapper
-      className="svgColor"
-      tabIndex={0}
-      color={color}
       $isActive={activeFigure === id}
       $isKilling={isKilling}
       $isRequired={isRequired}
-      onClick={handleClick}
-      onKeyDown={enterHandler}
+      className="svgColor"
+      color={color}
       role="button"
       style={style}
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={enterHandler}
     >
       {isStain && <Crown />}
     </FigureWrapper>
