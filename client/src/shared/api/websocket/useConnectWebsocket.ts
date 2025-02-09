@@ -1,11 +1,11 @@
-import { type FC, type PropsWithChildren, useEffect } from 'react'
+import { useInitialEffect } from 'shared/lib'
 
 import { useWebsocket } from './useWebsocket'
 
-export const WsLayout: FC<PropsWithChildren> = ({ children }) => {
+export const useConnectWebsocket = (): void => {
   const setWs = useWebsocket(state => state.setWs)
 
-  useEffect(() => {
+  useInitialEffect(() => {
     const ws = new WebSocket('ws://localhost:8080')
 
     ws.onopen = e => {
@@ -29,7 +29,5 @@ export const WsLayout: FC<PropsWithChildren> = ({ children }) => {
     return () => {
       ws.close()
     }
-  }, [setWs])
-
-  return <>{children}</>
+  })
 }

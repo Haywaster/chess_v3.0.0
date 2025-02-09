@@ -33,11 +33,9 @@ const Label = styled.label`
   display: block;
 `
 
-export const Input: FC<InputProps> = ({ label, ...props }) => {
-  return (
-    <div>
-      {label && <Label>{label}</Label>}
-      <StyledInput {...props} />
-    </div>
-  )
-}
+export const Input: FC<InputProps> = ({ label, ...props }) => (
+  <div>
+    {label && <Label>{label}</Label>}
+    <StyledInput {...props} />
+  </div>
+)

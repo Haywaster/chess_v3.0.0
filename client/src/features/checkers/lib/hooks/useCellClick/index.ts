@@ -34,9 +34,11 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
         const killVariants = killingVariants.filter(
           variant => variant[variant.length - 1].finishCellId === id
         )
-        const killVariant = killVariants.reduce((longest, current) => {
-          return current.length > longest.length ? current : longest
-        }, [])
+        const killVariant = killVariants.reduce(
+          (longest, current) =>
+            current.length > longest.length ? current : longest,
+          []
+        )
 
         if (killVariant.length !== 0) {
           for (const variant of killVariant) {

@@ -29,9 +29,7 @@ const calcStainMove = (
   board: IBoard,
   activeFigure: IFigure,
   cell: ICell
-): boolean => {
-  return !isCellAfterFigure(board, activeFigure, cell)
-}
+): boolean => !isCellAfterFigure(board, activeFigure, cell)
 
 export const isMoveValid = (
   board: IBoard,

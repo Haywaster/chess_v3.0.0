@@ -25,6 +25,6 @@ interface IProps {
   isRotate?: boolean
 }
 
-export const VerticalOrder: FC<IProps> = memo(({ isRotate }) => {
-  return <VerticalOrderStyled $isRotate={isRotate} values={verticalCells} />
-})
+export const VerticalOrder: FC<IProps> = memo(({ isRotate }) => (
+  <VerticalOrderStyled $isRotate={isRotate} values={verticalCells} />
+))

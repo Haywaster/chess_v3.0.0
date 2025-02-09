@@ -145,6 +145,8 @@ export default tsEslint.config(
           multiline: 'last'
         }
       ]
+      // Включать опционально
+      // "arrow-body-style": ["error", "as-needed"]
     }
   },
   {
