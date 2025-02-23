@@ -6,6 +6,7 @@ import {
   useState
 } from 'react'
 
+import { useGame } from 'entities/Game/model/store/useGame.ts'
 import { VideoLinks } from 'features/chooseVideoLink'
 import { RouterPath } from 'shared/const/router'
 import { Flex } from 'shared/ui/Flex'
@@ -26,7 +27,8 @@ interface IProps {
 export const ChooseGame: FC<IProps> = memo(props => {
   const { onError } = props
 
-  const [username, setUsername] = useState<string>('')
+  const username = useGame(state => state.username)
+  const setUsername = useGame(state => state.setUsername)
   const [modalLink, setModalLink] = useState<RouterPath | null>(null)
 
   const inputChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
@@ -52,7 +54,11 @@ export const ChooseGame: FC<IProps> = memo(props => {
 
   return (
     <Flex direction="column">
-      <Input value={username} onChange={inputChangeHandler} />
+      <Input
+        placeholder="Your name"
+        value={username}
+        onChange={inputChangeHandler}
+      />
       <VideoLinks videoLinks={games} onClick={clickHandler} />
       <WelcomeModal
         game={game}

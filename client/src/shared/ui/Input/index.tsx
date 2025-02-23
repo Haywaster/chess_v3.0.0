@@ -33,9 +33,13 @@ const Label = styled.label`
   display: block;
 `
 
+const Wrapper = styled.div`
+  width: 100%;
+`
+
 export const Input: FC<InputProps> = ({ label, ...props }) => (
-  <div>
+  <Wrapper>
     {label && <Label>{label}</Label>}
     <StyledInput {...props} />
-  </div>
+  </Wrapper>
 )

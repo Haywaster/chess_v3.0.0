@@ -1,11 +1,12 @@
 import { memo, type FC } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { CheckersRulesBtn } from 'features/checkers'
 import { RotateBoardBtn } from 'features/rotateBoard'
 import { SwitchButton } from 'features/switchTheme'
 import { RouterPath } from 'shared/const/router'
+import { Button } from 'shared/ui/Button'
 import { Flex } from 'shared/ui/Flex'
 
 const StyledHeader = styled(Flex)`
@@ -19,9 +20,12 @@ const CheckersHeader: FC = memo(() => {
     <>
       <Flex size="xs">
         <SwitchButton />
-        <CheckersRulesBtn />
+        <Button as={Link} size="sm" to={RouterPath.Home}>
+          Back to games
+        </Button>
       </Flex>
       <Flex size="xs">
+        <CheckersRulesBtn />
         <RotateBoardBtn />
       </Flex>
     </>

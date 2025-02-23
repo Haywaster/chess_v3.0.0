@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 
 import { type IGame } from 'entities/Game/model/types'
 import { Button } from 'shared/ui/Button'
+import { CopyButton } from 'shared/ui/CopyButton'
+import { Flex } from 'shared/ui/Flex'
 import { Modal } from 'shared/ui/Modal'
 
 interface IProps extends ComponentProps<typeof Modal> {
@@ -20,9 +22,12 @@ export const WelcomeModal: FC<IProps> = props => {
       <p>
         Do you really want to play <b>{game}</b>?
       </p>
-      <Button as={Link} size="sm" to={uniqueGameLink}>
-        Go!
-      </Button>
+      <Flex>
+        <Button as={Link} size="sm" to={uniqueGameLink}>
+          Go!
+        </Button>
+        <CopyButton copy={uniqueGameLink} />
+      </Flex>
     </Modal>
   )
 }

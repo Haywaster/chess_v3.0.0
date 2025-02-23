@@ -18,7 +18,10 @@ export const Button = styled.button
     shouldForwardProp: prop =>
       !['isActive', 'icon', 'size', 'mode'].includes(prop)
   })
-  .attrs<IBaseProps>({ type: 'button', role: 'button' })`
+  .attrs<IBaseProps>(props => ({
+    type: props.type ?? 'button',
+    role: props.role ?? 'button'
+  }))`
     ${base}
     ${props => size[props.size ?? 'lg']}
     ${props => mode[props.mode ?? 'primary']}

@@ -11,6 +11,11 @@ export const AppRouter: RouteObject[] = [
   },
   {
     path: RouterPath.Checkers,
-    element: <Checkers />
+    children: [
+      {
+        path: ':gameId',
+        element: <Checkers />
+      }
+    ]
   }
 ]

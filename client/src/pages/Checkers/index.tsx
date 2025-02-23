@@ -2,6 +2,7 @@ import { type FC } from 'react'
 import styled from 'styled-components'
 
 import { CheckersRulesModal } from 'features/checkers'
+import { useSendGameInfo, UsernameModal } from 'features/prepareToGame'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
 
@@ -14,6 +15,8 @@ const StyledMain = styled.main`
 `
 
 export const Checkers: FC = () => {
+  useSendGameInfo()
+
   return (
     <>
       <Header />
@@ -21,6 +24,7 @@ export const Checkers: FC = () => {
         <CenteredBoard />
       </StyledMain>
       <CheckersRulesModal />
+      <UsernameModal />
     </>
   )
 }
