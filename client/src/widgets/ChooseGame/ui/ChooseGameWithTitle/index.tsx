@@ -1,7 +1,8 @@
 import { type FC, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { Flex } from 'shared/ui/Flex'
+import { useUsername } from 'entities/User'
+import { Flex } from 'shared/ui'
 
 import { ChooseGame } from '../ChooseGame'
 
@@ -29,11 +30,13 @@ const Span = styled.span<{ $hasUnderline: boolean }>`
 const ANIMATION_DURATION = 1000
 
 export const ChooseGameWithTitle: FC = () => {
+  const username = useUsername()
+
   const [hasUnderline, setHasUnderline] = useState(false)
   const writeRef = useRef<HTMLSpanElement | null>(null)
 
   const underline = (): void => {
-    if (writeRef.current) {
+    if (writeRef.current && !hasUnderline) {
       setHasUnderline(true)
 
       setTimeout(() => {
@@ -42,15 +45,21 @@ export const ChooseGameWithTitle: FC = () => {
     }
   }
 
+  const title = !username ? (
+    <>
+      Hello!{' '}
+      <Span ref={writeRef} $hasUnderline={hasUnderline}>
+        Enter your nickname
+      </Span>{' '}
+      to play
+    </>
+  ) : (
+    <>Welcome, {username}! Choose the game!</>
+  )
+
   return (
     <Container as="main" direction="column">
-      <Title>
-        Hello!{' '}
-        <Span ref={writeRef} $hasUnderline={hasUnderline}>
-          Write your name
-        </Span>{' '}
-        and chose the game
-      </Title>
+      <Title>{title}</Title>
       <ChooseGame onError={underline} />
     </Container>
   )

@@ -1,18 +1,17 @@
 import { type FC, type FormEventHandler } from 'react'
-import { useLocation } from 'react-router-dom'
 
-import { useGame } from 'entities/Game/model/store/useGame.ts'
-import { useWebsocket } from 'shared/api'
-import { Button } from 'shared/ui/Button'
-import { Flex } from 'shared/ui/Flex'
-import { Input } from 'shared/ui/Input'
-import { Modal } from 'shared/ui/Modal'
+import { useSetUsername, useUsername } from 'entities/User'
+import { useWs } from 'shared/store'
+import { Button, Flex, Input, Modal } from 'shared/ui'
+
+import { useGameInfo } from '../../lib'
 
 export const UsernameModal: FC = () => {
-  const { pathname } = useLocation()
-  const ws = useWebsocket(state => state.ws)
-  const username = useGame(state => state.username)
-  const setUsername = useGame(state => state.setUsername)
+  const gameInfo = useGameInfo()
+
+  const ws = useWs()
+  const username = useUsername()
+  const setUsername = useSetUsername()
 
   const submitHandler: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
@@ -22,8 +21,8 @@ export const UsernameModal: FC = () => {
 
     setUsername(username as string)
 
-    if (ws) {
-      ws.send(JSON.stringify({ pathname, username }))
+    if (ws && gameInfo) {
+      ws.send(JSON.stringify({ ...gameInfo, username }))
     }
   }
 

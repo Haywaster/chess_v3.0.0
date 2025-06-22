@@ -1,7 +1,7 @@
-import { type IGame } from 'entities/Game'
+import { type IGameIntroduction } from 'entities/Game'
 import { RouterPath } from 'shared/const/router'
 
-export const games: IGame[] = [
+export const games: IGameIntroduction[] = [
   {
     title: 'checkers',
     route: RouterPath.Checkers

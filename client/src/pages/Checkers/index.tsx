@@ -1,8 +1,11 @@
 import { type FC } from 'react'
 import styled from 'styled-components'
 
+import { useGame } from 'entities/Game'
+import { useUsername } from 'entities/User'
 import { CheckersRulesModal } from 'features/checkers'
 import { useSendGameInfo, UsernameModal } from 'features/prepareToGame'
+import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
 
@@ -15,10 +18,15 @@ const StyledMain = styled.main`
 `
 
 export const Checkers: FC = () => {
+  const game = useGame()
+  const username = useUsername()
+
   useSendGameInfo()
 
   return (
     <>
+      {game?.status === 'pending' && username && <Loader fullScreen />}
+
       <Header />
       <StyledMain>
         <CenteredBoard />

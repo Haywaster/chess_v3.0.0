@@ -1,13 +1,14 @@
-import { memo, type FC } from 'react'
+import { type FC } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { useUsername } from 'entities/User'
+import { LogoutButton } from 'features/auth/logout'
 import { CheckersRulesBtn } from 'features/checkers'
 import { RotateBoardBtn } from 'features/rotateBoard'
 import { SwitchButton } from 'features/switchTheme'
 import { RouterPath } from 'shared/const/router'
-import { Button } from 'shared/ui/Button'
-import { Flex } from 'shared/ui/Flex'
+import { Button, Flex } from 'shared/ui'
 
 const StyledHeader = styled(Flex)`
   padding: 10px;
@@ -15,7 +16,7 @@ const StyledHeader = styled(Flex)`
   border-radius: 10px;
 `
 
-const CheckersHeader: FC = memo(() => {
+const CheckersHeader: FC = () => {
   return (
     <>
       <Flex size="xs">
@@ -30,18 +31,21 @@ const CheckersHeader: FC = memo(() => {
       </Flex>
     </>
   )
-})
+}
 
-const MainHeader: FC = memo(() => {
+const MainHeader: FC = () => {
+  const username = useUsername()
+
   return (
     <>
       <SwitchButton />
       <h2>Haywaster's games</h2>
+      {username && <LogoutButton />}
     </>
   )
-})
+}
 
-export const Header: FC = memo(() => {
+export const Header: FC = () => {
   const location = useLocation()
 
   const currentHeader = (() => {
@@ -60,4 +64,4 @@ export const Header: FC = memo(() => {
       {currentHeader}
     </StyledHeader>
   )
-})
+}

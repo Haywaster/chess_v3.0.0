@@ -1,4 +1,4 @@
-import { type FC, type InputHTMLAttributes } from 'react'
+import { type FC, type InputHTMLAttributes, memo } from 'react'
 import styled from 'styled-components'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -37,9 +37,9 @@ const Wrapper = styled.div`
   width: 100%;
 `
 
-export const Input: FC<InputProps> = ({ label, ...props }) => (
+export const Input: FC<InputProps> = memo(({ label, ...props }) => (
   <Wrapper>
     {label && <Label>{label}</Label>}
     <StyledInput {...props} />
   </Wrapper>
-)
+))

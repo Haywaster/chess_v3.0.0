@@ -1,8 +1,7 @@
 import { type FC, memo, useState } from 'react'
 
+import { CopyIcon, DoneIcon } from 'shared/assets'
 import { Button } from 'shared/ui/Button'
-
-import { Copy, Done } from './assets'
 
 interface IProps {
   copy: string
@@ -21,7 +20,7 @@ export const CopyButton: FC<IProps> = memo(({ copy }) => {
 
   return (
     <Button icon size="sm" onClick={copyToClipboard}>
-      {!isCopied ? <Copy /> : <Done />}
+      {!isCopied ? <CopyIcon /> : <DoneIcon />}
     </Button>
   )
 })

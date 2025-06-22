@@ -1,17 +1,16 @@
 import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
 
-import { useGame } from 'entities/Game/model/store/useGame.ts'
-import { useWebsocket } from 'shared/api'
+import { useWs } from 'shared/store'
+
+import { useGameInfo } from '../useGameInfo'
 
 export const useSendGameInfo = (): void => {
-  const { pathname } = useLocation()
-  const ws = useWebsocket(state => state.ws)
-  const username = useGame(state => state.username)
+  const ws = useWs()
+  const gameInfo = useGameInfo()
 
   useEffect(() => {
-    if (ws && username && pathname) {
-      ws.send(JSON.stringify({ pathname, username }))
+    if (gameInfo && ws) {
+      ws.send(JSON.stringify(gameInfo))
     }
-  }, [pathname, username, ws])
+  }, [gameInfo, ws])
 }

@@ -54,6 +54,11 @@ export const mode: Record<BtnMode, RuleSet<object>> = {
   `,
   ghost: css`
     color: var(--primary-color);
+  `,
+  white: css`
+    border: 1px solid var(--primary-color);
+    background-color: var(--white);
+    color: var(--black);
   `
 }
 

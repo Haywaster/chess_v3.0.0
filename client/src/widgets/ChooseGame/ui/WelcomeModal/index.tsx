@@ -1,7 +1,7 @@
 import type { ComponentProps, FC } from 'react'
 import { Link } from 'react-router-dom'
 
-import { type IGame } from 'entities/Game/model/types'
+import { type IGameIntroduction } from 'entities/Game/model/types'
 import { Button } from 'shared/ui/Button'
 import { CopyButton } from 'shared/ui/CopyButton'
 import { Flex } from 'shared/ui/Flex'
@@ -10,7 +10,7 @@ import { Modal } from 'shared/ui/Modal'
 interface IProps extends ComponentProps<typeof Modal> {
   username: string
   uniqueGameLink: string
-  game: IGame['title'] | undefined
+  game: IGameIntroduction['title'] | undefined
 }
 
 export const WelcomeModal: FC<IProps> = props => {

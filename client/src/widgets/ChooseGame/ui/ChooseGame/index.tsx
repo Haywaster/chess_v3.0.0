@@ -1,16 +1,10 @@
-import {
-  type ChangeEventHandler,
-  type FC,
-  memo,
-  type MouseEventHandler,
-  useState
-} from 'react'
+import { type FC, memo, type MouseEventHandler, useState } from 'react'
 
-import { useGame } from 'entities/Game/model/store/useGame.ts'
+import { useUsername } from 'entities/User'
+import { LoginForm } from 'features/auth/login'
 import { VideoLinks } from 'features/chooseVideoLink'
 import { RouterPath } from 'shared/const/router'
-import { Flex } from 'shared/ui/Flex'
-import { Input } from 'shared/ui/Input'
+import { Flex } from 'shared/ui'
 
 import { games } from '../../const'
 import { WelcomeModal } from '../WelcomeModal'
@@ -27,16 +21,12 @@ interface IProps {
 export const ChooseGame: FC<IProps> = memo(props => {
   const { onError } = props
 
-  const username = useGame(state => state.username)
-  const setUsername = useGame(state => state.setUsername)
+  const globalUsername = useUsername()
+
   const [modalLink, setModalLink] = useState<RouterPath | null>(null)
 
-  const inputChangeHandler: ChangeEventHandler<HTMLInputElement> = e => {
-    setUsername(e.target.value)
-  }
-
-  const clickHandler: MouseEventHandler<HTMLAnchorElement> = (e): void => {
-    if (username === '') {
+  const gameClickHandler: MouseEventHandler<HTMLAnchorElement> = e => {
+    if (globalUsername === '') {
       e.preventDefault()
       onError()
       return
@@ -54,17 +44,13 @@ export const ChooseGame: FC<IProps> = memo(props => {
 
   return (
     <Flex direction="column">
-      <Input
-        placeholder="Your name"
-        value={username}
-        onChange={inputChangeHandler}
-      />
-      <VideoLinks videoLinks={games} onClick={clickHandler} />
+      <LoginForm />
+      <VideoLinks videoLinks={games} onClick={gameClickHandler} />
       <WelcomeModal
         game={game}
         isOpen={!!modalLink}
         uniqueGameLink={uniqueGameLink}
-        username={username}
+        username={globalUsername}
         onClose={closeModal}
       />
     </Flex>
