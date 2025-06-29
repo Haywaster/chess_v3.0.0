@@ -1,4 +1,5 @@
 import { type RouterPath } from 'shared/const/router'
+import { type WebsocketDataConstructor } from 'shared/types'
 
 export type GameStatus = 'pending' | 'playing' | 'finished'
 export type GameType = 'checkers' | 'chess'
@@ -14,8 +15,9 @@ export interface IGame {
   status: GameStatus
 }
 
-export interface ICreateGameRequest {
-  type: 'createGame'
+interface ICreateGameData {
   username: string
   game: Omit<IGame, 'status'>
 }
+
+export type CreateGameRequestWebsocket = WebsocketDataConstructor<'createGame', ICreateGameData>

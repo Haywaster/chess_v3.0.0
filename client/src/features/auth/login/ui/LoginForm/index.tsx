@@ -8,7 +8,7 @@ import styled from 'styled-components'
 
 import { useUsername, useSetUsername } from 'entities/User'
 import { DoneIcon } from 'shared/assets'
-import { useWs } from 'shared/store'
+// import { useWs } from 'shared/store'
 import { Button, Flex, Input } from 'shared/ui'
 
 import { type AuthRequestWebsocket } from '../../model'
@@ -18,7 +18,7 @@ const StyledForm = styled.form<{ $hidden: boolean }>`
 `
 
 export const LoginForm: FC = () => {
-  const ws = useWs()
+  // const ws = useWs()
   const globalUsername = useUsername()
   const setGlobalUsername = useSetUsername()
 
@@ -29,7 +29,6 @@ export const LoginForm: FC = () => {
 
     if (!globalUsername) {
       const username = localUsername.trim()
-      setGlobalUsername(username)
       setLocalUserName('')
 
       //TODO: Отправлять запрос на регистрацию.
@@ -37,10 +36,14 @@ export const LoginForm: FC = () => {
         type: 'auth',
         data: { username }
       }
-      ws?.send(JSON.stringify(requestObj))
-      // ws?.addEventListener('message', (event: MessageEvent<AuthRequestWebsocket>) => {
-      //   console.log(event.data)
-      // })
+      
+      // if (ws) {
+      //   ws.send(JSON.stringify(requestObj))
+      //   ws.onmessage = (event: MessageEvent<AuthRequestWebsocket>) => {
+      //     const { data } = event.data
+      //     setGlobalUsername(data.username)
+      //   }
+      // }
     }
   }
 

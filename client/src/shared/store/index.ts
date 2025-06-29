@@ -1,1 +1,1 @@
-export { useWs, useSetWs } from './useWebsocketStore'
+export { useWebsocketStore } from './useWebsocketStore'

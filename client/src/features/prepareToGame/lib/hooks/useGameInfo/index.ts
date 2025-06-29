@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
 
 import {
-  type ICreateGameRequest,
+  type CreateGameRequestWebsocket,
   type GameType,
   type IGame,
   useGame,
@@ -9,7 +9,7 @@ import {
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
 
-export const useGameInfo = (): ICreateGameRequest | undefined => {
+export const useGameInfo = (): CreateGameRequestWebsocket | undefined => {
   const username = useUsername()
   const game = useGame()
   const setGame = useSetGame()
@@ -19,12 +19,13 @@ export const useGameInfo = (): ICreateGameRequest | undefined => {
   if (!game) {
     const [type, id] = pathname.split('/').filter(Boolean)
     const newGame: IGame = { type: type as GameType, id, status: 'pending' }
+    const requestData: CreateGameRequestWebsocket['data'] = { username, game: newGame }
     setGame(newGame)
-    return { game: newGame, username, type: 'createGame' }
+    return { type: 'createGame', data: requestData }
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
     const { status, ...gameWithoutStatus } = game
-
-    return { game: gameWithoutStatus, username, type: 'createGame' }
+    const requestData: CreateGameRequestWebsocket['data'] = { username, game: gameWithoutStatus }
+    return { type: 'createGame', data: requestData }
   }
 }

@@ -8,6 +8,7 @@ import { useSendGameInfo, UsernameModal } from 'features/prepareToGame'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
+import { useWebSocketSubscription } from 'shared/lib/hooks/websocket/useWebSocketSubscription.ts'
 
 const CenteredBoard = styled(Board)`
   margin: 0 auto;
@@ -21,7 +22,19 @@ export const Checkers: FC = () => {
   const game = useGame()
   const username = useUsername()
 
-  useSendGameInfo()
+  // useSendGameInfo()
+  useWebSocketSubscription('checkers', (message) => {
+    if (message.type === 'notification') {
+      const newNotification = {
+        id: message.data.id,
+        message: message.data.message,
+        priority: message.data.priority,
+        timestamp: Date.now(),
+        read: false
+      };
+      console.log(newNotification)
+    }
+  })
 
   return (
     <>
