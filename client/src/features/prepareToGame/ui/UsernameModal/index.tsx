@@ -1,15 +1,9 @@
 import { type FC, type FormEventHandler } from 'react'
 
 import { useSetUsername, useUsername } from 'entities/User'
-// import { useWs } from 'shared/store'
 import { Button, Flex, Input, Modal } from 'shared/ui'
 
-import { useGameInfo } from '../../lib'
-
 export const UsernameModal: FC = () => {
-  const gameInfo = useGameInfo()
-
-  // const ws = useWs()
   const username = useUsername()
   const setUsername = useSetUsername()
 
@@ -20,10 +14,6 @@ export const UsernameModal: FC = () => {
     const username = formData.get('username')
 
     setUsername(username as string)
-
-    // if (ws && gameInfo) {
-    //   ws.send(JSON.stringify({ ...gameInfo, username }))
-    // }
   }
 
   return (

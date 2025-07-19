@@ -1,31 +1,57 @@
-import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 import {
   type CreateGameRequestWebsocket,
-  type GameType,
+  type CreateGameResponseWebsocket,
   type IGame,
   useGame,
   useSetGame
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
+import { WebSocketStatus } from 'shared/const/ws'
+import { useInitialEffect, useWebSocketSubscription } from 'shared/lib'
+import { useSendWsMessage, useWsStatus } from 'shared/store'
 
-export const useGameInfo = (): CreateGameRequestWebsocket | undefined => {
-  const username = useUsername()
+// Установка слежки за игрой
+export const useGameInfo = (gameType: IGame['type']): void => {
   const game = useGame()
   const setGame = useSetGame()
+  const sendMessage = useSendWsMessage()
+  const wsStatus = useWsStatus()
+  const username = useUsername()
 
-  const { pathname } = useLocation()
+  const { gameId } = useParams<'gameId'>()
 
-  if (!game) {
-    const [type, id] = pathname.split('/').filter(Boolean)
-    const newGame: IGame = { type: type as GameType, id, status: 'pending' }
-    const requestData: CreateGameRequestWebsocket['data'] = { username, game: newGame }
-    setGame(newGame)
-    return { type: 'createGame', data: requestData }
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars,unused-imports/no-unused-vars
-    const { status, ...gameWithoutStatus } = game
-    const requestData: CreateGameRequestWebsocket['data'] = { username, game: gameWithoutStatus }
-    return { type: 'createGame', data: requestData }
-  }
+  useInitialEffect(() => {
+    if (!game && gameId) {
+      const newGame: IGame = { type: gameType, id: gameId, status: 'pending' }
+      setGame(newGame)
+    }
+
+    return () => setGame(null)
+  })
+
+  useWebSocketSubscription<CreateGameResponseWebsocket>(
+    'createGame',
+    newGameInfo => {
+      if (game?.status === 'pending') {
+        setGame(newGameInfo.data)
+      }
+    }
+  )
+
+  useEffect(() => {
+    if (
+      wsStatus === WebSocketStatus.OPEN &&
+      game?.status === 'pending' &&
+      username
+    ) {
+      const gameInfo: CreateGameRequestWebsocket = {
+        type: 'createGame',
+        data: { game, username }
+      }
+      sendMessage(gameInfo)
+    }
+  }, [game, sendMessage, username, wsStatus])
 }

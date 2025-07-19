@@ -1,22 +1,22 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
-import { type WSServerResponse, useWebsocketStore } from 'shared/store/useWebsocketStore.ts'
+import { useWsSubscribe } from 'shared/store/useWebsocketStore'
+import { type WebsocketDataConstructor } from 'shared/types'
 
-export const useWebSocketSubscription = <T extends WSServerResponse>(
-  messageType: string,
-  callback: (message: T) => void,
-  dependencies: unknown[] = []
+// Работает с response WebSocket (обязательно <...Response...> в типизации)
+// Установит подписку при монтаже компонента
+export const useWebSocketSubscription = <
+  T extends WebsocketDataConstructor<
+    T['type'],
+    T['data']
+  > = WebsocketDataConstructor
+>(
+  messageType: T['type'],
+  callback: (message: T) => void
 ): void => {
-  const { subscribe } = useWebsocketStore();
-  const callbackRef = useRef(callback);
-// Обновляем ref при изменении callback
+  const subscribe = useWsSubscribe()
+
   useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-  useEffect(() => {
-    return subscribe(
-      messageType,
-      (message) => callbackRef.current(message as T),
-    );
-  }, [messageType, subscribe, ...dependencies]);
-};
+    return subscribe(messageType as string, message => callback(message as T))
+  }, [callback, messageType, subscribe])
+}

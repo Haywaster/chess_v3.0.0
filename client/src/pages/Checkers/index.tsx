@@ -1,14 +1,15 @@
 import { type FC } from 'react'
 import styled from 'styled-components'
 
-import { useGame } from 'entities/Game'
+import { GameType, useGame } from 'entities/Game'
 import { useUsername } from 'entities/User'
 import { CheckersRulesModal } from 'features/checkers'
-import { useSendGameInfo, UsernameModal } from 'features/prepareToGame'
+import { UsernameModal } from 'features/prepareToGame'
+import { useGameInfo } from 'features/prepareToGame/lib'
+import { useWebSocketConnection } from 'shared/lib'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
-import { useWebSocketSubscription } from 'shared/lib/hooks/websocket/useWebSocketSubscription.ts'
 
 const CenteredBoard = styled(Board)`
   margin: 0 auto;
@@ -18,28 +19,18 @@ const StyledMain = styled.main`
   margin-top: 30px;
 `
 
+const WEBSOCKET_SERVER = 'ws://localhost:8080'
+
 export const Checkers: FC = () => {
   const game = useGame()
   const username = useUsername()
 
-  // useSendGameInfo()
-  useWebSocketSubscription('checkers', (message) => {
-    if (message.type === 'notification') {
-      const newNotification = {
-        id: message.data.id,
-        message: message.data.message,
-        priority: message.data.priority,
-        timestamp: Date.now(),
-        read: false
-      };
-      console.log(newNotification)
-    }
-  })
+  useWebSocketConnection(WEBSOCKET_SERVER)
+  useGameInfo(GameType.CHECKERS)
 
   return (
     <>
       {game?.status === 'pending' && username && <Loader fullScreen />}
-
       <Header />
       <StyledMain>
         <CenteredBoard />

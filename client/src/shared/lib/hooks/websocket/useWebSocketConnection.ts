@@ -1,25 +1,14 @@
 import { useEffect } from 'react'
-import { useWebsocketStore } from 'shared/store'
-import { WebSocketStatus } from 'shared/store/useWebsocketStore.ts'
 
-interface UseWebSocketConnection {
-  connectionState: WebSocketStatus
-  isConnected: boolean
-  isConnecting: boolean
-}
+import { useConnectWs, useWsStatus } from 'shared/store'
 
-export const useWebSocketConnection = (url: string): UseWebSocketConnection => {
-  const { connect, connectionState } = useWebsocketStore();
-  
+export const useWebSocketConnection = (url: string): void => {
+  const status = useWsStatus()
+  const connect = useConnectWs()
+
   useEffect(() => {
-    if (connectionState === WebSocket.CLOSED) {
-      connect(url);
+    if (status === WebSocket.CLOSED) {
+      connect(url)
     }
-  }, [connect, connectionState, url]);
-  
-  return {
-    connectionState,
-    isConnected: connectionState === WebSocketStatus.OPEN,
-    isConnecting: connectionState === WebSocketStatus.CONNECTING
-  };
-};
+  }, [connect, status, url])
+}
