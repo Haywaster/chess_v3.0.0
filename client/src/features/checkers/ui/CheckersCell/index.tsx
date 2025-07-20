@@ -3,7 +3,7 @@ import { type CSSProperties, type FC, memo } from 'react'
 import { Cell, type ICell } from 'entities/Cell'
 import { Figure, type IFigure } from 'entities/Figure'
 
-import { useCheckers } from '../../model'
+import { useCheckers } from '../../store'
 
 interface IProps {
   onCellClick: (id: ICell['id']) => void

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import type { Theme } from '../types'
+import type { Theme } from '../model'
 
 interface State {
   theme: Theme

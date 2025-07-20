@@ -4,6 +4,7 @@ import { useUsername } from 'entities/User'
 import { LoginForm } from 'features/auth/login'
 import { VideoLinks } from 'features/chooseVideoLink'
 import { RouterPath } from 'shared/const/router'
+import { type TRouterPath } from 'shared/types'
 import { Flex } from 'shared/ui'
 
 import { games } from '../../const'
@@ -23,7 +24,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
 
   const globalUsername = useUsername()
 
-  const [modalLink, setModalLink] = useState<RouterPath | null>(null)
+  const [modalLink, setModalLink] = useState<TRouterPath | null>(null)
 
   const gameClickHandler: MouseEventHandler<HTMLAnchorElement> = e => {
     if (globalUsername === '') {
@@ -31,7 +32,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
       onError()
       return
     }
-    const candidateLink = e.currentTarget.pathname as RouterPath
+    const candidateLink = e.currentTarget.pathname as TRouterPath
     setModalLink(candidateLink)
     e.preventDefault()
   }

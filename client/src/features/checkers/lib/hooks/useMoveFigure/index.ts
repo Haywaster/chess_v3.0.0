@@ -1,11 +1,12 @@
 import { type CSSProperties } from 'react'
 
 import { type ICell } from 'entities/Cell'
-import { ANIMATION_DURATION } from 'entities/Figure'
 import { DOUBLE, TRANSLATE_PCT } from 'shared/const/numbers'
 
-import { RENDER_DURATION } from '../../../const'
-import { useCheckers } from '../../../model'
+import { RENDER_DURATION } from '../../../model'
+import { useCheckers } from '../../../store'
+
+const ANIMATION_DURATION = 200
 
 const calculateTransform = (n: number): string =>
   `${TRANSLATE_PCT * (1 + DOUBLE * n)}%`

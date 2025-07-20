@@ -3,16 +3,20 @@
 import { create } from 'zustand'
 
 import { WebSocketStatus } from 'shared/const/ws'
-import type { WebsocketDataConstructor, MessageListener } from 'shared/types'
+import {
+  type WebsocketDataConstructor,
+  type MessageListener,
+  type TWebSocketStatus
+} from 'shared/types'
 
 interface State {
   socket: WebSocket | null
   listeners: Record<string, MessageListener[]>
-  status: WebSocketStatus
+  status: TWebSocketStatus
 }
 
 interface Action {
-  setStatus: (WebSocketStatus: WebSocketStatus) => void
+  setStatus: (WebSocketStatus: TWebSocketStatus) => void
   sendMessage: MessageListener
   connect: (url: string) => void
   subscribe: (messageType: string, callback: MessageListener) => void

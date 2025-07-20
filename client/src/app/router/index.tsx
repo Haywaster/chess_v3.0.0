@@ -2,7 +2,10 @@ import type { RouteObject } from 'react-router-dom'
 
 import { Checkers } from 'pages/Checkers'
 import { Main } from 'pages/Main'
-import { RouterPath } from 'shared/const/router'
+import { id, RouterPath } from 'shared/const/router'
+
+const getRouteWithId = (route: string, id?: string): string =>
+  id ? `${route}/:${id}` : route
 
 export const AppRouter: RouteObject[] = [
   {
@@ -10,12 +13,7 @@ export const AppRouter: RouteObject[] = [
     element: <Main />
   },
   {
-    path: RouterPath.Checkers,
-    children: [
-      {
-        path: ':gameId',
-        element: <Checkers />
-      }
-    ]
+    path: getRouteWithId(RouterPath.Checkers, id),
+    element: <Checkers />
   }
 ]

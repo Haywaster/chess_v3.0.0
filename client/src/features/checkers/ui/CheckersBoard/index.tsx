@@ -3,7 +3,7 @@ import { type FC, memo } from 'react'
 import { type IFigure } from 'entities/Figure'
 
 import { useCellClick, useFigureClick } from '../../lib'
-import { useCheckers } from '../../model'
+import { useCheckers } from '../../store'
 import { CheckersCell } from '../CheckersCell'
 
 export const CheckersBoard: FC = memo(() => {

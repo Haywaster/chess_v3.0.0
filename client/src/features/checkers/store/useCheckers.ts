@@ -3,11 +3,15 @@ import { create } from 'zustand'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { killFigureFromBoard } from 'features/checkers/lib/utils/killFigureFromBoard'
 
-import { initialCells, ruleDefaults } from '../../const'
-import { changeBoardAfterMove } from '../../lib'
-import type { IBoard, IKillVariant, Rules } from '../types'
+import { changeBoardAfterMove, killFigureFromBoard } from '../lib'
+import {
+  initialCells,
+  ruleDefaults,
+  type IBoard,
+  type IKillVariant,
+  type Rules
+} from '../model'
 
 interface State {
   rulesModal: boolean

@@ -5,8 +5,8 @@ import { Flex } from 'shared/ui/Flex'
 import { Modal } from 'shared/ui/Modal'
 import { Switch } from 'shared/ui/Switch'
 
-import { ruleTitles } from '../../const'
-import { type Rules, useCheckers } from '../../model'
+import { type Rules, ruleTitles } from '../../model'
+import { useCheckers } from '../../store'
 
 const ModalStyled = styled(Modal)`
   color: var(--black);

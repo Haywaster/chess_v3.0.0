@@ -1,8 +1,12 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
-import { boardCellsIds } from '../../../const'
-import type { IBoard, IKillVariant, Rules } from '../../../model'
+import {
+  boardCellsIds,
+  type IBoard,
+  type IKillVariant,
+  type Rules
+} from '../../../model'
 import {
   calcFigureKill,
   calcStainKillManyCells,

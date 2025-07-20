@@ -4,7 +4,8 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { keepLargestArrays } from 'shared/lib'
 
-import { useCheckers, type IKillVariant, type IBoard } from '../../../model'
+import { type IKillVariant, type IBoard } from '../../../model'
+import { useCheckers } from '../../../store'
 import { isMoveValid, getKillVariants } from '../../utils'
 
 interface Variants {

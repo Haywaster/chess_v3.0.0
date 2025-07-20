@@ -1,11 +1,8 @@
 import type { ComponentProps, FC } from 'react'
 import { Link } from 'react-router-dom'
 
-import { type IGameIntroduction } from 'entities/Game/model/types'
-import { Button } from 'shared/ui/Button'
-import { CopyButton } from 'shared/ui/CopyButton'
-import { Flex } from 'shared/ui/Flex'
-import { Modal } from 'shared/ui/Modal'
+import { type IGameIntroduction } from 'entities/Game'
+import { Button, CopyButton, Flex, Modal } from 'shared/ui'
 
 interface IProps extends ComponentProps<typeof Modal> {
   username: string

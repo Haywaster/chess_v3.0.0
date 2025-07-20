@@ -2,7 +2,8 @@ import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
 
-import { type IBoard, useCheckers } from '../../../model'
+import { type IBoard } from '../../../model'
+import { useCheckers } from '../../../store'
 import { useGetRequiredFigures } from '../useGetRequiredFigures'
 import { useMoveFigure } from '../useMoveFigure'
 

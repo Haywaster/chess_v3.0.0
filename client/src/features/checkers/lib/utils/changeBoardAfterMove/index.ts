@@ -1,6 +1,7 @@
 import { type ICell } from 'entities/Cell'
-import { makeFigureStain } from 'features/checkers/lib'
-import { type IBoard } from 'features/checkers/model'
+
+import { type IBoard } from '../../../model'
+import { makeFigureStain } from '../makeFigureStain'
 
 export const changeBoardAfterMove = (
   startCellId: ICell['id'],

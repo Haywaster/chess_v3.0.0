@@ -1,6 +1,7 @@
 import type { IFigure } from 'entities/Figure'
 
-import { type IBoard, useCheckers } from '../../../model'
+import { type IBoard } from '../../../model'
+import { useCheckers } from '../../../store'
 import { getKillVariants } from '../../utils'
 
 export const useGetRequiredFigures = (): ((board: IBoard) => void) => {

@@ -1,18 +1,23 @@
-import { type RouterPath } from 'shared/const/router'
-import { type EnumValues, type WebsocketDataConstructor } from 'shared/types'
+import type {
+  EnumValues,
+  TRouterPath,
+  WebsocketDataConstructor
+} from 'shared/types'
 
-import { type GameType } from '../const'
-export type GameStatus = 'pending' | 'playing' | 'finished'
+import type { GameType, GameStatus } from '../const'
+
+export type TGameType = EnumValues<typeof GameType>
+type TGameStatus = EnumValues<typeof GameStatus>
 
 export interface IGameIntroduction {
   title: string
-  route: RouterPath
+  route: TRouterPath
 }
 
 export interface IGame {
   id: string
-  type: EnumValues<typeof GameType>
-  status: GameStatus
+  type: TGameType
+  status: TGameStatus
 }
 
 export interface ICreateGameData {

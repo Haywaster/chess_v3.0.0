@@ -1,2 +1,2 @@
 export type { IBoard, IKillVariant, Rules } from './types'
-export * from './store'
+export * from './const'

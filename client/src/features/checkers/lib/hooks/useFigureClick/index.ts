@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import type { IFigure } from 'entities/Figure'
 
-import { useCheckers } from '../../../model'
+import { useCheckers } from '../../../store'
 import { useGetVariants } from '../useGetVariants'
 
 export const useFigureClick = (): ((id: IFigure['id']) => void) => {

@@ -1,7 +1,7 @@
-import { type Rules } from 'features/checkers/model/types'
 import { BOARD_SIZE } from 'shared/const/numbers'
 
-import { createBoard } from '../lib'
+import { createBoard } from '../../lib'
+import { type Rules } from '../types'
 
 export const RENDER_DURATION = 50
 

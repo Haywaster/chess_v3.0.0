@@ -2,7 +2,8 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useInitialEffect } from 'shared/lib'
 
-import { themes, useTheme } from '../../model'
+import { themes } from '../../model'
+import { useTheme } from '../../store'
 
 export const useSwitchTheme = () => {
   const { theme, setTheme } = useTheme(

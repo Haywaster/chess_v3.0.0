@@ -1,13 +1,13 @@
-import { type IGameIntroduction } from 'entities/Game'
+import { GameType, type IGameIntroduction } from 'entities/Game'
 import { RouterPath } from 'shared/const/router'
 
 export const games: IGameIntroduction[] = [
   {
-    title: 'checkers',
+    title: GameType.CHECKERS,
     route: RouterPath.Checkers
   },
   {
-    title: 'chess',
+    title: GameType.CHESS,
     route: RouterPath.Chess
   }
 ]

@@ -1,9 +1,13 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { boardCellsIds } from 'features/checkers/const'
-import type { IBoard, IKillVariant, Rules } from 'features/checkers/model'
 import { DOUBLE } from 'shared/const/numbers'
 
+import {
+  boardCellsIds,
+  type IBoard,
+  type IKillVariant,
+  type Rules
+} from '../../../model'
 import { calcFigureMove } from '../calcFigureMove'
 
 export const calcFigureKill = (

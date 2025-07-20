@@ -1,7 +1,7 @@
 import { type FC, memo } from 'react'
 import styled from 'styled-components'
 
-import { Flex } from 'shared/ui/Flex'
+import { Flex } from 'shared/ui'
 
 interface IProps {
   values: string[]
