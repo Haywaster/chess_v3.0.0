@@ -4,6 +4,7 @@ const wss = new WebSocketServer({
   port: 8080,
 });
 
+const users = {}
 const games = {};
 
 wss.on('connection', (ws) => {
@@ -14,11 +15,34 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('message', (strData) => {
-    const data = JSON.parse(strData);
+    // Объект { type, data }
+    const parsedData = JSON.parse(strData);
 
-    switch (data.type) {
+    switch (parsedData.type) {
+      case 'logout': {
+        const { data: { username } } = parsedData;
+
+        users[username] = {
+          username,
+          online: false,
+        };
+
+        ws.send(JSON.stringify({ type: parsedData.type, data: users[username] }));
+        break;
+      }
+      case 'auth': {
+        const { data: { username } } = parsedData;
+
+        users[username] = {
+          username,
+          online: true,
+        };
+
+        ws.send(JSON.stringify({ type: parsedData.type, data: users[username] }));
+        break;
+      }
       case 'createGame': {
-        const { username, game } = data;
+        const { username, game } = parsedData;
         const { type, id } = game;
 
         ws.send(JSON.stringify({ ...game, status: 'pending' }));

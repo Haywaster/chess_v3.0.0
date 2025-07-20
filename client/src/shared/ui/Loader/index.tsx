@@ -12,9 +12,9 @@ interface LoaderProps {
 
 const DEFAULT_WIDTH_SPINNER = 40
 
-const LoaderContainer = styled.div<
-  Pick<LoaderProps, 'fullScreen' | 'backgroundColor'>
->`
+const LoaderContainer = styled.div.withConfig({
+  shouldForwardProp: prop => !['fullScreen', 'backgroundColor'].includes(prop)
+})<Pick<LoaderProps, 'fullScreen' | 'backgroundColor'>>`
   display: flex;
   justify-content: center;
   align-items: center;

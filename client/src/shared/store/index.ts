@@ -1,1 +1,7 @@
-export { useWs, useSetWs } from './useWebsocketStore'
+export {
+  useSetWsStatus,
+  useConnectWs,
+  useWsSubscribe,
+  useSendWsMessage,
+  useWsStatus
+} from './useWebsocketStore'
