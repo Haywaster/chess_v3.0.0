@@ -1,21 +1,18 @@
-import { useShallow } from 'zustand/react/shallow'
-
+import { Themes } from 'shared/const/themes'
 import { useInitialEffect } from 'shared/lib'
-
-import { themes } from '../../model'
-import { useTheme } from '../../store'
+import { useTheme, useSetTheme } from 'shared/store'
 
 export const useSwitchTheme = () => {
-  const { theme, setTheme } = useTheme(
-    useShallow(({ theme, setTheme }) => ({ theme, setTheme }))
-  )
+  const theme = useTheme()
+  const setTheme = useSetTheme()
 
   useInitialEffect(() => {
-    const useDark = window.matchMedia('(prefers-color-scheme: dark)')
-    const localStorageTheme = localStorage.getItem('theme')
-    const newUser = !localStorageTheme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: light)')
+    const newUser = !localStorage.getItem('application')
 
-    if (newUser && useDark.matches) {
+    // В store изначальная цветовая схема определена как светлая,
+    // поэтому мы с ней не возимся
+    if (prefersDark.matches && newUser) {
       document.documentElement.classList.add('dark')
       setTheme('dark')
       return
@@ -25,17 +22,17 @@ export const useSwitchTheme = () => {
   })
 
   return () => {
-    const currentThemeIndex = themes.indexOf(theme)
+    const currentThemeIndex = Themes.indexOf(theme)
 
     switch (currentThemeIndex) {
-      case themes.length - 1:
+      case Themes.length - 1:
       case -1:
-        setTheme(themes[0])
-        document.documentElement.className = themes[0]
+        setTheme(Themes[0])
+        document.documentElement.className = Themes[0]
         break
       default:
-        setTheme(themes[currentThemeIndex + 1])
-        document.documentElement.className = themes[currentThemeIndex + 1]
+        setTheme(Themes[currentThemeIndex + 1])
+        document.documentElement.className = Themes[currentThemeIndex + 1]
         break
     }
   }

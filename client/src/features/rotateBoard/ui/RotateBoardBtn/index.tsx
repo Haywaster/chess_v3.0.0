@@ -1,10 +1,10 @@
 import { type ComponentProps, type FC } from 'react'
 import styled, { css } from 'styled-components'
 
+import { useRotate, useToggleRotate } from 'shared/store'
 import { Button } from 'shared/ui/Button'
 
 import { ArrowCircle } from '../../assets'
-import { useRotateBoard } from '../../store'
 
 interface IStyledButtonProps extends ComponentProps<typeof Button> {
   $isRotate: boolean
@@ -30,8 +30,8 @@ const StyledButton = styled(Button)<IStyledButtonProps>`
 `
 
 export const RotateBoardBtn: FC = () => {
-  const rotate = useRotateBoard(state => state.rotate)
-  const toggleRotate = useRotateBoard(state => state.toggleRotate)
+  const rotate = useRotate()
+  const toggleRotate = useToggleRotate()
 
   return (
     <StyledButton

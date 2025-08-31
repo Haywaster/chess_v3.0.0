@@ -2,7 +2,7 @@ import { type FC, memo } from 'react'
 import styled from 'styled-components'
 
 import { CheckersBoard, useCheckers } from 'features/checkers'
-import { useRotateBoard } from 'features/rotateBoard'
+import { useRotate } from 'shared/store'
 
 import { HorizontalOrder } from '../HorizontalOrder'
 import { VerticalOrder } from '../VerticalOrder'
@@ -35,7 +35,7 @@ interface IProps {
 
 export const Board: FC<IProps> = memo(({ className }) => {
   const stepColor = useCheckers(state => state.stepColor)
-  const rotate = useRotateBoard(state => state.rotate)
+  const rotate = useRotate()
 
   const isRotate = rotate && stepColor === 'black'
 

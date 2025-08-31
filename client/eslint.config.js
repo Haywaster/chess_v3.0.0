@@ -144,6 +144,13 @@ export default tsEslint.config(
           reservedFirst: ['key', 'ref'],
           multiline: 'last'
         }
+      ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'TSEnumDeclaration',
+          message: 'Use an object instead of an enum.'
+        }
       ]
       // Включать опционально
       // "arrow-body-style": ["error", "as-needed"]

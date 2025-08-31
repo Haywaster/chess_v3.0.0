@@ -5,3 +5,10 @@ export {
   useSendWsMessage,
   useWsStatus
 } from './useWebsocketStore'
+
+export {
+  useRotate,
+  useSetTheme,
+  useToggleRotate,
+  useTheme
+} from './useApplicationStore'
