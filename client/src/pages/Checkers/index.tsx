@@ -19,13 +19,11 @@ const StyledMain = styled.main`
   margin-top: 30px;
 `
 
-const WEBSOCKET_SERVER = 'ws://localhost:8080'
-
 export const Checkers: FC = () => {
   const game = useGame()
   const username = useUsername()
 
-  useWebSocketConnection(WEBSOCKET_SERVER)
+  useWebSocketConnection(import.meta.env.VITE_WS_SERVER_URL)
   useGameInfo(GameType.CHECKERS)
 
   return (

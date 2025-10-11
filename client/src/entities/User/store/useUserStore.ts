@@ -1,32 +1,31 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 interface State {
   username: string
+  token: string
+  isAuth: boolean // прошла ли попытка resresh
 }
 
 interface Action {
-  setUsername: (username: string) => void
+  setUserData: (data: Partial<State>) => void
 }
 
 const initialState: State = {
-  username: ''
+  username: '',
+  token: '',
+  isAuth: false
 }
 
-const useGameStore = create(
-  persist<State & Action>(
-    set => ({
-      ...initialState,
-      setUsername: username => set({ username })
-    }),
-    //TODO: В будущем не нужно хранить данные пользователя в локал сторедж
-    {
-      name: 'user'
-    }
-  )
-)
+export const useUserStore = create<State & Action>(set => ({
+  ...initialState,
+  setUserData: data => set(prev => ({ ...prev, ...data }))
+}))
 
 export const useUsername = (): State['username'] =>
-  useGameStore(state => state.username)
-export const useSetUsername = (): Action['setUsername'] =>
-  useGameStore(state => state.setUsername)
+  useUserStore(state => state.username)
+export const useToken = (): State['token'] => useUserStore(state => state.token)
+export const useIsAuth = (): State['isAuth'] =>
+  useUserStore(state => state.isAuth)
+
+export const useSetUserData = (): Action['setUserData'] =>
+  useUserStore(state => state.setUserData)

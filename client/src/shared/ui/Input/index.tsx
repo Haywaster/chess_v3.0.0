@@ -1,11 +1,19 @@
-import { type FC, type InputHTMLAttributes, memo } from 'react'
+import {
+  type FC,
+  type InputHTMLAttributes,
+  type LabelHTMLAttributes,
+  memo
+} from 'react'
 import styled from 'styled-components'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
 }
 
-const StyledInput = styled.input.attrs({ type: 'text' })`
+const StyledInput = styled.input.attrs(props => ({
+  type: props.type ?? 'text',
+  autoComplete: props.autoComplete ?? 'off'
+}))`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -26,7 +34,13 @@ const StyledInput = styled.input.attrs({ type: 'text' })`
   }
 `
 
-const Label = styled.label`
+interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  $name?: string
+}
+
+const Label = styled.label.attrs<LabelProps>(props => ({
+  htmlFor: props.htmlFor ?? props.$name
+}))`
   margin-bottom: 5px;
   font-size: 14px;
   color: #333;
@@ -37,9 +51,15 @@ const Wrapper = styled.div`
   width: 100%;
 `
 
-export const Input: FC<InputProps> = memo(({ label, ...props }) => (
-  <Wrapper>
-    {label && <Label>{label}</Label>}
-    <StyledInput {...props} />
-  </Wrapper>
-))
+export const Input: FC<InputProps> = memo(({ label, ...props }) => {
+  const input = <StyledInput {...props} />
+
+  return !label ? (
+    input
+  ) : (
+    <Wrapper>
+      <Label $name={props.name}>{label}</Label>
+      {input}
+    </Wrapper>
+  )
+})

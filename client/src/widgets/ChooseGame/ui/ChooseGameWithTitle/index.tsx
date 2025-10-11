@@ -2,7 +2,8 @@ import { type FC, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { useUsername } from 'entities/User'
-import { Flex } from 'shared/ui'
+import { userService } from 'entities/User/service'
+import { Button, Flex } from 'shared/ui'
 
 import { ChooseGame } from '../ChooseGame'
 
@@ -49,7 +50,7 @@ export const ChooseGameWithTitle: FC = () => {
     <>
       Hello!{' '}
       <Span ref={writeRef} $hasUnderline={hasUnderline}>
-        Enter your nickname
+        Enter your user data
       </Span>{' '}
       to play
     </>
@@ -60,6 +61,7 @@ export const ChooseGameWithTitle: FC = () => {
   return (
     <Container as="main" direction="column">
       <Title>{title}</Title>
+      <Button onClick={() => userService.getUsers()}>Qwewq</Button>
       <ChooseGame onError={underline} />
     </Container>
   )

@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#Common files
+.env
+
+# Server files
+server/generated/prisma

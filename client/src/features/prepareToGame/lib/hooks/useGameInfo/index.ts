@@ -12,7 +12,7 @@ import {
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
 import { type id } from 'shared/const/router'
-import { WebSocketStatus } from 'shared/const/ws'
+import { WebSocketStatus } from 'shared/const/statuses.ts'
 import { useInitialEffect, useWebSocketSubscription } from 'shared/lib'
 import { useSendWsMessage, useWsStatus } from 'shared/store'
 

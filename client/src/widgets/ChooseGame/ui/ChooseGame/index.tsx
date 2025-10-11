@@ -40,7 +40,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
   const closeModal = (): void => setModalLink(null)
   const uniqueGameLink = modalLink
     ? `${modalLink}/${uniqGameId}`
-    : RouterPath.Home
+    : RouterPath.HOME
   const game = games.find(game => game.route === modalLink)?.title
 
   return (

@@ -7,11 +7,10 @@ export const useSwitchTheme = () => {
   const setTheme = useSetTheme()
 
   useInitialEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: light)')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
     const newUser = !localStorage.getItem('application')
 
-    // В store изначальная цветовая схема определена как светлая,
-    // поэтому мы с ней не возимся
+    // В store изначальная цветовая схема определена как светлая, поэтому мы с ней не возимся
     if (prefersDark.matches && newUser) {
       document.documentElement.classList.add('dark')
       setTheme('dark')

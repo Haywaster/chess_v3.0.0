@@ -9,11 +9,11 @@ const getRouteWithId = (route: string, id?: string): string =>
 
 export const AppRouter: RouteObject[] = [
   {
-    path: RouterPath.Home,
+    path: RouterPath.HOME,
     element: <Main />
   },
   {
-    path: getRouteWithId(RouterPath.Checkers, id),
+    path: getRouteWithId(RouterPath.CHECKERS, id),
     element: <Checkers />
   }
 ]

@@ -1,19 +1,19 @@
 import { type FC, type FormEventHandler } from 'react'
 
-import { useSetUsername, useUsername } from 'entities/User'
+import { useUsername } from 'entities/User'
 import { Button, Flex, Input, Modal } from 'shared/ui'
 
 export const UsernameModal: FC = () => {
   const username = useUsername()
-  const setUsername = useSetUsername()
+  // const setUsername = useSetUsername()
 
   const submitHandler: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
 
-    const formData = new FormData(e.target as HTMLFormElement)
-    const username = formData.get('username')
+    // const formData = new FormData(e.target as HTMLFormElement)
+    // const username = formData.get('username')
 
-    setUsername(username as string)
+    // setUsername(username as string)
   }
 
   return (

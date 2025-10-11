@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 
-import { WebSocketStatus } from 'shared/const/ws'
+import { WebSocketStatus } from 'shared/const/statuses.ts'
 import {
   type WebsocketDataConstructor,
   type MessageListener,

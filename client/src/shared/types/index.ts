@@ -1,6 +1,6 @@
 import type { RouterPath } from 'shared/const/router'
+import { type WebSocketStatus } from 'shared/const/statuses.ts'
 import type { Themes } from 'shared/const/themes'
-import type { WebSocketStatus } from 'shared/const/ws'
 
 export type EnumValues<
   T extends Record<string, string | number> | ReadonlyArray<string | number>
@@ -20,3 +20,4 @@ export type MessageListener = <T, D>(
 export type TWebSocketStatus = EnumValues<typeof WebSocketStatus>
 export type TRouterPath = EnumValues<typeof RouterPath>
 export type Theme = EnumValues<typeof Themes>
+export type TimeUnits = 'MS' | 'SECOND' | 'MINUTE' | 'HOUR' | 'DAY'

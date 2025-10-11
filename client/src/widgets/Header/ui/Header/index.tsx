@@ -21,7 +21,7 @@ const CheckersHeader: FC = () => {
     <>
       <Flex size="xs">
         <SwitchButton />
-        <Button as={Link} size="sm" to={RouterPath.Home}>
+        <Button as={Link} size="sm" to={RouterPath.HOME}>
           Back to games
         </Button>
       </Flex>
@@ -50,9 +50,9 @@ export const Header: FC = () => {
 
   const currentHeader = (() => {
     switch (location.pathname) {
-      case RouterPath.Home:
+      case RouterPath.HOME:
         return <MainHeader />
-      case RouterPath.Checkers:
+      case RouterPath.CHECKERS:
         return <CheckersHeader />
       default:
         return <CheckersHeader />
