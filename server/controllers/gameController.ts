@@ -1,11 +1,16 @@
-import { gameService } from '../services/gameService.js'
+import { gameService } from '../services/gameService.ts'
+import { RequestHandler } from 'express'
 
-export const gameController = {
+interface IGameController {
+  [key: string]: RequestHandler
+}
+
+export const gameController: IGameController = {
   async createGame(req, res, next) {
     try {
       const { type } = req.body
 
-      if (type) {
+      if (type && req.user) {
         const { gameType, gameId } = await gameService.createGame(req.user.id, type);
         return res.redirect(`/${gameType.toLowerCase()}/${gameId}`)
       }

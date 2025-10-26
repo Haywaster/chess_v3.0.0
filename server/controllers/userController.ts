@@ -1,8 +1,13 @@
-import { userService } from '../services/userService.js'
+import { userService } from '../services/userService.ts'
+import { RequestHandler } from 'express'
 
-export const userController = {
+interface IUserController {
+  [key: string]: RequestHandler
+}
+
+export const userController: IUserController = {
   async registration(req, res, next) {
-    const { login, password} = req.body
+    const { login, password } = req.body
 
     try {
 //      const errors = validationResult(req)

@@ -1,7 +1,8 @@
-import { tokenService } from '../services/tokenService.js';
-import { ApiError } from '../exceptions/api-error.js'
+import { RequestHandler } from 'express'
+import { tokenService } from '../services/tokenService.ts';
+import { ApiError } from '../exceptions/api-error.ts'
 
-export default function (req, res, next) {
+const authMiddleware: RequestHandler = (req, res, next) => {
 	try {
 		const fullTokenStr = req.headers.authorization;
 
@@ -27,3 +28,5 @@ export default function (req, res, next) {
 		next(ApiError.UnauthorizedError())
 	}
 }
+
+export default authMiddleware

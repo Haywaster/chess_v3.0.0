@@ -1,11 +1,12 @@
 import { Router } from 'express'
-import { userController } from '../controllers/userController.js'
-import { gameController } from '../controllers/gameController.js'
-import authMiddleware from '../middlewares/auth-middleware.js'
+import { userController } from '../controllers/userController.ts'
+import { gameController } from '../controllers/gameController.ts'
+import authMiddleware from '../middlewares/auth-middleware.ts'
 //const {body} = require('express-validator')
 //const userController = require('../controllers/user-controller')
 //const authMiddleware = require('../middlewares/auth-middleware')
 
+// TODO: Убрал new
 const router = new Router()
 
 //router.post('/registration',
