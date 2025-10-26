@@ -36,9 +36,7 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (strData) => {
     // Объект { type, data }
-    const parsedData = JSON.parse(strData);
-
-    const { type, data } = parsedData;
+    const { type, data } = JSON.parse(strData);
 
     switch (type) {
       case 'logout': {

@@ -12,15 +12,76 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  login     String  @unique
-  password  String
-  created_at DateTime @default(now())
-  refresh_token RefreshToken?
+  id            Int              @id @default(autoincrement())
+  login         String           @unique
+  password      String
+  createdAt     DateTime         @default(now())
+  refreshToken  RefreshToken?
+  participations GameParticipant[]
 }
 
 model RefreshToken {
-  id            Int      @id
-  refresh_token String   @unique
-  user          User     @relation(fields: [id], references: [id])
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  refreshToken String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GameType {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  minPlayers  Int
+  maxPlayers  Int?
+  description String?
+  games       Game[]
+}
+
+model Game {
+  id           Int                @id @default(autoincrement())
+  gameTypeId   Int
+  status       String             @default("active")
+  startedAt    DateTime           @default(now())
+  finishedAt   DateTime?
+  gameType     GameType           @relation(fields: [gameTypeId], references: [id], onDelete: Restrict)
+  participants GameParticipant[]
+  checkersGame CheckersGame?
+  chessGame    ChessGame?
+}
+
+model GameParticipant {
+  id          Int      @id @default(autoincrement())
+  gameId      Int
+  playerId    Int
+  joinedAt    DateTime @default(now())
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player      User     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  colorParticipant GameWithColorParticipant?
+
+  @@index([gameId])
+  @@index([playerId])
+  @@unique([gameId, playerId])
+}
+
+model GameWithColorParticipant {
+  id            Int             @id @default(autoincrement())
+  color         String
+  participantId Int             @unique
+  participant   GameParticipant @relation(fields: [participantId], references: [id])
+}
+
+model CheckersGame {
+  id          Int      @id @default(autoincrement())
+  gameId      Int      @unique
+  figures     String   @default("[]")
+  currentTurn String?   // Можно заменить на Int, если currentTurn должен быть id пользователя
+  moveCount   Int      @default(0)
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model ChessGame {
+  id      Int   @id @default(autoincrement())
+  gameId  Int   @unique
+  game    Game  @relation(fields: [gameId], references: [id], onDelete: Cascade)
 }

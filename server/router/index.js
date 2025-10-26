@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { userController } from '../controllers/userController.js'
+import { gameController } from '../controllers/gameController.js'
 import authMiddleware from '../middlewares/auth-middleware.js'
 //const {body} = require('express-validator')
 //const userController = require('../controllers/user-controller')
@@ -17,5 +18,6 @@ router.post('/registration', userController.registration)
 router.post('/login', userController.login)
 router.get('/refresh', userController.refresh)
 router.get('/users', authMiddleware, userController.getAllUsers)
+router.post('/createGame', authMiddleware, gameController.createGame)
 
 export default router;

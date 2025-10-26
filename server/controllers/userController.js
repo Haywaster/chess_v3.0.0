@@ -34,8 +34,8 @@ export const userController = {
       const userData = await userService.refresh(refreshToken)
       res.cookie('refreshToken', userData.refreshToken, {httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000})
       return res.json(userData)
-    } catch(error) {
-      next(error)
+    } catch(e) {
+      next(e)
     }
   },
 
@@ -43,8 +43,8 @@ export const userController = {
     try {
       const users = await userService.getAllUsers()
       return res.json(users)
-    } catch(error) {
-      next(error)
+    } catch(e) {
+      next(e)
     }
   },
 }

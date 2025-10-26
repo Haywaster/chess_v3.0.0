@@ -17,7 +17,7 @@ export const userService = {
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await prisma.user.create({ data: { login, password: hashPassword } })
+    const newUser = await prisma.user.create({ data: { login, password: hashPassword, playerGames: { create: [] } } })
     const tokens = tokenService.generate(newUser)
     await tokenService.saveToken(newUser.id, tokens.refreshToken)
 
