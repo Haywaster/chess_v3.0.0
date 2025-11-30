@@ -1,7 +1,7 @@
 import { type AxiosPromise } from 'axios'
 
-import $api from 'shared/api/config.ts'
-import { instance } from 'shared/api/instance.ts'
+import $api from 'shared/api/config'
+import { instance } from 'shared/api/instance'
 
 interface ITokenCouple {
   accessToken: string
@@ -16,6 +16,7 @@ interface UserService {
   login(login: string, password: string): AxiosPromise<ILoginResult>
   registration(login: string, password: string): AxiosPromise<ILoginResult>
   getUsers(): AxiosPromise<void>
+  logout(): AxiosPromise<void>
 }
 
 export const authService = {
@@ -39,5 +40,8 @@ export const userService: UserService = {
       method: 'POST',
       data: { login, password }
     })
+  },
+  async logout() {
+    return await $api('/logout', { method: 'POST' })
   }
 }

@@ -8,6 +8,7 @@ interface State {
 
 interface Action {
   setUserData: (data: Partial<State>) => void
+  reset: () => void
 }
 
 const initialState: State = {
@@ -18,7 +19,8 @@ const initialState: State = {
 
 export const useUserStore = create<State & Action>(set => ({
   ...initialState,
-  setUserData: data => set(prev => ({ ...prev, ...data }))
+  setUserData: data => set(prev => ({ ...prev, ...data })),
+  reset: () => set({ ...initialState })
 }))
 
 export const useUsername = (): State['username'] =>
@@ -29,3 +31,5 @@ export const useIsAuth = (): State['isAuth'] =>
 
 export const useSetUserData = (): Action['setUserData'] =>
   useUserStore(state => state.setUserData)
+export const useReset = (): Action['reset'] =>
+  useUserStore(state => state.reset)

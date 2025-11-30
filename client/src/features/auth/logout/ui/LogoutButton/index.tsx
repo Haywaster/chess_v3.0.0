@@ -1,6 +1,6 @@
 import type { ComponentProps, FC, MouseEventHandler } from 'react'
 
-// import { useSetUsername } from 'entities/User'
+import { useLogoutUser } from 'entities/User'
 import { Button } from 'shared/ui'
 
 import { LogoutIcon } from '../assets'
@@ -8,20 +8,14 @@ import { LogoutIcon } from '../assets'
 type IProps = ComponentProps<typeof Button>
 
 export const LogoutButton: FC<IProps> = props => {
-  const { onClick, ...rest } = props
-  // const setUsername = useSetUsername()
+  const logout = useLogoutUser()
 
-  const logoutHandler: MouseEventHandler<HTMLButtonElement> = (e): void => {
-    //TODO: Удалять токен, а не username
-    // setUsername('')
-
-    if (onClick) {
-      onClick(e)
-    }
+  const logoutHandler: MouseEventHandler<HTMLButtonElement> = () => {
+    logout()
   }
 
   return (
-    <Button icon mode="white" size="sm" onClick={logoutHandler} {...rest}>
+    <Button icon mode="white" size="sm" onClick={logoutHandler} {...props}>
       <LogoutIcon />
     </Button>
   )

@@ -19,11 +19,11 @@ export const tokenService = {
   },
 
   async saveToken(userId: User['id'], refreshToken: RefreshToken['refreshToken']) {
-    const tokenData = await prisma.refreshToken.findUnique({ where: { id: userId } });
+    const tokenData = await prisma.refreshToken.findUnique({ where: { userId } });
 
     if (tokenData) {
       return prisma.refreshToken.update({
-        where: { id: userId },
+        where: { userId },
         data: { refreshToken },
       });
     }
@@ -63,5 +63,9 @@ export const tokenService = {
 
   async findToken(refreshToken: RefreshToken['refreshToken']) {
     return prisma.refreshToken.findUnique({ where: { refreshToken } })
+  },
+  
+  async removeToken(refreshToken: RefreshToken['refreshToken']) {
+    return prisma.refreshToken.delete({ where: { refreshToken } })
   }
 }

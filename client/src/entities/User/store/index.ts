@@ -2,5 +2,6 @@ export {
   useUsername,
   useSetUserData,
   useIsAuth,
-  useToken
+  useToken,
+  useReset
 } from './useUserStore'

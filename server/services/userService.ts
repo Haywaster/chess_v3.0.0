@@ -10,6 +10,14 @@ export const authErrors = {
   USER_ALREADY_EXISTS: 'USER_ALREADY_EXISTS'
 } as const
 
+interface IUserService {
+  registration: (login: User['login'], password: User['password']) => Promise<User>
+  login: (login: User['login'], password: User['password']) => Promise<User>
+  refresh: (refreshToken: RefreshToken['refreshToken']) => Promise<User>
+  getAllUsers: () => Promise<User[]>
+  logout: (refreshToken: RefreshToken['refreshToken']) => Promise<void>
+}
+
 export const userService = {
   async registration(login: User['login'], password: User['password']) {
     const candidate = await prisma.user.findUnique({ where: { login } })
@@ -71,6 +79,13 @@ export const userService = {
   },
 
   async getAllUsers() {
-    return await prisma.user.findMany();
+    return prisma.user.findMany()
+  },
+  
+  async logout(refreshToken: RefreshToken['refreshToken'] | null) {
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError()
+    }
+    await tokenService.removeToken(refreshToken)
   }
 }

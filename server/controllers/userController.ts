@@ -6,6 +6,7 @@ interface IUserController {
   login: RequestHandler
   refresh: RequestHandler
   getAllUsers: RequestHandler
+  logout: RequestHandler
 }
 
 export const userController: IUserController = {
@@ -32,6 +33,7 @@ export const userController: IUserController = {
       res.cookie('refreshToken', userData.refreshToken, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 })
       return res.json(userData)
     } catch (e) {
+      console.log(e)
       next(e)
     }
   },
@@ -55,4 +57,15 @@ export const userController: IUserController = {
       next(e)
     }
   },
+  
+  async logout(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies
+      await userService.logout(refreshToken)
+      res.clearCookie('refreshToken')
+      return res.sendStatus(200)
+    } catch(e) {
+      next(e)
+    }
+  }
 }
