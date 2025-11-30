@@ -26,5 +26,3 @@ dist-ssr
 #Common files
 .env
 
-# Server files
-server/generated/prisma

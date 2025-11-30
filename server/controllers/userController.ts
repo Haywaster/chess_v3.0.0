@@ -2,7 +2,10 @@ import { userService } from '../services/userService.ts'
 import { RequestHandler } from 'express'
 
 interface IUserController {
-  [key: string]: RequestHandler
+  registration: RequestHandler
+  login: RequestHandler
+  refresh: RequestHandler
+  getAllUsers: RequestHandler
 }
 
 export const userController: IUserController = {

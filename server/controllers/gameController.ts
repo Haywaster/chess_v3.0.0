@@ -2,7 +2,7 @@ import { gameService } from '../services/gameService.ts'
 import { RequestHandler } from 'express'
 
 interface IGameController {
-  [key: string]: RequestHandler
+  createGame: RequestHandler
 }
 
 export const gameController: IGameController = {
@@ -10,10 +10,10 @@ export const gameController: IGameController = {
     try {
       const { type } = req.body
 
-      if (type && req.user) {
-        const { gameType, gameId } = await gameService.createGame(req.user.id, type);
-        return res.redirect(`/${gameType.toLowerCase()}/${gameId}`)
-      }
+      // if (type && req.user) {
+      //   const { gameType, gameId } = await gameService.createGame(req.user.id, type);
+      //   return res.redirect(`/${gameType.toLowerCase()}/${gameId}`)
+      // }
     } catch(e) {
       next(e)
     }

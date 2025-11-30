@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import prisma from '../prisma/prismaClient.ts'
 import { ApiError } from '../exceptions/api-error.ts'
-import type { User, RefreshToken } from '../types/scheme'
+import type { User, RefreshToken } from '../types/scheme.ts'
 
 export const tokenService = {
   generate(user: User) {

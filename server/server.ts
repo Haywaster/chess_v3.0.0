@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import express from 'express';
 import router from './router'
-import errorMiddleware from './middlewares/error-middleware'
+import errorMiddleware from './middlewares/errorMiddleware.ts'
 import http from 'http';
 import dotenv from 'dotenv'
 import cors from 'cors'
