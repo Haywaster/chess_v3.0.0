@@ -23,7 +23,7 @@ export const Checkers: FC = () => {
   const game = useGame()
   const username = useUsername()
 
-  useWebSocketConnection(import.meta.env.VITE_WS_SERVER_URL)
+  useWebSocketConnection('/ws')
   useGameInfo(GameType.CHECKERS)
 
   return (

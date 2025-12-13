@@ -1,18 +1,9 @@
-import type {
-  EnumValues,
-  TRouterPath,
-  WebsocketDataConstructor
-} from 'shared/types'
+import type { EnumValues, WebsocketDataConstructor } from 'shared/types'
 
 import type { GameType, GameStatus } from '../const'
 
 export type TGameType = EnumValues<typeof GameType>
 type TGameStatus = EnumValues<typeof GameStatus>
-
-export interface IGameIntroduction {
-  title: string
-  route: TRouterPath
-}
 
 export interface IGame {
   id: string

@@ -1,6 +1,6 @@
 export const GameType = {
-  CHECKERS: 'checkers',
-  CHESS: 'chess'
+  CHECKERS: 'CHECKERS',
+  CHESS: 'CHESS'
 } as const
 
 export const GameStatus = {

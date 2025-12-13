@@ -1,5 +1,4 @@
-import { userService } from 'entities/User/service'
-
+import { authService } from '../../service'
 import { useReset } from '../../store'
 
 export const useLogoutUser = () => {
@@ -7,7 +6,7 @@ export const useLogoutUser = () => {
 
   return async () => {
     try {
-      await userService.logout()
+      await authService.logout()
       reset()
     } catch {
       // console.log(e)

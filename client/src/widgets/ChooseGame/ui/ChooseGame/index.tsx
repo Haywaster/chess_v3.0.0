@@ -1,19 +1,13 @@
-import { type FC, memo, type MouseEventHandler, useState } from 'react'
+import { type FC, memo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { useUsername } from 'entities/User'
+import { gameService, type TGameType } from 'entities/Game'
+import { useIsAuth, useUsername } from 'entities/User'
 import { LoginForm } from 'features/auth/login'
 import { VideoLinks } from 'features/chooseVideoLink'
-import { RouterPath } from 'shared/const/router'
-import { type TRouterPath } from 'shared/types'
-import { Flex } from 'shared/ui'
+import { Button, CopyButton, Flex, Modal } from 'shared/ui'
 
 import { games } from '../../const'
-import { WelcomeModal } from '../WelcomeModal'
-
-const RADIX = 16
-const SLICE = 2
-
-const uniqGameId = Math.random().toString(RADIX).slice(SLICE)
 
 interface IProps {
   onError: () => void
@@ -22,38 +16,44 @@ interface IProps {
 export const ChooseGame: FC<IProps> = memo(props => {
   const { onError } = props
 
-  const globalUsername = useUsername()
+  const isAuth = useIsAuth()
+  const username = useUsername()
+  const navigate = useNavigate()
 
-  const [modalLink, setModalLink] = useState<TRouterPath | null>(null)
+  const [checkedGame, setCheckedGame] = useState<TGameType | null>(null)
 
-  const gameClickHandler: MouseEventHandler<HTMLAnchorElement> = e => {
-    if (globalUsername === '') {
-      e.preventDefault()
+  const gameClickHandler = (game: TGameType): void => {
+    if (!isAuth) {
       onError()
-      return
+    } else {
+      setCheckedGame(game)
     }
-    const candidateLink = e.currentTarget.pathname as TRouterPath
-    setModalLink(candidateLink)
-    e.preventDefault()
   }
 
-  const closeModal = (): void => setModalLink(null)
-  const uniqueGameLink = modalLink
-    ? `${modalLink}/${uniqGameId}`
-    : RouterPath.HOME
-  const game = games.find(game => game.route === modalLink)?.title
+  const closeModal = (): void => setCheckedGame(null)
+  const createGame = async (): Promise<void> => {
+    if (checkedGame) {
+      const { data: gameId } = await gameService.createGame(checkedGame)
+      navigate(`/${checkedGame.toLowerCase()}/${gameId}`, { replace: true })
+    }
+  }
 
   return (
     <Flex direction="column">
       <LoginForm />
       <VideoLinks videoLinks={games} onClick={gameClickHandler} />
-      <WelcomeModal
-        game={game}
-        isOpen={!!modalLink}
-        uniqueGameLink={uniqueGameLink}
-        username={globalUsername}
-        onClose={closeModal}
-      />
+      <Modal isOpen={!!checkedGame} onClose={closeModal}>
+        <h3>Hello, {username}!</h3>
+        <p>
+          Do you really want to play <b>{checkedGame}</b>?
+        </p>
+        <Flex>
+          <Button size="sm" onClick={createGame}>
+            Go!
+          </Button>
+          <CopyButton copy={checkedGame ?? ''} />
+        </Flex>
+      </Modal>
     </Flex>
   )
 })

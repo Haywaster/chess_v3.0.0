@@ -10,10 +10,10 @@ export const gameController: IGameController = {
     try {
       const { type } = req.body
 
-      // if (type && req.user) {
-      //   const { gameType, gameId } = await gameService.createGame(req.user.id, type);
-      //   return res.redirect(`/${gameType.toLowerCase()}/${gameId}`)
-      // }
+      if (type && req.user) {
+        const { gameId } = await gameService.createGame(req.user.id, type);
+        return res.json(gameId)
+      }
     } catch(e) {
       next(e)
     }

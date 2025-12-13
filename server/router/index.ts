@@ -19,6 +19,6 @@ router.post('/login', userController.login)
 router.get('/refresh', userController.refresh)
 router.get('/users', authMiddleware, userController.getAllUsers)
 router.post('/logout', authMiddleware, userController.logout)
-router.post('/createGame', authMiddleware, gameController.createGame)
+router.post('/game', authMiddleware, gameController.createGame)
 
 export default router;

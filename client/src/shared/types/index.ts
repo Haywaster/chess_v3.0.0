@@ -1,4 +1,3 @@
-import type { RouterPath } from 'shared/const/router'
 import { type WebSocketStatus } from 'shared/const/statuses.ts'
 import type { Themes } from 'shared/const/themes'
 
@@ -18,6 +17,5 @@ export type MessageListener = <T, D>(
   message: WebsocketDataConstructor<T, D>
 ) => void
 export type TWebSocketStatus = EnumValues<typeof WebSocketStatus>
-export type TRouterPath = EnumValues<typeof RouterPath>
 export type Theme = EnumValues<typeof Themes>
 export type TimeUnits = 'MS' | 'SECOND' | 'MINUTE' | 'HOUR' | 'DAY'

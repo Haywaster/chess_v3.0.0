@@ -1,11 +1,11 @@
-import { userService } from '../../service'
+import { authService } from '../../service'
 import { useSetUserData } from '../../store'
 
 export const useRegistrationUser = () => {
   const setUsername = useSetUserData()
 
   return async (username: string, password: string) => {
-    const { data } = await userService.registration(username, password)
+    const { data } = await authService.registration(username, password)
     setUsername({
       username: data.user,
       token: data.accessToken,

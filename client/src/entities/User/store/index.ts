@@ -3,5 +3,6 @@ export {
   useSetUserData,
   useIsAuth,
   useToken,
+  useUserStore,
   useReset
 } from './useUserStore'

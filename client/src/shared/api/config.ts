@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-import { useUserStore } from 'entities/User/store/useUserStore.ts'
-import { StatusCodes } from 'shared/const/statuses.ts'
+import { useUserStore } from 'entities/User'
+import { StatusCodes } from 'shared/const/statuses'
 
-import { BASE_URL, instance } from './instance.ts'
+import { instance } from './instance.ts'
 
 instance.interceptors.request.use(
   config => {
@@ -31,16 +31,14 @@ instance.interceptors.response.use(
     ) {
       originalRequest._isRetry = true
       try {
-        const { data } = await axios(`${BASE_URL}/refresh`, {
+        const { data } = await axios('/refresh', {
           withCredentials: true
         })
-        useUserStore
-          .getState()
-          .setUserData({
-            token: data.accessToken,
-            isAuth: true,
-            username: data.user
-          })
+        useUserStore.getState().setUserData({
+          token: data.accessToken,
+          isAuth: true,
+          username: data.user
+        })
         return instance.request(originalRequest)
       } catch {
         useUserStore

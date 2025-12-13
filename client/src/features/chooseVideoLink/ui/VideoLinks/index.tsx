@@ -1,10 +1,9 @@
 import { type FC, memo } from 'react'
-import { type LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { type TGameType } from 'entities/Game'
 import { Flex } from 'shared/ui/Flex'
 
-import { type IVideoLink } from '../../model'
 import { VideoLink } from '../VideoLink'
 
 const Container = styled(Flex)`
@@ -12,8 +11,8 @@ const Container = styled(Flex)`
 `
 
 interface IProps {
-  videoLinks: IVideoLink[]
-  onClick: LinkProps['onClick']
+  videoLinks: TGameType[]
+  onClick: (game: TGameType) => void
 }
 
 export const VideoLinks: FC<IProps> = memo(props => {
@@ -22,7 +21,7 @@ export const VideoLinks: FC<IProps> = memo(props => {
   return (
     <Container as="nav">
       {videoLinks.map(item => (
-        <VideoLink key={item.route} videoLink={item} onClick={onClick} />
+        <VideoLink key={item} game={item} onClick={onClick} />
       ))}
     </Container>
   )

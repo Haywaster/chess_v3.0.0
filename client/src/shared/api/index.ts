@@ -1,1 +1,1 @@
-export { BASE_URL, instance } from './instance'
+export { instance } from './instance'

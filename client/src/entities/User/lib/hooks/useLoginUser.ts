@@ -1,12 +1,11 @@
-import { userService } from 'entities/User/service'
-
+import { authService } from '../../service'
 import { useSetUserData } from '../../store'
 
 export const useLoginUser = () => {
   const setUsername = useSetUserData()
 
   return async (username: string, password: string) => {
-    const { data } = await userService.login(username, password)
+    const { data } = await authService.login(username, password)
     setUsername({
       username: data.user,
       token: data.accessToken,

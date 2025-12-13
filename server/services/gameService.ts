@@ -6,92 +6,60 @@ const gameTypes = {
   CHESS: 'CHESS',
 } as const
 
+const errors = {
+  INCORRECT_GAME: 'INCORRECT_GAME',
+}
+
 export const gameService = {
   async createGame(userId: number, type: string) {
-    // if (!(type in gameTypes)) {
-    //   throw ApiError.BadRequest('Тип игры указан неверно')
-    // }
-    //
-    // const { name: gameType } = await prisma.gameType.upsert({
-    //   where: { name: type },
-    //   update: {},
-    //   create: { name: type }
-    // });
-    //
-    // const createGameObj = {
-    //   data: {
-    //     type: gameType,
-    //     status: 'waiting',
-    //     playerGames: {
-    //       create: [
-    //         {
-    //           userId,
-    //           figureColor: 'white'
-    //         },
-    //       ]
-    //     },
-    //     checkersGame: {
-    //       create: {
-    //         lastMove: 'white',
-    //         figures: '[]'
-    //       }
-    //     }
-    //   },
-    //   include: {
-    //     playerGames: {
-    //       include: {
-    //         user: {
-    //           select: {
-    //             id: true,
-    //             login: true
-    //           }
-    //         }
-    //       }
-    //     },
-    //     checkersGame: true,
-    //     gameType: true
-    //   }
-    // }
-    //
-    // if (gameType === gameTypes.CHESS) {
-    //
-    // }
-    //
-    // const data = await prisma.game.create({
-    //   data: {
-    //     type: gameType,
-    //     status: 'waiting',
-    //     playerGames: {
-    //       create: [
-    //         {
-    //           userId,
-    //           figureColor: 'white'
-    //         },
-    //       ]
-    //     },
-    //     checkersGame: {
-    //       create: {
-    //         lastMove: 'white',
-    //         figures: '[]'
-    //       }
-    //     }
-    //   },
-    //   include: {
-    //     playerGames: {
-    //       include: {
-    //         user: {
-    //           select: {
-    //             id: true,
-    //             login: true
-    //           }
-    //         }
-    //       }
-    //     },
-    //     checkersGame: true,
-    //     gameType: true
-    //   }
-    // });
-    //
-    // return { gameId: data.id, gameType: type }
+    if (!(type in gameTypes)) {
+      throw ApiError.BadRequest('Тип игры указан неверно', errors.INCORRECT_GAME)
+    }
+
+    const { id: gameTypeId } = await prisma.gameType.upsert({
+      where: { name: type },
+      update: {},
+      create: { name: type, minPlayers: 2, maxPlayers: 2 },
+    });
+
+    const data = await prisma.game.create({
+      data: {
+        gameTypeId,
+        status: 'waiting',
+        participants: {
+          create: [
+            {
+              playerId: userId,
+              colorParticipant: {
+                create: {
+                  color: 'white'
+                }
+              }
+            },
+          ]
+        },
+        checkersGame: {
+          create: {
+            currentTurn: 'white',
+          }
+        }
+      },
+      include: {
+        participants: {
+          include: {
+            player: {
+              select: {
+                id: true,
+                login: true
+              }
+            }
+          }
+        },
+        checkersGame: true,
+        gameType: true
+      }
+    });
+
+    return { gameId: data.id, gameType: type }
   }
 }

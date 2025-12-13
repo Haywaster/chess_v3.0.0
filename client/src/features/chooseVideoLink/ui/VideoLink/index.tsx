@@ -1,14 +1,14 @@
 import { type FC, memo } from 'react'
-import { Link, type LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { type IVideoLink } from '../../model'
+import { type TGameType } from 'entities/Game'
 
-interface IProps extends Omit<LinkProps, 'to'> {
-  videoLink: IVideoLink
+interface IProps {
+  game: TGameType
+  onClick: (game: TGameType) => void
 }
 
-const StyledLink = styled(Link)`
+const Wrapper = styled('div')`
   position: relative;
   display: flex;
   justify-content: center;
@@ -17,6 +17,7 @@ const StyledLink = styled(Link)`
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-decoration: none;
+  cursor: pointer;
 
   &:before {
     content: '';
@@ -59,23 +60,25 @@ const StyledParagraph = styled.h3`
 const videoElements = [StyledVideoBg, StyledVideoMain]
 
 export const VideoLink: FC<IProps> = memo(props => {
-  const { videoLink, ...linkProps } = props
+  const { game, onClick } = props
 
-  const { title, route } = videoLink
+  const clickHandler = (): void => {
+    onClick(game)
+  }
 
   return (
-    <StyledLink to={route} {...linkProps}>
+    <Wrapper onClick={clickHandler}>
       {videoElements.map((VideoItem, index) => (
         <VideoItem
           key={index}
           autoPlay
           loop
           muted
-          src={`${title}.webm`}
+          src={`${game.toLowerCase()}.webm`}
           typeof="video/webp"
         />
       ))}
-      <StyledParagraph>{title}</StyledParagraph>
-    </StyledLink>
+      <StyledParagraph>{game}</StyledParagraph>
+    </Wrapper>
   )
 })
