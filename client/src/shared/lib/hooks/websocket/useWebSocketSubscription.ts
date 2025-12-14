@@ -15,7 +15,7 @@ export const useWebSocketSubscription = <
   callback: (message: T) => void
 ): void => {
   const subscribe = useWsSubscribe()
-
+  console.log(messageType)
   useEffect(() => {
     return subscribe(messageType as string, message => callback(message as T))
   }, [callback, messageType, subscribe])

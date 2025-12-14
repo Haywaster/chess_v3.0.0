@@ -60,6 +60,7 @@ export const useWebsocketStore = create<State & Action>((set, get) => ({
 
       try {
         const message = JSON.parse(event.data) as WebsocketDataConstructor
+
         if (message.type in listeners) {
           listeners[message.type].forEach(callback => callback(message))
         }

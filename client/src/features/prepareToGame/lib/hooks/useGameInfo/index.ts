@@ -26,7 +26,7 @@ export const useGameInfo = (gameType: TGameType): void => {
   useInitialEffect(() => () => setGame(null))
 
   useWebSocketSubscription<CreateGameResponseWebsocket>(
-    'CREATE_GAME',
+    'JOIN_GAME',
     newGameInfo => {
       setGame(newGameInfo.data)
     }
@@ -39,7 +39,7 @@ export const useGameInfo = (gameType: TGameType): void => {
         id: gameId
       }
       const gameInfo: CreateGameRequestWebsocket = {
-        type: 'CREATE_GAME',
+        type: 'JOIN_GAME',
         data: { username, game }
       }
       sendMessage(gameInfo)

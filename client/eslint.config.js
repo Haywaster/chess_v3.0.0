@@ -18,7 +18,7 @@ export default tsEslint.config(
       eslintConfigPrettier,
       importPlugin.flatConfigs.recommended
     ],
-    files: ['**/*.{ts,tsx}'],
+    files: ['client/**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

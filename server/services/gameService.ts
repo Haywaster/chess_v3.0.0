@@ -1,9 +1,15 @@
 import prisma from '../prisma/prismaClient.ts'
 import { ApiError } from '../exceptions/api-error.ts'
 
-const gameTypes = {
+export const GameType = {
   CHECKERS: 'CHECKERS',
-  CHESS: 'CHESS',
+  CHESS: 'CHESS'
+} as const
+
+export const GameStatus = {
+  PENDING: 'pending',
+  PLAYING: 'playing',
+  FINISHED: 'finished'
 } as const
 
 const errors = {
@@ -12,7 +18,7 @@ const errors = {
 
 export const gameService = {
   async createGame(userId: number, type: string) {
-    if (!(type in gameTypes)) {
+    if (!(type in GameType)) {
       throw ApiError.BadRequest('Тип игры указан неверно', errors.INCORRECT_GAME)
     }
 
@@ -25,7 +31,7 @@ export const gameService = {
     const data = await prisma.game.create({
       data: {
         gameTypeId,
-        status: 'waiting',
+        status: GameStatus.PENDING,
         participants: {
           create: [
             {

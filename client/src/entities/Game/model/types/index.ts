@@ -17,10 +17,10 @@ export interface ICreateGameData {
 }
 
 export type CreateGameRequestWebsocket = WebsocketDataConstructor<
-  'CREATE_GAME',
+  'JOIN_GAME',
   ICreateGameData
 >
 export type CreateGameResponseWebsocket = WebsocketDataConstructor<
-  'CREATE_GAME',
+  'JOIN_GAME',
   IGame
 >
