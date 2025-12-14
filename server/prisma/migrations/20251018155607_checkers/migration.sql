@@ -1,0 +1,31 @@
+-- CreateTable
+CREATE TABLE "Game" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "status" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "PlayerGame" (
+    "userId" INTEGER NOT NULL,
+    "gameId" INTEGER NOT NULL,
+    "figureColor" TEXT NOT NULL,
+
+    PRIMARY KEY ("userId", "gameId"),
+    CONSTRAINT "PlayerGame_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "PlayerGame_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "Game" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "CheckersGame" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "lastMove" TEXT NOT NULL,
+    "figures" TEXT NOT NULL,
+    CONSTRAINT "CheckersGame_id_fkey" FOREIGN KEY ("id") REFERENCES "Game" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "ChessGame" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    CONSTRAINT "ChessGame_id_fkey" FOREIGN KEY ("id") REFERENCES "Game" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

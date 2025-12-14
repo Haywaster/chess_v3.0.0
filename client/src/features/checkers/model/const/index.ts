@@ -1,0 +1,27 @@
+import { BOARD_SIZE } from 'shared/const/numbers'
+
+import { createBoard } from '../../lib'
+import { type Rules } from '../types'
+
+export const RENDER_DURATION = 50
+
+export const initialCells = createBoard()
+
+const borders = [1, BOARD_SIZE]
+export const boardCellsIds = Object.values(initialCells.cells)
+  .filter(cell => borders.includes(cell.x) || borders.includes(cell.y))
+  .map(cell => cell.id)
+
+export const ruleTitles: Record<Rules, string> = {
+  behindKill: 'Рубить назад',
+  killMaxFigure: 'Рубить фигуры по-максимуму',
+  requireKill: 'Рубить обязательно',
+  stopAfterKill: 'Остановить дамку после срубленной фигуры'
+}
+
+export const ruleDefaults: Record<Rules, boolean> = {
+  behindKill: true,
+  killMaxFigure: false,
+  requireKill: true,
+  stopAfterKill: false
+}
