@@ -1,24 +1,26 @@
+/* eslint-disable no-console */
+
 import { type FC, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import {
-  JoinGameRequestWebsocket,
-  JoinGameResponseWebsocket,
+  type JoinGameRequestWebsocket,
+  type JoinGameResponseWebsocket,
   GameType,
-  IJoinGameData,
+  type IJoinGameData,
   useGame,
   useSetGame,
-  ErrorResponseWebsocket
+  type ErrorResponseWebsocket
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
 import { CheckersRulesModal } from 'features/checkers'
 import { UsernameModal } from 'features/prepareToGame'
+import type { id as TId } from 'shared/const/router'
+import { useSetWs } from 'shared/store'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
-import { useSetWs } from 'shared/store'
-import { useParams } from 'react-router-dom'
-import type { id as TId } from 'shared/const/router'
 
 const CenteredBoard = styled(Board)`
   margin: 0 auto;
@@ -80,7 +82,7 @@ export const Checkers: FC = () => {
       wss.close()
       setWs(null)
     }
-  }, [id, username])
+  }, [id, setGame, setWs, username])
 
   return (
     <>

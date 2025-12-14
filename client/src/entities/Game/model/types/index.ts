@@ -1,7 +1,7 @@
 import {
-  EnumValues,
-  WebsocketDataConstructor,
-  WebsocketErrorConstructor
+  type EnumValues,
+  type WebsocketDataConstructor,
+  type WebsocketErrorConstructor
 } from 'shared/types'
 
 import type { GameType, GameStatus } from '../const'
