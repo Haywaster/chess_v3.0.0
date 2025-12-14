@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: parseInt(envAppFile.VITE_CLIENT_PORT),
       proxy: {
-        '/api': envAppFile.VITE_SERVER_URL,
-        '/ws': envAppFile.VITE_WS_SERVER_URL
+        '/api': envAppFile.VITE_SERVER_URL || 'http://localhost:5000',
+        '/ws': envAppFile.VITE_WS_SERVER_URL || 'ws://localhost:5000'
       }
     },
     envDir

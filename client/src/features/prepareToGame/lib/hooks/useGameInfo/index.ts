@@ -4,21 +4,18 @@ import { useParams } from 'react-router-dom'
 import {
   type CreateGameRequestWebsocket,
   type CreateGameResponseWebsocket,
-  GameStatus,
-  type IGame,
+  type ICreateGameData,
   type TGameType,
-  useGame,
   useSetGame
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
-import { type id } from 'shared/const/router'
+import { type id } from 'shared/const/router.ts'
 import { WebSocketStatus } from 'shared/const/statuses.ts'
 import { useInitialEffect, useWebSocketSubscription } from 'shared/lib'
 import { useSendWsMessage, useWsStatus } from 'shared/store'
 
 // Установка слежки за игрой
 export const useGameInfo = (gameType: TGameType): void => {
-  const game = useGame()
   const setGame = useSetGame()
   const sendMessage = useSendWsMessage()
   const wsStatus = useWsStatus()
@@ -26,39 +23,26 @@ export const useGameInfo = (gameType: TGameType): void => {
 
   const { id: gameId } = useParams<typeof id>()
 
-  useInitialEffect(() => {
-    if (!game && gameId) {
-      const newGame: IGame = {
-        type: gameType,
-        id: gameId,
-        status: GameStatus.PENDING
-      }
-      setGame(newGame)
-    }
-
-    return () => setGame(null)
-  })
+  useInitialEffect(() => () => setGame(null))
 
   useWebSocketSubscription<CreateGameResponseWebsocket>(
-    'createGame',
+    'CREATE_GAME',
     newGameInfo => {
-      if (game?.status === GameStatus.PENDING) {
-        setGame(newGameInfo.data)
-      }
+      setGame(newGameInfo.data)
     }
   )
 
   useEffect(() => {
-    if (
-      wsStatus === WebSocketStatus.OPEN &&
-      game?.status === GameStatus.PENDING &&
-      username
-    ) {
+    if (wsStatus === WebSocketStatus.OPEN && username && gameId) {
+      const game: ICreateGameData['game'] = {
+        type: gameType,
+        id: gameId
+      }
       const gameInfo: CreateGameRequestWebsocket = {
-        type: 'createGame',
-        data: { game, username }
+        type: 'CREATE_GAME',
+        data: { username, game }
       }
       sendMessage(gameInfo)
     }
-  }, [game, sendMessage, username, wsStatus])
+  }, [gameId, gameType, sendMessage, username, wsStatus])
 }
