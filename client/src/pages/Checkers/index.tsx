@@ -1,15 +1,24 @@
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { GameType, useGame } from 'entities/Game'
+import {
+  JoinGameRequestWebsocket,
+  JoinGameResponseWebsocket,
+  GameType,
+  IJoinGameData,
+  useGame,
+  useSetGame,
+  ErrorResponseWebsocket
+} from 'entities/Game'
 import { useUsername } from 'entities/User'
 import { CheckersRulesModal } from 'features/checkers'
 import { UsernameModal } from 'features/prepareToGame'
-import { useGameInfo } from 'features/prepareToGame/lib'
-import { useWebSocketConnection } from 'shared/lib'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
+import { useSetWs } from 'shared/store'
+import { useParams } from 'react-router-dom'
+import type { id as TId } from 'shared/const/router'
 
 const CenteredBoard = styled(Board)`
   margin: 0 auto;
@@ -21,10 +30,57 @@ const StyledMain = styled.main`
 
 export const Checkers: FC = () => {
   const game = useGame()
+  const setGame = useSetGame()
   const username = useUsername()
+  const setWs = useSetWs()
 
-  useWebSocketConnection('/ws')
-  useGameInfo(GameType.CHECKERS)
+  const { id } = useParams<typeof TId>()
+
+  useEffect(() => {
+    const wss = new WebSocket('/ws')
+    setWs(wss)
+
+    if (!id || !username) {
+      return
+    }
+
+    const game: IJoinGameData = {
+      username,
+      game: { type: GameType.CHECKERS, id }
+    }
+
+    const joinGameData: JoinGameRequestWebsocket = {
+      data: game,
+      type: 'JOIN_GAME'
+    }
+
+    wss.onopen = () => {
+      wss.send(JSON.stringify(joinGameData))
+    }
+
+    wss.onmessage = (event: MessageEvent<string>) => {
+      const { data: stringData } = event
+      const data = JSON.parse(stringData) as
+        | JoinGameResponseWebsocket
+        | ErrorResponseWebsocket
+
+      switch (data.type) {
+        case 'JOIN_GAME':
+          setGame(data.data)
+          break
+        case 'ERROR':
+          console.error('WebSocket server error:', data.error)
+          break
+        default:
+          console.error('Unknown message type')
+      }
+    }
+
+    return () => {
+      wss.close()
+      setWs(null)
+    }
+  }, [id, username])
 
   return (
     <>

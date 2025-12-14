@@ -6,7 +6,6 @@ import { GameStatus, GameType } from '../services/gameService.ts'
 const ActionType = {
   JOIN_GAME: 'JOIN_GAME',
   MOVE: 'MOVE',
-  RESIGN: 'RESIGN',
 } as const
 
 type EnumValues<
@@ -19,6 +18,7 @@ type TGameStatus = EnumValues<typeof GameStatus>
 interface IGame {
   id: string
   type: TGameType
+  status: TGameStatus
 }
 
 interface IJoinGameData {
@@ -89,6 +89,11 @@ class GameWebSocketService {
     const { game, username } = message;
     const { id: gameId } = game;
     
+    const joinUserInGame = (client: WebSocket, status: TGameStatus) => {
+      const data: IGame = {  ...game, status }
+      client.send(JSON.stringify({ type: ActionType.JOIN_GAME, data }));
+    }
+    
     const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
 
     if (!gameInDB) {
@@ -109,13 +114,15 @@ class GameWebSocketService {
     
     if (gameInDB.status === GameStatus.PENDING) {
       if (currentUser) {
-        ws.send(JSON.stringify({ type: 'GAME_CREATED', data: { status: GameStatus.PENDING } }));
+        joinUserInGame(ws, GameStatus.PENDING);
       } else {
+        await prisma.gameParticipant.create({ data: { gameId, playerId: user.id } })
+        await prisma.game.update({ where: { id: gameId }, data: { status: GameStatus.PLAYING } })
         const otherPlayer = await prisma.gameParticipant.findMany({ where: { gameId } })
         
         this.wss.clients.forEach((client) => {
-          if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: 'GAME_CREATED', data: { status: GameStatus.PLAYING } }));
+          if (client.readyState === WebSocket.OPEN) {
+            joinUserInGame(client, GameStatus.PLAYING);
           }
         })
         // otherPlayer.forEach(player => {
@@ -125,8 +132,6 @@ class GameWebSocketService {
         //     }
         //   }
         // })
-        await prisma.gameParticipant.create({ data: { gameId, playerId: user.id } })
-        ws.send(JSON.stringify({ type: 'GAME_CREATED', data: { status: GameStatus.PLAYING } }));
       }
     }
   }

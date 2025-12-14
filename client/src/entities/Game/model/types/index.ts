@@ -1,4 +1,8 @@
-import type { EnumValues, WebsocketDataConstructor } from 'shared/types'
+import {
+  EnumValues,
+  WebsocketDataConstructor,
+  WebsocketErrorConstructor
+} from 'shared/types'
 
 import type { GameType, GameStatus } from '../const'
 
@@ -11,16 +15,17 @@ export interface IGame {
   status: TGameStatus
 }
 
-export interface ICreateGameData {
+export interface IJoinGameData {
   username: string
   game: Omit<IGame, 'status'>
 }
 
-export type CreateGameRequestWebsocket = WebsocketDataConstructor<
+export type JoinGameRequestWebsocket = WebsocketDataConstructor<
   'JOIN_GAME',
-  ICreateGameData
+  IJoinGameData
 >
-export type CreateGameResponseWebsocket = WebsocketDataConstructor<
+export type JoinGameResponseWebsocket = WebsocketDataConstructor<
   'JOIN_GAME',
   IGame
 >
+export type ErrorResponseWebsocket = WebsocketErrorConstructor<'ERROR', string>
