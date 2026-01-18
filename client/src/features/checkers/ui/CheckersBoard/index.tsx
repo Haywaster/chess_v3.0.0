@@ -4,7 +4,7 @@ import { type IFigure } from 'entities/Figure'
 
 import { useCellClick, useFigureClick } from '../../lib'
 import { type IBoard } from '../../model'
-import { useCheckers } from '../../store'
+import { useCheckersStore } from '../../store'
 import { CheckersCell } from '../CheckersCell'
 
 const getFigure = (
@@ -17,8 +17,8 @@ const getFigure = (
 }
 
 export const CheckersBoard: FC = memo(() => {
-  const cells = useCheckers(state => state.cells)
-  const figures = useCheckers(state => state.figures)
+  const cells = useCheckersStore(state => state.cells)
+  const figures = useCheckersStore(state => state.figures)
 
   const onFigureClick = useFigureClick()
   const onCellClick = useCellClick()

@@ -3,18 +3,18 @@ import { useCallback } from 'react'
 import type { IFigure } from 'entities/Figure'
 import { useGame } from 'entities/Game'
 
-import { useCheckers } from '../../../store'
+import { useCheckersStore } from '../../../store'
 import { useGetVariants } from '../useGetVariants'
 
 export const useFigureClick = (): ((id: IFigure['id']) => void) => {
-  const figures = useCheckers(state => state.figures)
-  const activeFigure = useCheckers(state => state.activeFigure)
-  const animatedFigure = useCheckers(state => state.animatedFigure)
-  const stepColor = useCheckers(state => state.stepColor)
-  const requiredFigures = useCheckers(state => state.requiredFigures)
-  const setActiveFigure = useCheckers(state => state.setActiveFigure)
-  const setCellsForMoving = useCheckers(state => state.setCellsForMoving)
-  const setKillingVariants = useCheckers(state => state.setKillingVariants)
+  const figures = useCheckersStore(state => state.figures)
+  const activeFigure = useCheckersStore(state => state.activeFigure)
+  const animatedFigure = useCheckersStore(state => state.animatedFigure)
+  const stepColor = useCheckersStore(state => state.stepColor)
+  const requiredFigures = useCheckersStore(state => state.requiredFigures)
+  const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
+  const setCellsForMoving = useCheckersStore(state => state.setCellsForMoving)
+  const setKillingVariants = useCheckersStore(state => state.setKillingVariants)
   const game = useGame()
 
   const getVariants = useGetVariants()

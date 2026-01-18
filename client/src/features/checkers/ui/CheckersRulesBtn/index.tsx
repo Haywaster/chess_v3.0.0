@@ -2,10 +2,10 @@ import { type FC } from 'react'
 
 import { Button } from 'shared/ui/Button'
 
-import { useCheckers } from '../../store'
+import { useCheckersStore } from '../../store'
 
 export const CheckersRulesBtn: FC = () => {
-  const toggleRulesModal = useCheckers(state => state.toggleRulesModal)
+  const toggleRulesModal = useCheckersStore(state => state.toggleRulesModal)
 
   return (
     <Button size="sm" onClick={toggleRulesModal}>

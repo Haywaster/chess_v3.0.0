@@ -5,22 +5,22 @@ import { useGame } from 'entities/Game'
 import { useWs } from 'shared/store'
 
 import { type IBoard, type MoveFigureRequestWebsocket } from '../../../model'
-import { useCheckers } from '../../../store'
+import { useCheckersStore } from '../../../store'
 import { useGetRequiredFigures } from '../useGetRequiredFigures'
 import { useMoveFigure } from '../useMoveFigure'
 
 export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
-  const cells = useCheckers(state => state.cells)
-  const figures = useCheckers(state => state.figures)
-  const activeFigure = useCheckers(state => state.activeFigure)
-  const killingVariants = useCheckers(state => state.killingVariants)
-  const stepColor = useCheckers(state => state.stepColor)
-  const rules = useCheckers(state => state.rules)
-  const setActiveFigure = useCheckers(state => state.setActiveFigure)
-  const setKillingFigure = useCheckers(state => state.setKillingFigure)
-  const killFigure = useCheckers(state => state.killFigure)
-  const setStepColor = useCheckers(state => state.setStepColor)
-  const setRequiredFigures = useCheckers(state => state.setRequiredFigures)
+  const cells = useCheckersStore(state => state.cells)
+  const figures = useCheckersStore(state => state.figures)
+  const activeFigure = useCheckersStore(state => state.activeFigure)
+  const killingVariants = useCheckersStore(state => state.killingVariants)
+  const stepColor = useCheckersStore(state => state.stepColor)
+  const rules = useCheckersStore(state => state.rules)
+  const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
+  const setKillingFigure = useCheckersStore(state => state.setKillingFigure)
+  const killFigure = useCheckersStore(state => state.killFigure)
+  const setStepColor = useCheckersStore(state => state.setStepColor)
+  const setRequiredFigures = useCheckersStore(state => state.setRequiredFigures)
   const game = useGame()
   const ws = useWs()
 
@@ -98,8 +98,8 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
         }
 
         if (rules.requireKill) {
-          const cells = useCheckers.getState().cells
-          const figures = useCheckers.getState().figures
+          const cells = useCheckersStore.getState().cells
+          const figures = useCheckersStore.getState().figures
           const board: IBoard = { cells, figures }
 
           getRequiredFigures(board)

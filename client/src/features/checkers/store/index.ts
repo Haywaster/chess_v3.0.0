@@ -1,1 +1,5 @@
-export { useCheckers } from './useCheckers'
+export {
+  useCheckersStore,
+  useMoveFigure,
+  useSetAnimatedFigure
+} from './useCheckersStore'

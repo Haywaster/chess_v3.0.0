@@ -1,13 +1,13 @@
 import type { IFigure } from 'entities/Figure'
 
 import { type IBoard } from '../../../model'
-import { useCheckers } from '../../../store'
+import { useCheckersStore } from '../../../store'
 import { getKillVariants } from '../../utils'
 
 export const useGetRequiredFigures = (): ((board: IBoard) => void) => {
-  const stepColor = useCheckers(state => state.stepColor)
-  const rules = useCheckers(state => state.rules)
-  const setRequiredFigures = useCheckers(state => state.setRequiredFigures)
+  const stepColor = useCheckersStore(state => state.stepColor)
+  const rules = useCheckersStore(state => state.rules)
+  const setRequiredFigures = useCheckersStore(state => state.setRequiredFigures)
 
   return (board: IBoard) => {
     const enemyFigures = Object.values(board.figures).filter(
@@ -16,7 +16,7 @@ export const useGetRequiredFigures = (): ((board: IBoard) => void) => {
     const requiredFigures: IFigure['id'][] = []
 
     enemyFigures.forEach(figure => {
-      for (const cell of Object.values(useCheckers.getState().cells)) {
+      for (const cell of Object.values(useCheckersStore.getState().cells)) {
         const diagonalCondition =
           Math.abs(cell.x - figure.x) === Math.abs(cell.y - figure.y)
 

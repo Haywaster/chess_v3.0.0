@@ -64,7 +64,7 @@ const initialState: State = {
   stepColor: 'white'
 }
 
-export const useCheckers = create<State & Action>(set => ({
+export const useCheckersStore = create<State & Action>(set => ({
   ...initialState,
   changeRule: (rule, value) =>
     set(state => ({ rules: { ...state.rules, [rule]: value } })),
@@ -92,3 +92,8 @@ export const useCheckers = create<State & Action>(set => ({
     })
   }
 }))
+
+export const useMoveFigure = (): Action['moveFigure'] =>
+  useCheckersStore(state => state.moveFigure)
+export const useSetAnimatedFigure = (): Action['setAnimatedFigure'] =>
+  useCheckersStore(state => state.setAnimatedFigure)

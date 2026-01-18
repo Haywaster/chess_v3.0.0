@@ -6,7 +6,7 @@ import { Modal } from 'shared/ui/Modal'
 import { Switch } from 'shared/ui/Switch'
 
 import { type Rules, ruleTitles } from '../../model'
-import { useCheckers } from '../../store'
+import { useCheckersStore } from '../../store'
 
 const ModalStyled = styled(Modal)`
   color: var(--black);
@@ -17,10 +17,10 @@ const Container = styled(Flex)`
 `
 
 export const CheckersRulesModal: FC = () => {
-  const rules = useCheckers(state => state.rules)
-  const rulesModal = useCheckers(state => state.rulesModal)
-  const toggleRulesModal = useCheckers(state => state.toggleRulesModal)
-  const changeRule = useCheckers(state => state.changeRule)
+  const rules = useCheckersStore(state => state.rules)
+  const rulesModal = useCheckersStore(state => state.rulesModal)
+  const toggleRulesModal = useCheckersStore(state => state.toggleRulesModal)
+  const changeRule = useCheckersStore(state => state.changeRule)
 
   const changeHandler: ComponentProps<typeof Switch>['onChange'] = useCallback(
     value => {

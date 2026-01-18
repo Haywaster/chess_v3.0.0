@@ -17,7 +17,7 @@ import { useUsername } from 'entities/User'
 import {
   CheckersRulesModal,
   type MoveFigureResponseWebsocket,
-  useCheckers,
+  useCheckersStore,
   useMoveFigure
 } from 'features/checkers'
 import { UsernameModal } from 'features/prepareToGame'
@@ -42,7 +42,7 @@ export const Checkers: FC = () => {
   const ws = useWs()
   const setWs = useSetWs()
   const moveAnimate = useMoveFigure()
-  const setStepColor = useCheckers(state => state.setStepColor)
+  const setStepColor = useCheckersStore(state => state.setStepColor)
 
   const { id } = useParams<typeof TId>()
 
@@ -95,7 +95,7 @@ export const Checkers: FC = () => {
       wss.close()
       setWs(null)
     }
-  }, [id, setGame, setWs, setStepColor, username])
+  }, [id, setGame, setWs, setStepColor, username, moveAnimate])
 
   return (
     <>

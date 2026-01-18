@@ -3,7 +3,7 @@ import { type CSSProperties, type FC, memo } from 'react'
 import { Cell, type ICell } from 'entities/Cell'
 import { Figure, type IFigure } from 'entities/Figure'
 
-import { useCheckers } from '../../store'
+import { useCheckersStore } from '../../store'
 
 interface IProps {
   onCellClick: (id: ICell['id']) => void
@@ -15,12 +15,12 @@ interface IProps {
 export const CheckersCell: FC<IProps> = memo(props => {
   const { onCellClick, onFigureClick, cell, figure } = props
 
-  const activeFigure = useCheckers(state => state.activeFigure)
-  const cellsForMoving = useCheckers(state => state.cellsForMoving)
-  const killingVariants = useCheckers(state => state.killingVariants)
-  const animatedFigure = useCheckers(state => state.animatedFigure)
-  const killingFigure = useCheckers(state => state.killingFigure)
-  const requiredFigures = useCheckers(state => state.requiredFigures)
+  const activeFigure = useCheckersStore(state => state.activeFigure)
+  const cellsForMoving = useCheckersStore(state => state.cellsForMoving)
+  const killingVariants = useCheckersStore(state => state.killingVariants)
+  const animatedFigure = useCheckersStore(state => state.animatedFigure)
+  const killingFigure = useCheckersStore(state => state.killingFigure)
+  const requiredFigures = useCheckersStore(state => state.requiredFigures)
 
   const getAnimatedStyles = (id: IFigure['id']): CSSProperties | undefined => {
     if (id === animatedFigure.id) {

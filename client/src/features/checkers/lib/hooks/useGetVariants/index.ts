@@ -5,7 +5,7 @@ import type { IFigure } from 'entities/Figure'
 import { keepLargestArrays } from 'shared/lib'
 
 import { type IKillVariant, type IBoard } from '../../../model'
-import { useCheckers } from '../../../store'
+import { useCheckersStore } from '../../../store'
 import { isMoveValid, getKillVariants } from '../../utils'
 
 interface Variants {
@@ -18,10 +18,10 @@ interface UseGetVariants {
 }
 
 export const useGetVariants = (): UseGetVariants => {
-  const cells = useCheckers(state => state.cells)
-  const figures = useCheckers(state => state.figures)
-  const rules = useCheckers(state => state.rules)
-  const requiredFigures = useCheckers(state => state.requiredFigures)
+  const cells = useCheckersStore(state => state.cells)
+  const figures = useCheckersStore(state => state.figures)
+  const rules = useCheckersStore(state => state.rules)
+  const requiredFigures = useCheckersStore(state => state.requiredFigures)
 
   return useCallback(
     activeFigureId => {
