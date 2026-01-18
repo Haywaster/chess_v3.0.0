@@ -1,8 +1,10 @@
 import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
+import { useGame } from 'entities/Game'
+import { useWs } from 'shared/store'
 
-import { type IBoard } from '../../../model'
+import { type IBoard, type MoveFigureRequestWebsocket } from '../../../model'
 import { useCheckers } from '../../../store'
 import { useGetRequiredFigures } from '../useGetRequiredFigures'
 import { useMoveFigure } from '../useMoveFigure'
@@ -19,6 +21,8 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
   const killFigure = useCheckers(state => state.killFigure)
   const setStepColor = useCheckers(state => state.setStepColor)
   const setRequiredFigures = useCheckers(state => state.setRequiredFigures)
+  const game = useGame()
+  const ws = useWs()
 
   const moveAnimate = useMoveFigure()
   const getRequiredFigures = useGetRequiredFigures()
@@ -51,7 +55,23 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
             const finishCell = cells[variant.finishCellId]
 
             setKillingFigure(variant.figure)
-            await moveAnimate(startCell, finishCell)
+
+            if (ws && game?.id) {
+              const data: MoveFigureRequestWebsocket['data'] = {
+                startCell,
+                finishCell,
+                gameId: game.id
+              }
+
+              const moveData: MoveFigureRequestWebsocket = {
+                type: 'MOVE_FIGURE',
+                data
+              }
+              ws.send(JSON.stringify(moveData))
+            } else {
+              await moveAnimate(startCell, finishCell)
+            }
+
             killFigure(variant.figure)
             setKillingFigure(null)
           }
@@ -59,10 +79,23 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
           const startCell = cells[figures[activeFigure].cellId]
           const finishCell = cells[id]
 
-          await moveAnimate(startCell, finishCell)
-        }
+          if (ws && game?.id) {
+            const data: MoveFigureRequestWebsocket['data'] = {
+              startCell,
+              finishCell,
+              gameId: game.id
+            }
 
-        setStepColor(stepColor === 'white' ? 'black' : 'white')
+            const moveData: MoveFigureRequestWebsocket = {
+              type: 'MOVE_FIGURE',
+              data
+            }
+            ws.send(JSON.stringify(moveData))
+          } else {
+            await moveAnimate(startCell, finishCell)
+            setStepColor(stepColor === 'white' ? 'black' : 'white')
+          }
+        }
 
         if (rules.requireKill) {
           const cells = useCheckers.getState().cells
@@ -77,6 +110,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
       activeFigure,
       cells,
       figures,
+      game?.id,
       getRequiredFigures,
       killFigure,
       killingVariants,
@@ -86,7 +120,8 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
       setKillingFigure,
       setRequiredFigures,
       setStepColor,
-      stepColor
+      stepColor,
+      ws
     ]
   )
 }

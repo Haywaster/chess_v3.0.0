@@ -14,10 +14,15 @@ import {
   type ErrorResponseWebsocket
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
-import { CheckersRulesModal } from 'features/checkers'
+import {
+  CheckersRulesModal,
+  type MoveFigureResponseWebsocket,
+  useCheckers,
+  useMoveFigure
+} from 'features/checkers'
 import { UsernameModal } from 'features/prepareToGame'
 import type { id as TId } from 'shared/const/router'
-import { useSetWs } from 'shared/store'
+import { useSetWs, useWs } from 'shared/store'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
@@ -34,17 +39,20 @@ export const Checkers: FC = () => {
   const game = useGame()
   const setGame = useSetGame()
   const username = useUsername()
+  const ws = useWs()
   const setWs = useSetWs()
+  const moveAnimate = useMoveFigure()
+  const setStepColor = useCheckers(state => state.setStepColor)
 
   const { id } = useParams<typeof TId>()
 
   useEffect(() => {
-    const wss = new WebSocket('/ws')
-    setWs(wss)
-
     if (!id || !username) {
       return
     }
+
+    const wss = new WebSocket('/ws')
+    setWs(wss)
 
     const game: IJoinGameData = {
       username,
@@ -65,10 +73,15 @@ export const Checkers: FC = () => {
       const data = JSON.parse(stringData) as
         | JoinGameResponseWebsocket
         | ErrorResponseWebsocket
+        | MoveFigureResponseWebsocket
 
       switch (data.type) {
         case 'JOIN_GAME':
           setGame(data.data)
+          break
+        case 'MOVE_FIGURE':
+          moveAnimate(data.data.startCell, data.data.finishCell)
+          setStepColor(data.data.currentTurn)
           break
         case 'ERROR':
           console.error('WebSocket server error:', data.error)
@@ -82,11 +95,11 @@ export const Checkers: FC = () => {
       wss.close()
       setWs(null)
     }
-  }, [id, setGame, setWs, username])
+  }, [id, setGame, setWs, setStepColor, username])
 
   return (
     <>
-      {game?.status === 'pending' && username && <Loader fullScreen />}
+      {ws && game?.status === 'pending' && username && <Loader fullScreen />}
       <Header />
       <StyledMain>
         <CenteredBoard />

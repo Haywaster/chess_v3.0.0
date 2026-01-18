@@ -1,3 +1,4 @@
+import type { IFigure } from 'entities/Figure'
 import {
   type EnumValues,
   type WebsocketDataConstructor,
@@ -9,15 +10,25 @@ import type { GameType, GameStatus } from '../const'
 export type TGameType = EnumValues<typeof GameType>
 type TGameStatus = EnumValues<typeof GameStatus>
 
-export interface IGame {
+interface IBaseGame {
   id: string
-  type: TGameType
   status: TGameStatus
 }
 
+interface ICheckersUserData {
+  color: IFigure['color']
+}
+
+interface ICheckersGame extends IBaseGame {
+  type: typeof GameType.CHECKERS
+  userData: ICheckersUserData
+}
+
+export type IGame = ICheckersGame
+
 export interface IJoinGameData {
   username: string
-  game: Omit<IGame, 'status'>
+  game: Omit<IGame, 'status' | 'userData'>
 }
 
 export type JoinGameRequestWebsocket = WebsocketDataConstructor<

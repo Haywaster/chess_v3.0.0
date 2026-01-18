@@ -19,9 +19,6 @@ export interface WebsocketErrorConstructor<T, D>
   extends WebsocketConstructor<T> {
   error: D
 }
-export type MessageListener = <T, D>(
-  message: WebsocketDataConstructor<T, D>
-) => void
 export type TWebSocketStatus = EnumValues<typeof WebSocketStatus>
 export type Theme = EnumValues<typeof Themes>
 export type TimeUnits = 'MS' | 'SECOND' | 'MINUTE' | 'HOUR' | 'DAY'

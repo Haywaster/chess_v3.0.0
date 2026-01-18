@@ -3,8 +3,18 @@ import { type FC, memo } from 'react'
 import { type IFigure } from 'entities/Figure'
 
 import { useCellClick, useFigureClick } from '../../lib'
+import { type IBoard } from '../../model'
 import { useCheckers } from '../../store'
 import { CheckersCell } from '../CheckersCell'
+
+const getFigure = (
+  id: IFigure['id'] | undefined,
+  figures: IBoard['figures']
+): IFigure | undefined => {
+  if (id !== undefined) {
+    return figures[id]
+  }
+}
 
 export const CheckersBoard: FC = memo(() => {
   const cells = useCheckers(state => state.cells)
@@ -13,19 +23,13 @@ export const CheckersBoard: FC = memo(() => {
   const onFigureClick = useFigureClick()
   const onCellClick = useCellClick()
 
-  const hasFigure = (id: IFigure['id'] | undefined): IFigure | undefined => {
-    if (id !== undefined) {
-      return figures[id]
-    }
-  }
-
   return (
     <>
       {Object.values(cells).map(cell => (
         <CheckersCell
           key={cell.id}
           cell={cell}
-          figure={hasFigure(cell.figureId)}
+          figure={getFigure(cell.figureId, figures)}
           onCellClick={onCellClick}
           onFigureClick={onFigureClick}
         />

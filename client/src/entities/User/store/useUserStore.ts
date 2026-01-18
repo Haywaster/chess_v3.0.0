@@ -3,7 +3,7 @@ import { create } from 'zustand'
 interface State {
   username: string
   token: string
-  isAuth: boolean // прошла ли попытка resresh
+  isAuth: boolean // прошла ли попытка refresh
 }
 
 interface Action {

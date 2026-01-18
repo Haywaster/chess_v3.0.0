@@ -1,5 +1,7 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
+import type { IGame } from 'entities/Game'
+import type { WebsocketDataConstructor } from 'shared/types'
 
 export interface IBoard {
   cells: Record<number, ICell>
@@ -16,3 +18,16 @@ export type Rules =
   | 'behindKill'
   | 'killMaxFigure'
   | 'stopAfterKill'
+
+export interface IMoveFigure {
+  startCell: ICell
+  finishCell: ICell
+}
+export type MoveFigureRequestWebsocket = WebsocketDataConstructor<
+  'MOVE_FIGURE',
+  IMoveFigure & { gameId: IGame['id'] }
+>
+export type MoveFigureResponseWebsocket = WebsocketDataConstructor<
+  'MOVE_FIGURE',
+  IMoveFigure & { currentTurn: IFigure['color'] }
+>

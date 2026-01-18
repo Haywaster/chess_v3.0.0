@@ -16,11 +16,10 @@ interface UseMoveFigure {
 }
 
 export const useMoveFigure = (): UseMoveFigure => {
-  const activeFigure = useCheckers(state => state.activeFigure)
   const moveFigure = useCheckers(state => state.moveFigure)
   const setAnimatedFigure = useCheckers(state => state.setAnimatedFigure)
 
-  return async (startCell: ICell, finishCell: ICell): Promise<void> => {
+  return async (startCell, finishCell) => {
     // Задержка установлена для того, чтобы фигура успела отрендериться на своем новом месте
     await new Promise<void>(res => {
       setTimeout((): void => {
@@ -33,7 +32,7 @@ export const useMoveFigure = (): UseMoveFigure => {
       left: calculateTransform(finishCell.x - startCell.x),
       top: calculateTransform(finishCell.y - startCell.y)
     }
-    setAnimatedFigure(activeFigure, animationStyles)
+    setAnimatedFigure(startCell.figureId ?? null, animationStyles)
 
     await new Promise<void>(res => {
       setTimeout((): void => {
