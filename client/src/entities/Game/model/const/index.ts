@@ -8,3 +8,8 @@ export const GameStatus = {
   PLAYING: 'playing',
   FINISHED: 'finished'
 } as const
+
+export const ActionType = {
+  JOIN_GAME: 'JOIN_GAME',
+  ERROR: 'ERROR'
+} as const

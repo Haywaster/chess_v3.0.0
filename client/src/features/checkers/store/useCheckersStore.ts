@@ -46,6 +46,7 @@ interface Action {
   killFigure: (id: IFigure['id']) => void
   setStepColor: (color: IFigure['color']) => void
   setRequiredFigures: (figures: IFigure['id'][]) => void
+  updateBoard: (board: IBoard) => void
 }
 
 const initialState: State = {
@@ -90,10 +91,13 @@ export const useCheckersStore = create<State & Action>(set => ({
       const board: IBoard = { cells: state.cells, figures: state.figures }
       return changeBoardAfterMove(startCellId, finishCellId, board)
     })
-  }
+  },
+  updateBoard: board => set({ cells: board.cells, figures: board.figures })
 }))
 
 export const useMoveFigure = (): Action['moveFigure'] =>
   useCheckersStore(state => state.moveFigure)
 export const useSetAnimatedFigure = (): Action['setAnimatedFigure'] =>
   useCheckersStore(state => state.setAnimatedFigure)
+export const useUpdateBoard = (): Action['updateBoard'] =>
+  useCheckersStore(state => state.updateBoard)

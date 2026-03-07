@@ -1,4 +1,4 @@
 export * from './ui'
-export { useCheckersStore } from './store'
-export type { MoveFigureResponseWebsocket } from './model'
+export * from './store'
 export { useMoveFigure } from './lib'
+export { CheckersActionType, type MoveFigureResponseWebsocket } from './model'

@@ -7,19 +7,23 @@ import styled from 'styled-components'
 import {
   type JoinGameRequestWebsocket,
   type JoinGameResponseWebsocket,
-  GameType,
   type IJoinGameData,
+  GameType,
   useGame,
   useSetGame,
-  type ErrorResponseWebsocket
+  type ErrorResponseWebsocket,
+  ActionType
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
 import {
   CheckersRulesModal,
   type MoveFigureResponseWebsocket,
   useCheckersStore,
-  useMoveFigure
+  useMoveFigure,
+  useUpdateBoard,
+  CheckersActionType
 } from 'features/checkers'
+import { type SaveGameResponseWebsocket } from 'features/checkers/model'
 import { UsernameModal } from 'features/prepareToGame'
 import type { id as TId } from 'shared/const/router'
 import { useSetWs, useWs } from 'shared/store'
@@ -42,6 +46,7 @@ export const Checkers: FC = () => {
   const ws = useWs()
   const setWs = useSetWs()
   const moveAnimate = useMoveFigure()
+  const updateBoard = useUpdateBoard()
   const setStepColor = useCheckersStore(state => state.setStepColor)
 
   const { id } = useParams<typeof TId>()
@@ -61,7 +66,7 @@ export const Checkers: FC = () => {
 
     const joinGameData: JoinGameRequestWebsocket = {
       data: game,
-      type: 'JOIN_GAME'
+      type: CheckersActionType.JOIN_GAME
     }
 
     wss.onopen = () => {
@@ -74,17 +79,21 @@ export const Checkers: FC = () => {
         | JoinGameResponseWebsocket
         | ErrorResponseWebsocket
         | MoveFigureResponseWebsocket
+        | SaveGameResponseWebsocket
 
       switch (data.type) {
-        case 'JOIN_GAME':
+        case ActionType.JOIN_GAME:
           setGame(data.data)
           break
-        case 'MOVE_FIGURE':
+        case CheckersActionType.MOVE_FIGURE:
           moveAnimate(data.data.startCell, data.data.finishCell)
           setStepColor(data.data.currentTurn)
           break
-        case 'ERROR':
+        case ActionType.ERROR:
           console.error('WebSocket server error:', data.error)
+          break
+        case CheckersActionType.SAVE_GAME:
+          updateBoard(data.data)
           break
         default:
           console.error('Unknown message type')

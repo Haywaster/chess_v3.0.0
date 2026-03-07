@@ -1,5 +1,6 @@
 export {
   useCheckersStore,
   useMoveFigure,
-  useSetAnimatedFigure
+  useSetAnimatedFigure,
+  useUpdateBoard
 } from './useCheckersStore'

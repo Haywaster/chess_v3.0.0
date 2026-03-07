@@ -4,7 +4,11 @@ import type { ICell } from 'entities/Cell'
 import { useGame } from 'entities/Game'
 import { useWs } from 'shared/store'
 
-import { type IBoard, type MoveFigureRequestWebsocket } from '../../../model'
+import {
+  CheckersActionType,
+  type IBoard,
+  type MoveFigureRequestWebsocket
+} from '../../../model'
 import { useCheckersStore } from '../../../store'
 import { useGetRequiredFigures } from '../useGetRequiredFigures'
 import { useMoveFigure } from '../useMoveFigure'
@@ -64,7 +68,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
               }
 
               const moveData: MoveFigureRequestWebsocket = {
-                type: 'MOVE_FIGURE',
+                type: CheckersActionType.MOVE_FIGURE,
                 data
               }
               ws.send(JSON.stringify(moveData))
@@ -87,7 +91,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
             }
 
             const moveData: MoveFigureRequestWebsocket = {
-              type: 'MOVE_FIGURE',
+              type: CheckersActionType.MOVE_FIGURE,
               data
             }
             ws.send(JSON.stringify(moveData))

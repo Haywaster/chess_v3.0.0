@@ -4,6 +4,8 @@ export type {
   Rules,
   IMoveFigure,
   MoveFigureResponseWebsocket,
-  MoveFigureRequestWebsocket
+  MoveFigureRequestWebsocket,
+  SaveGameResponseWebsocket,
+  SaveGameRequestWebsocket
 } from './types'
 export * from './const'

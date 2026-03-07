@@ -1,11 +1,15 @@
-import { WebSocketServer, WebSocket } from 'ws';
-import { Server } from 'http';
+import { Server } from 'http'
+
+import { WebSocketServer, WebSocket, type RawData } from 'ws'
+
 import prisma from '../prisma/prismaClient.ts'
 import { GameStatus, GameType } from '../services/gameService.ts'
 
 const ActionType = {
   JOIN_GAME: 'JOIN_GAME',
   MOVE_FIGURE: 'MOVE_FIGURE',
+  SAVE_GAME: 'SAVE_GAME',
+  ERROR: 'ERROR'
 } as const
 
 type EnumValues<
@@ -54,10 +58,13 @@ interface IMoveFigure {
   gameId: IGame['id']
 }
 
-interface WebsocketDataConstructor<
-  T = string,
-  D = Record<string, unknown>
-> {
+interface ISaveGameData {
+  gameId: IGame['id']
+  figures: IFigure[]
+  cells: ICell[]
+}
+
+interface WebsocketDataConstructor<T = string, D = Record<string, unknown>> {
   type: T
   data: D
 }
@@ -70,227 +77,367 @@ type MoveFigureRequestWebsocket = WebsocketDataConstructor<
   typeof ActionType.MOVE_FIGURE,
   IMoveFigure
 >
+type SaveGameRequestWebsocket = WebsocketDataConstructor<
+  typeof ActionType.SAVE_GAME,
+  ISaveGameData
+>
 
-class GameWebSocketService {
-  private wss: WebSocketServer;
-  
-  constructor(server: Server) {
-    this.wss = new WebSocketServer({ server });
-    this.initializeHandlers();
-  }
-  
-  private initializeHandlers(): void {
-    this.wss.on('connection', (ws: WebSocket) => {
-      console.log('New WebSocket connection');
-      
-      ws.on('message', async (data: string) => {
-        try {
-          const message = JSON.parse(data) as JoinGameRequestWebsocket;
-          await this.handleMessage(ws, message)
-        } catch (error) {
-          console.error('Failed to parse message:', error);
-          ws.send(JSON.stringify({ type: 'ERROR', error: 'Invalid message' }));
-        }
-      });
-      
-      ws.on('close', () => {
-        console.log('WebSocket disconnected');
-        // this.handleDisconnect(ws);
-      });
-      
-      ws.on('error', (error) => {
-        console.error('WebSocket error:', error);
-      });
-    });
-  }
-  
-  private async handleMessage(ws: WebSocket, message: JoinGameRequestWebsocket | MoveFigureRequestWebsocket): Promise<void> {
-    switch (message.type) {
-      case ActionType.JOIN_GAME:
-        await this.joinGame(ws, message.data);
-        break;
-      case ActionType.MOVE_FIGURE:
-        await this.handleMove(ws, message.data);
-        break;
-      default:
-        ws.send(JSON.stringify({ type: 'ERROR', error: 'Unknown message type' }));
-    }
-  }
-  
-  private async joinGame(ws: WebSocket, message: IJoinGameData): Promise<void> {
-    const { game, username } = message;
-    const { id: gameId } = game;
-    
-    const joinUserInGame = (client: WebSocket, params: Pick<IGame, 'status'> & Partial<Omit<IGame, 'status'>>) => {
-      const data: IGame = {  ...game, ...params }
-      client.send(JSON.stringify({ type: ActionType.JOIN_GAME, data }));
-    }
-    
-    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
+type IncomingWebsocketMessage =
+  | JoinGameRequestWebsocket
+  | MoveFigureRequestWebsocket
+  | SaveGameRequestWebsocket
 
-    if (!gameInDB) {
-      ws.send(JSON.stringify({ type: 'ERROR', error: 'Game not found' }));
-      return;
-    }
-    
-    const user = await prisma.user.findUnique({ where: { login: username } })
-    
-    if (!user) {
-      ws.send(JSON.stringify({ type: 'ERROR', error: 'User not found', }));
-      return;
-    }
-    
-    const currentUser = await prisma.gameParticipant.findUnique({
-      where: { gameId_playerId: { gameId, playerId: user.id }  }
-    })
-    
-    if (gameInDB.status === GameStatus.PENDING) {
-      // Пользователь найден в базе - играет белыми
-      if (currentUser) {
-        const userWithColor = await prisma.gameWithColorParticipant.findUnique({ where: { participantId: currentUser.id } })
-        
-        if (!userWithColor) {
-          ws.send(JSON.stringify({ type: 'ERROR', error: 'User not found', }));
-          return;
-        }
-        
-        joinUserInGame(ws, {
-          status: GameStatus.PENDING,
-          userData: {
-            color: userWithColor.color as ICheckersUserData['color']
-          }
-        });
-      // Пользователь не найден в базе - играет черными
-      } else {
-        const color = 'black';
-        await prisma.gameParticipant.create({
-          data: {
-            gameId,
-            playerId: user.id,
-            colorParticipant: {
-              create: {
-                color,
-              }
-            }
-          }
-        })
-        joinUserInGame(ws, {
-          status: GameStatus.PENDING,
-          userData: { color }
-        });
-        const otherPlayer = await prisma.gameParticipant.findMany({ where: { gameId } })
-        await prisma.game.update({ where: { id: gameId }, data: { status: GameStatus.PLAYING } })
-        
-        this.wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            joinUserInGame(client, { status: GameStatus.PLAYING });
-          }
-        })
-        // otherPlayer.forEach(player => {
-        //   if (player.playerId !== user.id) {
-        //     if (ws.client !== excludeWs && ws.readyState === WebSocket.OPEN) {
-        //       client.send(JSON.stringify(message));
-        //     }
-        //   }
-        // })
-      }
-    }
-    
-    if (gameInDB.status === GameStatus.PLAYING) {
-      if (currentUser) {
-        const userWithColor = await prisma.gameWithColorParticipant.findUnique({ where: { participantId: currentUser.id } })
-        
-        if (!userWithColor) {
-          ws.send(JSON.stringify({ type: 'ERROR', error: 'User not found', }));
-          return;
-        }
-        
-        joinUserInGame(ws, {
-          status: GameStatus.PLAYING,
-          userData: { color: userWithColor.color as ICheckersUserData['color'] }
-        });
-      }
-    }
-  }
-  
-  private async handleMove(ws: WebSocket, message: IMoveFigure): Promise<void> {
-    const { gameId, startCell, finishCell } = message;
-    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
-
-    if (!gameInDB) {
-      ws.send(JSON.stringify({ type: 'ERROR', error: 'Game not found' }));
-      return;
-    }
-    
-    const currentCheckersGame = await prisma.checkersGame.findUnique({ where: { gameId: gameInDB.id } })
-    
-    if (!currentCheckersGame) {
-      ws.send(JSON.stringify({ type: 'ERROR', error: 'Game not found' }));
-      return;
-    }
-    
-    const updatedCheckersGame = await prisma.checkersGame.update({
-      where: { id: currentCheckersGame.id },
-      data: { currentTurn: currentCheckersGame.currentTurn === 'white' ? 'black' : 'white' }
-    })
-    const data = { startCell, finishCell, currentTurn: updatedCheckersGame.currentTurn }
-    const moveData = { type: ActionType.MOVE_FIGURE, data }
-
-    this.wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(moveData));
-      }
-    })
-  }
-  
-  // private async broadcastToRoom(gameId: string, message: any, excludeWs?: WebSocket): void {
-  //   const room = await prisma.gameParticipant.findMany({
-  //     where: { gameId },
-  //   })
-  //   if (!room) return;
-  //
-  //   room.forEach((client) => {
-  //     if (client !== excludeWs && client.readyState === WebSocket.OPEN) {
-  //       client.send(JSON.stringify(message));
-  //     }
-  //   });
-  // }
-  //
-  // private handleDisconnect(ws: WebSocket): void {
-  //   // Удаляем клиента из всех комнат
-  //   this.gameRooms.forEach((room, gameId) => {
-  //     if (room.has(ws)) {
-  //       room.delete(ws);
-  //
-  //       // Если комната пуста, удаляем её
-  //       if (room.size === 0) {
-  //         this.gameRooms.delete(gameId);
-  //       } else {
-  //         // Уведомляем остальных
-  //         this.broadcastToRoom(gameId, {
-  //           type: 'PLAYER_LEFT',
-  //           gameId,
-  //         });
-  //       }
-  //     }
-  //   });
-  // }
-  
-  broadcast(message: any): void {
-    this.wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(message));
-      }
-    });
-  }
-  
-  // sendToGame(gameId: string, message: any): void {
-  //   this.broadcastToRoom(gameId, message);
-  // }
-  //
-  // getGameClients(gameId: string): number {
-  //   return this.gameRooms.get(gameId)?.size || 0;
-  // }
+interface IConnectionState {
+  gameId: string | null
+  userId: number | null
+  username: string | null
+  color: IFigure['color'] | null
 }
 
-export default GameWebSocketService;
+class GameWebSocketService {
+  private readonly wss: WebSocketServer
+
+  private readonly gameRooms = new Map<string, Set<WebSocket>>()
+
+  private readonly connectionState = new Map<WebSocket, IConnectionState>()
+
+  constructor(server: Server) {
+    this.wss = new WebSocketServer({ server })
+    this.initializeHandlers()
+  }
+
+  private initializeHandlers(): void {
+    this.wss.on('connection', (ws: WebSocket) => {
+      this.connectionState.set(ws, {
+        gameId: null,
+        userId: null,
+        username: null,
+        color: null
+      })
+      console.log('New WebSocket connection')
+
+      ws.on('message', async (rawData: RawData) => {
+        try {
+          const message = JSON.parse(rawData.toString()) as IncomingWebsocketMessage
+          await this.handleMessage(ws, message)
+        } catch (error) {
+          console.error('Failed to parse message:', error)
+          this.sendError(ws, 'Invalid message')
+        }
+      })
+
+      ws.on('close', () => {
+        this.handleDisconnect(ws)
+        console.log('WebSocket disconnected')
+      })
+
+      ws.on('error', (error) => {
+        console.error('WebSocket error:', error)
+      })
+    })
+  }
+
+  private async handleMessage(
+    ws: WebSocket,
+    message: IncomingWebsocketMessage
+  ): Promise<void> {
+    switch (message.type) {
+      case ActionType.JOIN_GAME:
+        await this.joinGame(ws, message.data)
+        break
+      case ActionType.MOVE_FIGURE:
+        await this.handleMove(ws, message.data)
+        break
+      case ActionType.SAVE_GAME:
+        await this.saveGameScheme(ws, message.data)
+        break
+      default:
+        this.sendError(ws, 'Unknown message type')
+    }
+  }
+
+  private async joinGame(ws: WebSocket, message: IJoinGameData): Promise<void> {
+    const { game, username } = message
+    const gameId = game.id
+    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
+
+    if (!gameInDB) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const user = await prisma.user.findUnique({ where: { login: username } })
+
+    if (!user) {
+      this.sendError(ws, 'User not found')
+      return
+    }
+
+    let currentUser = await prisma.gameParticipant.findUnique({
+      where: { gameId_playerId: { gameId, playerId: user.id } }
+    })
+
+    if (!currentUser && gameInDB.status !== GameStatus.PENDING) {
+      this.sendError(ws, 'Game is already full')
+      return
+    }
+
+    if (!currentUser) {
+      currentUser = await prisma.gameParticipant.create({
+        data: {
+          gameId,
+          playerId: user.id,
+          colorParticipant: {
+            create: {
+              color: 'black'
+            }
+          }
+        }
+      })
+    }
+
+    const participantColor = await this.getParticipantColor(currentUser.id)
+
+    if (!participantColor) {
+      this.sendError(ws, 'User color not found')
+      return
+    }
+
+    this.attachClientToGame(ws, gameId, {
+      userId: user.id,
+      username,
+      color: participantColor
+    })
+
+    const shouldStartGame =
+      gameInDB.status === GameStatus.PENDING && participantColor === 'black'
+    const nextStatus = shouldStartGame ? GameStatus.PLAYING : gameInDB.status as EnumValues<typeof GameStatus>
+
+    if (shouldStartGame) {
+      await prisma.game.update({
+        where: { id: gameId },
+        data: { status: GameStatus.PLAYING }
+      })
+    }
+
+    this.sendJoinState(ws, game, nextStatus, participantColor)
+
+    if (shouldStartGame) {
+      this.broadcastJoinState(gameId, game, GameStatus.PLAYING, ws)
+    }
+  }
+
+  private async handleMove(ws: WebSocket, message: IMoveFigure): Promise<void> {
+    const { gameId, startCell, finishCell } = message
+    const connection = this.connectionState.get(ws)
+
+    if (!connection || connection.gameId !== gameId) {
+      this.sendError(ws, 'Socket is not connected to this game')
+      return
+    }
+
+    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
+
+    if (!gameInDB) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const currentCheckersGame = await prisma.checkersGame.findUnique({
+      where: { gameId: gameInDB.id }
+    })
+
+    if (!currentCheckersGame) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const updatedCheckersGame = await prisma.checkersGame.update({
+      where: { id: currentCheckersGame.id },
+      data: {
+        currentTurn: currentCheckersGame.currentTurn === 'white' ? 'black' : 'white'
+      }
+    })
+
+    this.broadcastToRoom(gameId, {
+      type: ActionType.MOVE_FIGURE,
+      data: {
+        startCell,
+        finishCell,
+        currentTurn: updatedCheckersGame.currentTurn
+      }
+    })
+  }
+
+  private async saveGameScheme(
+    ws: WebSocket,
+    message: ISaveGameData
+  ): Promise<void> {
+    const { gameId, figures, cells } = message
+    const connection = this.connectionState.get(ws)
+
+    if (!connection || connection.gameId !== gameId) {
+      this.sendError(ws, 'Socket is not connected to this game')
+      return
+    }
+
+    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
+
+    if (!gameInDB) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const currentCheckersGame = await prisma.checkersGame.findUnique({
+      where: { gameId: gameInDB.id }
+    })
+
+    if (!currentCheckersGame) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const updatedCheckersGame = await prisma.checkersGame.update({
+      where: { id: currentCheckersGame.id },
+      data: { figures: JSON.stringify({ figures, cells }) }
+    })
+
+    this.broadcastToRoom(gameId, {
+      type: ActionType.SAVE_GAME,
+      data: updatedCheckersGame
+    })
+  }
+
+  private attachClientToGame(
+    ws: WebSocket,
+    gameId: string,
+    params: Omit<IConnectionState, 'gameId'>
+  ): void {
+    this.detachClientFromGame(ws)
+
+    const room = this.gameRooms.get(gameId) ?? new Set<WebSocket>()
+    room.add(ws)
+    this.gameRooms.set(gameId, room)
+    this.connectionState.set(ws, {
+      gameId,
+      userId: params.userId,
+      username: params.username,
+      color: params.color
+    })
+  }
+
+  private detachClientFromGame(ws: WebSocket): void {
+    const connection = this.connectionState.get(ws)
+
+    if (!connection?.gameId) {
+      return
+    }
+
+    const room = this.gameRooms.get(connection.gameId)
+
+    if (!room) {
+      return
+    }
+
+    room.delete(ws)
+
+    if (room.size === 0) {
+      this.gameRooms.delete(connection.gameId)
+    }
+
+    this.connectionState.set(ws, {
+      ...connection,
+      gameId: null
+    })
+  }
+
+  private handleDisconnect(ws: WebSocket): void {
+    this.detachClientFromGame(ws)
+    this.connectionState.delete(ws)
+  }
+
+  private async getParticipantColor(
+    participantId: number
+  ): Promise<IFigure['color'] | null> {
+    const userWithColor = await prisma.gameWithColorParticipant.findUnique({
+      where: { participantId }
+    })
+
+    return (userWithColor?.color as IFigure['color'] | undefined) ?? null
+  }
+
+  private broadcastJoinState(
+    gameId: string,
+    game: Omit<IGame, 'status'>,
+    status: TGameStatus,
+    excludeWs?: WebSocket
+  ): void {
+    const room = this.gameRooms.get(gameId)
+
+    if (!room) {
+      return
+    }
+
+    room.forEach((client) => {
+      if (client === excludeWs) {
+        return
+      }
+
+      const connection = this.connectionState.get(client)
+
+      if (!connection?.color) {
+        return
+      }
+
+      this.sendJoinState(client, game, status, connection.color)
+    })
+  }
+
+  private sendJoinState(
+    ws: WebSocket,
+    game: Omit<IGame, 'status'>,
+    status: TGameStatus,
+    color: IFigure['color']
+  ): void {
+    this.sendJson(ws, {
+      type: ActionType.JOIN_GAME,
+      data: {
+        ...game,
+        status,
+        userData: {
+          color
+        }
+      }
+    })
+  }
+
+  private broadcastToRoom(
+    gameId: string,
+    message: Record<string, unknown>,
+    excludeWs?: WebSocket
+  ): void {
+    const room = this.gameRooms.get(gameId)
+
+    if (!room) {
+      return
+    }
+
+    room.forEach((client) => {
+      if (client !== excludeWs && client.readyState === WebSocket.OPEN) {
+        this.sendJson(client, message)
+      }
+    })
+  }
+
+  private sendError(ws: WebSocket, error: string): void {
+    this.sendJson(ws, { type: ActionType.ERROR, error })
+  }
+
+  private sendJson(ws: WebSocket, payload: Record<string, unknown>): void {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(payload))
+    }
+  }
+}
+
+export default GameWebSocketService

@@ -1,3 +1,4 @@
+import { ActionType } from 'entities/Game'
 import { BOARD_SIZE } from 'shared/const/numbers'
 
 import { createBoard } from '../../lib'
@@ -25,3 +26,9 @@ export const ruleDefaults: Record<Rules, boolean> = {
   requireKill: true,
   stopAfterKill: false
 }
+
+export const CheckersActionType = {
+  ...ActionType,
+  MOVE_FIGURE: 'MOVE_FIGURE',
+  SAVE_GAME: 'SAVE_GAME'
+} as const

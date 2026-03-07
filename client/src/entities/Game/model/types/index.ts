@@ -1,11 +1,11 @@
 import type { IFigure } from 'entities/Figure'
-import {
-  type EnumValues,
-  type WebsocketDataConstructor,
-  type WebsocketErrorConstructor
+import type {
+  EnumValues,
+  WebsocketDataConstructor,
+  WebsocketErrorConstructor
 } from 'shared/types'
 
-import type { GameType, GameStatus } from '../const'
+import type { GameType, GameStatus, ActionType } from '../const'
 
 export type TGameType = EnumValues<typeof GameType>
 type TGameStatus = EnumValues<typeof GameStatus>
@@ -32,11 +32,14 @@ export interface IJoinGameData {
 }
 
 export type JoinGameRequestWebsocket = WebsocketDataConstructor<
-  'JOIN_GAME',
+  typeof ActionType.JOIN_GAME,
   IJoinGameData
 >
 export type JoinGameResponseWebsocket = WebsocketDataConstructor<
-  'JOIN_GAME',
+  typeof ActionType.JOIN_GAME,
   IGame
 >
-export type ErrorResponseWebsocket = WebsocketErrorConstructor<'ERROR', string>
+export type ErrorResponseWebsocket = WebsocketErrorConstructor<
+  typeof ActionType.ERROR,
+  string
+>
