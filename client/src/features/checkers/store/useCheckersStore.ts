@@ -4,7 +4,7 @@ import { create } from 'zustand'
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
-import { changeBoardAfterMove, killFigureFromBoard } from '../lib'
+import { changeBoardAfterMove, changeBoardAfterKill } from '../lib'
 import {
   initialCells,
   ruleDefaults,
@@ -81,9 +81,7 @@ export const useCheckersStore = create<State & Action>(set => ({
   killFigure: id => {
     set(state => {
       const board: IBoard = { cells: state.cells, figures: state.figures }
-      return {
-        cells: killFigureFromBoard(id, board)
-      }
+      return changeBoardAfterKill(id, board)
     })
   },
   moveFigure: (startCellId, finishCellId) => {

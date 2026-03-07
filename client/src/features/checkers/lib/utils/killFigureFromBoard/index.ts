@@ -2,10 +2,10 @@ import type { IFigure } from 'entities/Figure'
 
 import type { IBoard } from '../../../model'
 
-export const killFigureFromBoard = (
+export const changeBoardAfterKill = (
   id: IFigure['id'],
   board: IBoard
-): IBoard['cells'] => {
+): IBoard => {
   const { figures, cells } = board
 
   const figure = figures[id]
@@ -15,7 +15,10 @@ export const killFigureFromBoard = (
   delete figures[id]
 
   return {
-    ...cells,
-    [figure.cellId]: cell
+    cells: {
+      ...cells,
+      [figure.cellId]: cell
+    },
+    figures
   }
 }

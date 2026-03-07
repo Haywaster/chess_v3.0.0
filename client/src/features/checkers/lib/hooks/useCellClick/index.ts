@@ -10,26 +10,25 @@ import {
   type MoveFigureRequestWebsocket
 } from '../../../model'
 import { useCheckersStore } from '../../../store'
-import { useGetRequiredFigures } from '../useGetRequiredFigures'
+import { getRequiredFigures, getKillCoords, getMoveCoords } from '../../utils'
 import { useMoveFigure } from '../useMoveFigure'
 
 export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
   const cells = useCheckersStore(state => state.cells)
   const figures = useCheckersStore(state => state.figures)
   const activeFigure = useCheckersStore(state => state.activeFigure)
-  const killingVariants = useCheckersStore(state => state.killingVariants)
+  const allKillVariants = useCheckersStore(state => state.killingVariants)
   const stepColor = useCheckersStore(state => state.stepColor)
   const rules = useCheckersStore(state => state.rules)
   const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
   const setKillingFigure = useCheckersStore(state => state.setKillingFigure)
-  const killFigure = useCheckersStore(state => state.killFigure)
+  const killFigureFromBoard = useCheckersStore(state => state.killFigure)
   const setStepColor = useCheckersStore(state => state.setStepColor)
   const setRequiredFigures = useCheckersStore(state => state.setRequiredFigures)
+
   const game = useGame()
   const ws = useWs()
-
   const moveAnimate = useMoveFigure()
-  const getRequiredFigures = useGetRequiredFigures()
 
   return useCallback(
     async (id: ICell['id']): Promise<void> => {
@@ -40,25 +39,24 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
           setRequiredFigures([])
         }
 
-        const killVariants = killingVariants.filter(
-          variant => variant[variant.length - 1].finishCellId === id
-        )
-        const killVariant = killVariants.reduce(
-          (longest, current) =>
-            current.length > longest.length ? current : longest,
-          []
-        )
+        const killVariant = allKillVariants
+          .filter(variant => variant[variant.length - 1].finishCellId === id)
+          .reduce(
+            (longest, current) =>
+              current.length > longest.length ? current : longest,
+            []
+          )
 
         if (killVariant.length !== 0) {
-          for (const variant of killVariant) {
-            const index = killVariant.indexOf(variant)
-            const startCell =
-              index === 0
-                ? cells[figures[activeFigure].cellId]
-                : cells[killVariant[index - 1].finishCellId]
-            const finishCell = cells[variant.finishCellId]
+          const killCoords = getKillCoords({
+            activeFigure,
+            cells,
+            figures,
+            killVariant
+          })
 
-            setKillingFigure(variant.figure)
+          for (const { startCell, finishCell, figureId } of killCoords) {
+            setKillingFigure(figureId)
 
             if (ws && game?.id) {
               const data: MoveFigureRequestWebsocket['data'] = {
@@ -76,12 +74,16 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
               await moveAnimate(startCell, finishCell)
             }
 
-            killFigure(variant.figure)
+            killFigureFromBoard(figureId)
             setKillingFigure(null)
           }
         } else {
-          const startCell = cells[figures[activeFigure].cellId]
-          const finishCell = cells[id]
+          const { startCell, finishCell } = getMoveCoords({
+            activeFigure,
+            cells,
+            figures,
+            id
+          })
 
           if (ws && game?.id) {
             const data: MoveFigureRequestWebsocket['data'] = {
@@ -102,11 +104,16 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
         }
 
         if (rules.requireKill) {
+          // TODO: Нужен ли здесь useCheckersStore.getState() ?
           const cells = useCheckersStore.getState().cells
           const figures = useCheckersStore.getState().figures
           const board: IBoard = { cells, figures }
 
-          getRequiredFigures(board)
+          const requiredFigures = getRequiredFigures(board, stepColor, rules)
+
+          if (requiredFigures.length !== 0) {
+            setRequiredFigures(requiredFigures)
+          }
         }
       }
     },
@@ -115,11 +122,10 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
       cells,
       figures,
       game?.id,
-      getRequiredFigures,
-      killFigure,
-      killingVariants,
+      killFigureFromBoard,
+      allKillVariants,
       moveAnimate,
-      rules.requireKill,
+      rules,
       setActiveFigure,
       setKillingFigure,
       setRequiredFigures,
