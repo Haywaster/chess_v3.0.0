@@ -1,6 +1,6 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { BOARD_SIZE } from 'shared/const/numbers'
+import { BOARD_SIZE } from 'shared/const/numbers.ts'
 
 export const makeFigureStain = (figure: IFigure, newCell: ICell): boolean => {
   if (figure.isStain) {

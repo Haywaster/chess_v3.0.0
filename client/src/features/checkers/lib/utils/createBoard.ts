@@ -2,7 +2,7 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { BOARD_SIZE, EVEN_NUMBER } from 'shared/const/numbers'
 
-import type { IBoard } from '../../../model'
+import type { IBoard } from '../../model'
 
 const FINAL_WHITE_ROW = 3
 const FIRST_ROW_WITHOUT_FIGURES = 4

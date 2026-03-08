@@ -1,7 +1,7 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
-import type { IBoard } from '../../model'
+import type { IBoard } from '../../../model'
 
 interface IMoveFigureInput {
   activeFigure: IFigure['id']

@@ -1,7 +1,9 @@
-import { type ICell } from 'entities/Cell'
+import type { ICell } from 'entities/Cell'
+import type { IFigure } from 'entities/Figure'
 
-import { type IBoard } from '../../../model'
-import { makeFigureStain } from '../makeFigureStain'
+import type { IBoard } from '../../../model'
+
+import { makeFigureStain } from './makeFigureStain'
 
 export const changeBoardAfterMove = (
   startCellId: ICell['id'],
@@ -18,9 +20,9 @@ export const changeBoardAfterMove = (
   const prevCell = { ...cells[startCellId] }
   delete prevCell.figureId
 
-  const newCell = { ...cells[finishCellId], figureId }
+  const newCell: ICell = { ...cells[finishCellId], figureId }
 
-  const changedFigure = {
+  const changedFigure: IFigure = {
     ...figures[figureId],
     cellId: finishCellId,
     isStain: makeFigureStain(figures[figureId], newCell),

@@ -2,7 +2,8 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
 import type { IBoard } from '../../../model'
-import { calcFigureMove } from '../calcFigureMove'
+
+import { calcFigureMove } from './calcFigureMove'
 
 const isCellAfterFigure = (
   board: IBoard,

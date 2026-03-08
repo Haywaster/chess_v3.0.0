@@ -1,7 +1,8 @@
 import type { IFigure } from 'entities/Figure'
 
-import { getKillVariants } from '../../lib'
 import { type IBoard, type Rules } from '../../model'
+
+import { getKillVariants } from './kill'
 
 export const getRequiredFigures = (
   board: IBoard,

@@ -1,7 +1,7 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
-import type { IBoard, IKillVariant } from '../../model'
+import type { IBoard, IKillVariant } from '../../../model'
 
 interface IGetKillCoordsInput {
   activeFigure: IFigure['id']

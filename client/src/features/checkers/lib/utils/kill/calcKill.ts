@@ -1,6 +1,6 @@
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import { DOUBLE } from 'shared/const/numbers'
+import { DOUBLE } from 'shared/const/numbers.ts'
 
 import {
   boardCellsIds,
@@ -8,7 +8,7 @@ import {
   type IKillVariant,
   type Rules
 } from '../../../model'
-import { calcFigureMove } from '../calcFigureMove'
+import { calcFigureMove } from '../move'
 
 export const calcFigureKill = (
   cells: IBoard['cells'],

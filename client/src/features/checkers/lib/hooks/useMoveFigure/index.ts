@@ -1,6 +1,6 @@
 import { type CSSProperties, useCallback } from 'react'
 
-import { type ICell } from 'entities/Cell'
+import type { ICell } from 'entities/Cell'
 import { DOUBLE, TRANSLATE_PCT } from 'shared/const/numbers'
 
 import { RENDER_DURATION } from '../../../model'

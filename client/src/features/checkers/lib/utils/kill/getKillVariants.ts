@@ -7,12 +7,13 @@ import {
   type IKillVariant,
   type Rules
 } from '../../../model'
+import { makeFigureStain } from '../changeBoard'
+
 import {
   calcFigureKill,
   calcStainKillManyCells,
   calcStainKillSingleCell
-} from '../calcKill'
-import { makeFigureStain } from '../makeFigureStain'
+} from './calcKill'
 
 const getKillVariant = (
   activeFigure: IFigure,

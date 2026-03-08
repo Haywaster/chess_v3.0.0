@@ -3,10 +3,13 @@ import { useCallback } from 'react'
 import type { IFigure } from 'entities/Figure'
 import { useGame } from 'entities/Game'
 
+import type { IBoard } from '../../../model'
 import { useCheckersStore } from '../../../store'
-import { useGetVariants } from '../useGetVariants'
+import { getVariants } from '../../utils'
 
 export const useFigureClick = (): ((id: IFigure['id']) => void) => {
+  const cells = useCheckersStore(state => state.cells)
+  const rules = useCheckersStore(state => state.rules)
   const figures = useCheckersStore(state => state.figures)
   const activeFigure = useCheckersStore(state => state.activeFigure)
   const animatedFigure = useCheckersStore(state => state.animatedFigure)
@@ -15,9 +18,8 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
   const setCellsForMoving = useCheckersStore(state => state.setCellsForMoving)
   const setKillingVariants = useCheckersStore(state => state.setKillingVariants)
-  const game = useGame()
 
-  const getVariants = useGetVariants()
+  const game = useGame()
 
   return useCallback(
     (id: IFigure['id']): void => {
@@ -33,7 +35,13 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
           setCellsForMoving([])
           setKillingVariants([])
         } else {
-          const { cellsForMoving, killingVariants } = getVariants(id)
+          const board: IBoard = { cells, figures }
+          const { cellsForMoving, killingVariants } = getVariants({
+            board,
+            id,
+            requiredFigures,
+            rules
+          })
           setActiveFigure(id)
           setCellsForMoving(cellsForMoving)
           setKillingVariants(killingVariants)
@@ -43,10 +51,11 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
     [
       activeFigure,
       animatedFigure.id,
+      cells,
       figures,
       game,
-      getVariants,
       requiredFigures,
+      rules,
       setActiveFigure,
       setCellsForMoving,
       setKillingVariants,

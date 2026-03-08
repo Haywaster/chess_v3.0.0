@@ -2,12 +2,14 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { keepLargestArrays } from 'shared/lib'
 
-import { getKillVariants, isMoveValid } from '../../lib'
 import type { IBoard, IKillVariant, Rules } from '../../model'
+
+import { getKillVariants } from './kill'
+import { isMoveValid } from './move'
 
 interface IGetVariantInput {
   board: IBoard
-  activeFigureId: IFigure['id']
+  id: IFigure['id']
   requiredFigures: IFigure['id'][]
   rules: Record<Rules, boolean>
 }
@@ -19,7 +21,7 @@ interface IGetVariantResult {
 
 export const getVariants = ({
   board,
-  activeFigureId,
+  id,
   requiredFigures,
   rules
 }: IGetVariantInput): IGetVariantResult => {
@@ -27,7 +29,7 @@ export const getVariants = ({
   const cellsForMoving: ICell['id'][] = []
   const killingVariants: IKillVariant[][] = []
 
-  const activeFigure = figures[activeFigureId]
+  const activeFigure = figures[id]
 
   Object.values(cells).forEach(cell => {
     const diagonalCondition =
@@ -37,10 +39,8 @@ export const getVariants = ({
       return
     }
 
-    const board: IBoard = { figures, cells }
     const requireKillCondition =
-      requiredFigures.includes(activeFigureId) &&
-      isMoveValid(board, activeFigure, cell)
+      requiredFigures.includes(id) && isMoveValid(board, activeFigure, cell)
 
     if (requireKillCondition) {
       return

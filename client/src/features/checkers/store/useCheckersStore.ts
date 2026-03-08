@@ -4,7 +4,7 @@ import { create } from 'zustand'
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 
-import { changeBoardAfterMove, changeBoardAfterKill } from '../lib'
+import { changeBoardAfterKill, changeBoardAfterMove } from '../lib'
 import {
   initialCells,
   ruleDefaults,
