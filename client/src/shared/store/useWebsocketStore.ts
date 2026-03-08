@@ -5,7 +5,7 @@ interface State {
 }
 
 interface Action {
-  setWs: (ws: WebSocket | null) => void
+  setWs: (ws: State['ws']) => void
 }
 
 const initialState: State = {

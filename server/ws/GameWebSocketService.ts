@@ -8,6 +8,7 @@ import { GameStatus, GameType } from '../services/gameService.ts'
 const ActionType = {
   JOIN_GAME: 'JOIN_GAME',
   MOVE_FIGURE: 'MOVE_FIGURE',
+  KILL_FIGURE: 'KILL_FIGURE',
   SAVE_GAME: 'SAVE_GAME',
   ERROR: 'ERROR'
 } as const
@@ -58,6 +59,13 @@ interface IMoveFigure {
   gameId: IGame['id']
 }
 
+interface IKillFigure {
+  startCell: ICell
+  finishCell: ICell
+  figureId: IFigure['id']
+  gameId: IGame['id']
+}
+
 interface ISaveGameData {
   gameId: IGame['id']
   figures: IFigure[]
@@ -77,6 +85,10 @@ type MoveFigureRequestWebsocket = WebsocketDataConstructor<
   typeof ActionType.MOVE_FIGURE,
   IMoveFigure
 >
+type KillFigureRequestWebsocket = WebsocketDataConstructor<
+  typeof ActionType.KILL_FIGURE,
+  IKillFigure
+>
 type SaveGameRequestWebsocket = WebsocketDataConstructor<
   typeof ActionType.SAVE_GAME,
   ISaveGameData
@@ -85,6 +97,7 @@ type SaveGameRequestWebsocket = WebsocketDataConstructor<
 type IncomingWebsocketMessage =
   | JoinGameRequestWebsocket
   | MoveFigureRequestWebsocket
+  | KillFigureRequestWebsocket
   | SaveGameRequestWebsocket
 
 interface IConnectionState {
@@ -150,6 +163,9 @@ class GameWebSocketService {
         break
       case ActionType.SAVE_GAME:
         await this.saveGameScheme(ws, message.data)
+        break
+      case ActionType.KILL_FIGURE:
+        await this.killFigure(ws, message.data)
         break
       default:
         this.sendError(ws, 'Unknown message type')
@@ -264,6 +280,49 @@ class GameWebSocketService {
       data: {
         startCell,
         finishCell,
+        currentTurn: updatedCheckersGame.currentTurn
+      }
+    })
+  }
+  
+  private async killFigure(ws: WebSocket, message: IKillFigure): Promise<void> {
+    const { gameId, startCell, finishCell, figureId } = message
+    const connection = this.connectionState.get(ws)
+
+    if (!connection || connection.gameId !== gameId) {
+      this.sendError(ws, 'Socket is not connected to this game')
+      return
+    }
+
+    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
+
+    if (!gameInDB) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const currentCheckersGame = await prisma.checkersGame.findUnique({
+      where: { gameId: gameInDB.id }
+    })
+
+    if (!currentCheckersGame) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const updatedCheckersGame = await prisma.checkersGame.update({
+      where: { id: currentCheckersGame.id },
+      data: {
+        currentTurn: currentCheckersGame.currentTurn === 'white' ? 'black' : 'white'
+      }
+    })
+
+    this.broadcastToRoom(gameId, {
+      type: ActionType.KILL_FIGURE,
+      data: {
+        startCell,
+        finishCell,
+        figureId,
         currentTurn: updatedCheckersGame.currentTurn
       }
     })

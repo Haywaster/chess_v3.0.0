@@ -25,6 +25,10 @@ export interface IMoveFigure {
   startCell: ICell
   finishCell: ICell
 }
+export interface IKillFigure extends IMoveFigure {
+  figureId: IFigure['id']
+}
+
 export type MoveFigureRequestWebsocket = WebsocketDataConstructor<
   typeof CheckersActionType.MOVE_FIGURE,
   IMoveFigure & { gameId: IGame['id'] }
@@ -33,6 +37,16 @@ export type MoveFigureResponseWebsocket = WebsocketDataConstructor<
   typeof CheckersActionType.MOVE_FIGURE,
   IMoveFigure & { currentTurn: IFigure['color'] }
 >
+
+export type KillFigureRequestWebsocket = WebsocketDataConstructor<
+  typeof CheckersActionType.KILL_FIGURE,
+  IKillFigure & { gameId: IGame['id'] }
+>
+export type KillFigureResponseWebsocket = WebsocketDataConstructor<
+  typeof CheckersActionType.KILL_FIGURE,
+  IKillFigure & { currentTurn: IFigure['color'] }
+>
+
 export type SaveGameRequestWebsocket = WebsocketDataConstructor<
   typeof CheckersActionType.SAVE_GAME,
   IBoard & { gameId: IGame['id'] }

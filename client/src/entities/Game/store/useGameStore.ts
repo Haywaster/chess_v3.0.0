@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 
-import { type IGame } from '../model'
+import type { IGame } from '../model'
 
 interface State {
   game: IGame | null
 }
 
 interface Action {
-  setGame: (game: IGame | null) => void
+  setGame: (game: State['game']) => void
 }
 
 const initialState: State = {

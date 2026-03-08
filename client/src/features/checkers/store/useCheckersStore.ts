@@ -34,18 +34,18 @@ interface Action {
   changeRule: (rule: Rules, value: boolean) => void
   toggleRulesModal: () => void
   reset: () => void
-  setActiveFigure: (id: IFigure['id'] | null) => void
-  setCellsForMoving: (cells: ICell['id'][]) => void
-  setKillingVariants: (variants: IKillVariant[][]) => void
+  setActiveFigure: (id: State['activeFigure']) => void
+  setCellsForMoving: (cells: State['cellsForMoving']) => void
+  setKillingVariants: (variants: State['killingVariants']) => void
   moveFigure: (cellId: ICell['id'], figureId: ICell['id']) => void
   setAnimatedFigure: (
     id: IFigure['id'] | null,
     styles: CSSProperties | undefined
   ) => void
-  setKillingFigure: (id: IFigure['id'] | null) => void
+  setKillingFigure: (id: State['killingFigure']) => void
   killFigure: (id: IFigure['id']) => void
-  setStepColor: (color: IFigure['color']) => void
-  setRequiredFigures: (figures: IFigure['id'][]) => void
+  setStepColor: (color: State['stepColor']) => void
+  setRequiredFigures: (figures: State['requiredFigures']) => void
   updateBoard: (board: IBoard) => void
 }
 

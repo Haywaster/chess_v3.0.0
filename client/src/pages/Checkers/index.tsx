@@ -18,12 +18,13 @@ import { useUsername } from 'entities/User'
 import {
   CheckersRulesModal,
   type MoveFigureResponseWebsocket,
+  type SaveGameResponseWebsocket,
+  type KillFigureResponseWebsocket,
   useCheckersStore,
   useMoveFigure,
   useUpdateBoard,
   CheckersActionType
 } from 'features/checkers'
-import { type SaveGameResponseWebsocket } from 'features/checkers/model'
 import { UsernameModal } from 'features/prepareToGame'
 import type { id as TId } from 'shared/const/router'
 import { useSetWs, useWs } from 'shared/store'
@@ -48,6 +49,7 @@ export const Checkers: FC = () => {
   const moveAnimate = useMoveFigure()
   const updateBoard = useUpdateBoard()
   const setStepColor = useCheckersStore(state => state.setStepColor)
+  const killFigure = useCheckersStore(state => state.killFigure)
 
   const { id } = useParams<typeof TId>()
 
@@ -73,27 +75,34 @@ export const Checkers: FC = () => {
       wss.send(JSON.stringify(joinGameData))
     }
 
-    wss.onmessage = (event: MessageEvent<string>) => {
-      const { data: stringData } = event
-      const data = JSON.parse(stringData) as
+    wss.onmessage = async (event: MessageEvent<string>): Promise<void> => {
+      const { data: rawData } = event
+      const message = JSON.parse(rawData.toString()) as
         | JoinGameResponseWebsocket
         | ErrorResponseWebsocket
         | MoveFigureResponseWebsocket
+        | KillFigureResponseWebsocket
         | SaveGameResponseWebsocket
 
-      switch (data.type) {
+      switch (message.type) {
         case ActionType.JOIN_GAME:
-          setGame(data.data)
+          setGame(message.data)
           break
         case CheckersActionType.MOVE_FIGURE:
-          moveAnimate(data.data.startCell, data.data.finishCell)
-          setStepColor(data.data.currentTurn)
+          await moveAnimate(message.data.startCell, message.data.finishCell)
+          setStepColor(message.data.currentTurn)
           break
+        case CheckersActionType.KILL_FIGURE: {
+          await moveAnimate(message.data.startCell, message.data.finishCell)
+          killFigure(message.data.figureId)
+          setStepColor(message.data.currentTurn)
+          break
+        }
         case ActionType.ERROR:
-          console.error('WebSocket server error:', data.error)
+          console.error('WebSocket server error:', message.error)
           break
         case CheckersActionType.SAVE_GAME:
-          updateBoard(data.data)
+          updateBoard(message.data)
           break
         default:
           console.error('Unknown message type')
@@ -104,7 +113,16 @@ export const Checkers: FC = () => {
       wss.close()
       setWs(null)
     }
-  }, [id, setGame, setWs, setStepColor, username, moveAnimate])
+  }, [
+    id,
+    setGame,
+    setWs,
+    setStepColor,
+    username,
+    moveAnimate,
+    updateBoard,
+    killFigure
+  ])
 
   return (
     <>

@@ -7,7 +7,8 @@ import { useWs } from 'shared/store'
 import {
   CheckersActionType,
   type IBoard,
-  type MoveFigureRequestWebsocket
+  type MoveFigureRequestWebsocket,
+  type KillFigureRequestWebsocket
 } from '../../../model'
 import { useCheckersStore } from '../../../store'
 import { getRequiredFigures, getKillCoords, getMoveCoords } from '../../utils'
@@ -59,17 +60,18 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
             setKillingFigure(figureId)
 
             if (ws && game?.id) {
-              const data: MoveFigureRequestWebsocket['data'] = {
+              const data: KillFigureRequestWebsocket['data'] = {
                 startCell,
                 finishCell,
+                figureId,
                 gameId: game.id
               }
 
-              const moveData: MoveFigureRequestWebsocket = {
-                type: CheckersActionType.MOVE_FIGURE,
+              const killData: KillFigureRequestWebsocket = {
+                type: CheckersActionType.KILL_FIGURE,
                 data
               }
-              ws.send(JSON.stringify(moveData))
+              ws.send(JSON.stringify(killData))
             } else {
               await moveAnimate(startCell, finishCell)
             }

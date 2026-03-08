@@ -1,11 +1,2 @@
-export type {
-  IBoard,
-  IKillVariant,
-  Rules,
-  IMoveFigure,
-  MoveFigureResponseWebsocket,
-  MoveFigureRequestWebsocket,
-  SaveGameResponseWebsocket,
-  SaveGameRequestWebsocket
-} from './types'
+export type * from './types'
 export * from './const'

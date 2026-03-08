@@ -30,5 +30,6 @@ export const ruleDefaults: Record<Rules, boolean> = {
 export const CheckersActionType = {
   ...ActionType,
   MOVE_FIGURE: 'MOVE_FIGURE',
+  KILL_FIGURE: 'KILL_FIGURE',
   SAVE_GAME: 'SAVE_GAME'
 } as const
