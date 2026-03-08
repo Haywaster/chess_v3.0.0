@@ -176,7 +176,7 @@ class GameWebSocketService {
     const { game, username } = message
     const gameId = game.id
     const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
-
+    
     if (!gameInDB) {
       this.sendError(ws, 'Game not found')
       return
@@ -236,10 +236,10 @@ class GameWebSocketService {
       })
     }
 
-    this.sendJoinState(ws, game, nextStatus, participantColor)
+    await this.sendJoinState(ws, game, nextStatus)
 
     if (shouldStartGame) {
-      this.broadcastJoinState(gameId, game, GameStatus.PLAYING, ws)
+      await this.broadcastJoinState(gameId, game, GameStatus.PLAYING, ws)
     }
   }
 
@@ -425,12 +425,12 @@ class GameWebSocketService {
     return (userWithColor?.color as IFigure['color'] | undefined) ?? null
   }
 
-  private broadcastJoinState(
+  private async broadcastJoinState(
     gameId: string,
     game: Omit<IGame, 'status'>,
     status: TGameStatus,
     excludeWs?: WebSocket
-  ): void {
+  ): Promise<void> {
     const room = this.gameRooms.get(gameId)
 
     if (!room) {
@@ -442,29 +442,41 @@ class GameWebSocketService {
         return
       }
 
-      const connection = this.connectionState.get(client)
-
-      if (!connection?.color) {
-        return
-      }
-
-      this.sendJoinState(client, game, status, connection.color)
+      this.sendJoinState(client, game, status)
     })
   }
-
-  private sendJoinState(
+  
+  private async sendJoinState(
     ws: WebSocket,
     game: Omit<IGame, 'status'>,
     status: TGameStatus,
-    color: IFigure['color']
-  ): void {
+  ): Promise<void> {
+    const currentCheckersGame = await prisma.checkersGame.findUnique({
+      where: { gameId: game.id }
+    })
+    
+    if (!currentCheckersGame) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+    
+    const connection = this.connectionState.get(ws)
+    
+    if (!connection?.color) {
+      return
+    }
+    
     this.sendJson(ws, {
       type: ActionType.JOIN_GAME,
       data: {
         ...game,
         status,
+        gameData: {
+          // figures,
+          currentTurn: currentCheckersGame.currentTurn,
+        },
         userData: {
-          color
+          color: connection.color,
         }
       }
     })

@@ -22,13 +22,14 @@ interface ICheckersUserData {
 interface ICheckersGame extends IBaseGame {
   type: typeof GameType.CHECKERS
   userData: ICheckersUserData
+  gameData: { currentTurn: IFigure['color'] }
 }
 
 export type IGame = ICheckersGame
 
 export interface IJoinGameData {
   username: string
-  game: Omit<IGame, 'status' | 'userData'>
+  game: Omit<IGame, 'status' | 'userData' | 'gameData'>
 }
 
 export type JoinGameRequestWebsocket = WebsocketDataConstructor<

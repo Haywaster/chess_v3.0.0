@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 import { type FC, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -7,7 +6,6 @@ import styled from 'styled-components'
 import {
   type JoinGameRequestWebsocket,
   type JoinGameResponseWebsocket,
-  type IJoinGameData,
   GameType,
   useGame,
   useSetGame,
@@ -61,13 +59,11 @@ export const Checkers: FC = () => {
     const wss = new WebSocket('/ws')
     setWs(wss)
 
-    const game: IJoinGameData = {
-      username,
-      game: { type: GameType.CHECKERS, id }
-    }
-
     const joinGameData: JoinGameRequestWebsocket = {
-      data: game,
+      data: {
+        username,
+        game: { type: GameType.CHECKERS, id }
+      },
       type: CheckersActionType.JOIN_GAME
     }
 
@@ -87,6 +83,7 @@ export const Checkers: FC = () => {
       switch (message.type) {
         case ActionType.JOIN_GAME:
           setGame(message.data)
+          setStepColor(message.data.gameData.currentTurn)
           break
         case CheckersActionType.MOVE_FIGURE:
           await moveAnimate(message.data.startCell, message.data.finishCell)

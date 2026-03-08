@@ -10,7 +10,7 @@ interface State {
 
 interface Action {
   toggleRotate: () => void
-  setTheme: (theme: Theme) => void
+  setTheme: (theme: State['theme']) => void
 }
 
 const initialState: State = {
