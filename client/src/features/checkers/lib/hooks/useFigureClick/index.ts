@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import type { IFigure } from 'entities/Figure'
-import { useGame } from 'entities/Game'
+import { GameMode } from 'entities/Game'
 
 import type { IBoard } from '../../../model'
 import { useCheckersStore } from '../../../store'
@@ -11,6 +11,7 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const cells = useCheckersStore(state => state.cells)
   const rules = useCheckersStore(state => state.rules)
   const figures = useCheckersStore(state => state.figures)
+  const userColor = useCheckersStore(state => state.userColor)
   const activeFigure = useCheckersStore(state => state.activeFigure)
   const animatedFigure = useCheckersStore(state => state.animatedFigure)
   const stepColor = useCheckersStore(state => state.stepColor)
@@ -18,14 +19,25 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
   const setCellsForMoving = useCheckersStore(state => state.setCellsForMoving)
   const setKillingVariants = useCheckersStore(state => state.setKillingVariants)
+  const mode = useCheckersStore(state => state.mode)
 
-  const game = useGame()
+  const checkGameMode = (id: IFigure['id']): boolean => {
+    switch (mode) {
+      case GameMode.SINGLE:
+        return stepColor === figures[id].color
+      case GameMode.COUPLE:
+        return (
+          userColor === figures[id].color && stepColor === figures[id].color
+        )
+      default:
+        return false
+    }
+  }
 
   return useCallback(
     (id: IFigure['id']): void => {
       if (
-        ((!game || game.userData.color === figures[id].color) &&
-          stepColor === figures[id].color &&
+        (checkGameMode(id) &&
           requiredFigures.length === 0 &&
           animatedFigure.id === null) ||
         requiredFigures.includes(id)
@@ -53,13 +65,13 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
       animatedFigure.id,
       cells,
       figures,
-      game,
       requiredFigures,
       rules,
       setActiveFigure,
       setCellsForMoving,
       setKillingVariants,
-      stepColor
+      stepColor,
+      userColor
     ]
   )
 }

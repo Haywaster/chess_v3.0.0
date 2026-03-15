@@ -3,6 +3,7 @@ import { create } from 'zustand'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
+import type { IBaseGame, TGameMode } from 'entities/Game'
 
 import { changeBoardAfterKill, changeBoardAfterMove } from '../lib'
 import {
@@ -10,12 +11,13 @@ import {
   ruleDefaults,
   type IBoard,
   type IKillVariant,
-  type Rules
+  type TRules
 } from '../model'
 
 interface State {
+  mode: TGameMode | null
   rulesModal: boolean
-  rules: Record<Rules, boolean>
+  rules: Record<TRules, boolean>
   figures: IBoard['figures']
   cells: IBoard['cells']
   activeFigure: IFigure['id'] | null
@@ -27,11 +29,15 @@ interface State {
   }
   killingFigure: IFigure['id'] | null
   stepColor: IFigure['color']
+  userColor: IFigure['color'] | null
   requiredFigures: IFigure['id'][]
+  cooperativeGameData: IBaseGame | null // null в mode: SINGLE
 }
 
 interface Action {
-  changeRule: (rule: Rules, value: boolean) => void
+  setCooperativeGameData: (gameData: State['cooperativeGameData']) => void
+  setMode: (mode: TGameMode) => void
+  setRules: (rules: State['rules']) => void
   toggleRulesModal: () => void
   reset: () => void
   setActiveFigure: (id: State['activeFigure']) => void
@@ -45,12 +51,16 @@ interface Action {
   setKillingFigure: (id: State['killingFigure']) => void
   killFigure: (id: IFigure['id']) => void
   setStepColor: (color: State['stepColor']) => void
+  setUserColor: (color: State['userColor']) => void
   setRequiredFigures: (figures: State['requiredFigures']) => void
   updateBoard: (board: IBoard) => void
 }
 
 const initialState: State = {
   ...initialCells,
+  cooperativeGameData: null,
+  userColor: null,
+  mode: null,
   rules: ruleDefaults,
   rulesModal: false,
   activeFigure: null,
@@ -67,8 +77,20 @@ const initialState: State = {
 
 export const useCheckersStore = create<State & Action>(set => ({
   ...initialState,
-  changeRule: (rule, value) =>
-    set(state => ({ rules: { ...state.rules, [rule]: value } })),
+  //  Если к-л кооперативные данные существуют, они перезапишутся, иначе обнулятся
+  setCooperativeGameData: gameData =>
+    set(state => {
+      if (gameData) {
+        return {
+          cooperativeGameData: { ...state.cooperativeGameData, ...gameData }
+        }
+      }
+
+      return { cooperativeGameData: null }
+    }),
+  setUserColor: color => set({ userColor: color }),
+  setMode: mode => set({ mode }),
+  setRules: rules => set({ rules }),
   toggleRulesModal: () => set(state => ({ rulesModal: !state.rulesModal })),
   reset: () => set({ ...initialState }),
   setActiveFigure: id => set({ activeFigure: id }),

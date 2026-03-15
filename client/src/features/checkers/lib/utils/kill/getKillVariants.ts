@@ -5,7 +5,8 @@ import {
   boardCellsIds,
   type IBoard,
   type IKillVariant,
-  type Rules
+  Rules,
+  type TRules
 } from '../../../model'
 import { makeFigureStain } from '../changeBoard'
 
@@ -19,7 +20,7 @@ const getKillVariant = (
   activeFigure: IFigure,
   cell: ICell,
   board: IBoard,
-  rules: Record<Rules, boolean>
+  rules: Record<TRules, boolean>
 ): IKillVariant | IKillVariant[] | undefined => {
   const { figures, cells } = board
 
@@ -33,7 +34,7 @@ const getKillVariant = (
 
   return !activeFigure.isStain
     ? calcFigureKill(cells, activeFigure, cell, rules)
-    : rules.stopAfterKill
+    : rules[Rules.stopAfterKill]
       ? calcStainKillSingleCell(cells, activeFigure, cell)
       : calcStainKillManyCells(cells, activeFigure, cell)
 }
@@ -42,7 +43,7 @@ export const getKillVariants = (
   activeFigure: IFigure,
   board: IBoard,
   cell: ICell,
-  rules: Record<Rules, boolean>,
+  rules: Record<TRules, boolean>,
   variants: IKillVariant[] = []
   // eslint-disable-next-line max-params
 ): IKillVariant[][] => {

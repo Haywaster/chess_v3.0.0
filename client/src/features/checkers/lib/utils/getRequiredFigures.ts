@@ -1,13 +1,13 @@
 import type { IFigure } from 'entities/Figure'
 
-import { type IBoard, type Rules } from '../../model'
+import type { IBoard, TRules } from '../../model'
 
 import { getKillVariants } from './kill'
 
 export const getRequiredFigures = (
   board: IBoard,
   stepColor: IFigure['color'],
-  rules: Record<Rules, boolean>
+  rules: Record<TRules, boolean>
 ): IFigure['id'][] => {
   const { cells, figures } = board
 

@@ -1,7 +1,7 @@
 import { type FC, memo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-interface ISwitch {
+export interface ISwitchProps {
   id: string
   onChange: ({ id, checked }: { id: string; checked: boolean }) => void
   initialChecked?: boolean
@@ -55,7 +55,7 @@ const StyledSwitch = styled.label<IStyledProps>`
     `}
 `
 
-export const Switch: FC<ISwitch> = memo(props => {
+export const Switch: FC<ISwitchProps> = memo(props => {
   const { id, initialChecked = false, onChange, label } = props
   const [checked, setChecked] = useState(initialChecked)
 

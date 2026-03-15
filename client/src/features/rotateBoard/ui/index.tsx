@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useRotate, useToggleRotate } from 'shared/store'
 import { Button } from 'shared/ui/Button'
 
-import { ArrowCircle } from '../../assets'
+import { ArrowCircle } from '../assets'
 
 interface IStyledButtonProps extends ComponentProps<typeof Button> {
   $isRotate: boolean

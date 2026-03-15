@@ -6,7 +6,8 @@ import {
   boardCellsIds,
   type IBoard,
   type IKillVariant,
-  type Rules
+  Rules,
+  type TRules
 } from '../../../model'
 import { calcFigureMove } from '../move'
 
@@ -14,9 +15,9 @@ export const calcFigureKill = (
   cells: IBoard['cells'],
   activeFigure: IFigure,
   cell: ICell,
-  rules: Record<Rules, boolean>
+  rules: Record<TRules, boolean>
 ): IKillVariant | undefined => {
-  const moveCondition = rules.behindKill
+  const moveCondition = rules[Rules.behindKill]
     ? Math.abs(cell.x - activeFigure.x) === 1
     : calcFigureMove(activeFigure, cell)
 

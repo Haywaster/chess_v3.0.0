@@ -13,3 +13,8 @@ export const ActionType = {
   JOIN_GAME: 'JOIN_GAME',
   ERROR: 'ERROR'
 } as const
+
+export const GameMode = {
+  SINGLE: 'SINGLE',
+  COUPLE: 'COUPLE'
+} as const

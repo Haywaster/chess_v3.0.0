@@ -2,7 +2,7 @@ import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
 import { keepLargestArrays } from 'shared/lib'
 
-import type { IBoard, IKillVariant, Rules } from '../../model'
+import { type IBoard, type IKillVariant, type TRules, Rules } from '../../model'
 
 import { getKillVariants } from './kill'
 import { isMoveValid } from './move'
@@ -11,7 +11,7 @@ interface IGetVariantInput {
   board: IBoard
   id: IFigure['id']
   requiredFigures: IFigure['id'][]
-  rules: Record<Rules, boolean>
+  rules: Record<TRules, boolean>
 }
 
 interface IGetVariantResult {
@@ -54,7 +54,7 @@ export const getVariants = ({
     const variants = getKillVariants(activeFigure, board, cell, rules)
 
     if (variants.length !== 0) {
-      if (rules.killMaxFigure) {
+      if (rules[Rules.killMaxFigure]) {
         keepLargestArrays(variants).forEach(variant =>
           killingVariants.push(variant)
         )

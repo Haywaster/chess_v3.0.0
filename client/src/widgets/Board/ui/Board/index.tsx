@@ -16,6 +16,7 @@ const MainBoard = styled.div`
 interface IBoardWrapperProps {
   className?: string
   $isRotate?: boolean
+  $withAnimation?: boolean
 }
 
 const BoardWrapper = styled.div<IBoardWrapperProps>`
@@ -26,7 +27,7 @@ const BoardWrapper = styled.div<IBoardWrapperProps>`
   height: 500px;
   border: 5px solid var(--border-color);
   rotate: ${p => p.$isRotate && '-180deg'};
-  transition: rotate 1s ease;
+  transition: ${p => p.$withAnimation && 'rotate 1s ease'};
 `
 
 interface IProps {
@@ -35,14 +36,20 @@ interface IProps {
 
 export const Board: FC<IProps> = memo(({ className }) => {
   const stepColor = useCheckersStore(state => state.stepColor)
+  const userColor = useCheckersStore(state => state.userColor)
   const rotate = useRotate()
 
-  const isRotate = rotate && stepColor === 'black'
+  const isRotate = (rotate && stepColor === 'black') || userColor === 'black'
+  const withAnimation = rotate && stepColor === 'black'
 
   return (
     <MainBoard>
       <VerticalOrder isRotate={isRotate} />
-      <BoardWrapper $isRotate={isRotate} className={className}>
+      <BoardWrapper
+        $isRotate={isRotate}
+        $withAnimation={withAnimation}
+        className={className}
+      >
         <CheckersBoard />
       </BoardWrapper>
       <HorizontalOrder isRotate={isRotate} />

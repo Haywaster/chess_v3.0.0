@@ -1,14 +1,15 @@
 import { useCallback } from 'react'
 
 import type { ICell } from 'entities/Cell'
-import { useGame } from 'entities/Game'
+import { GameMode } from 'entities/Game'
 import { useWs } from 'shared/store'
 
 import {
   CheckersActionType,
   type IBoard,
   type MoveFigureRequestWebsocket,
-  type KillFigureRequestWebsocket
+  type KillFigureRequestWebsocket,
+  Rules
 } from '../../../model'
 import { useCheckersStore } from '../../../store'
 import { getRequiredFigures, getKillCoords, getMoveCoords } from '../../utils'
@@ -26,8 +27,9 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
   const killFigureFromBoard = useCheckersStore(state => state.killFigure)
   const setStepColor = useCheckersStore(state => state.setStepColor)
   const setRequiredFigures = useCheckersStore(state => state.setRequiredFigures)
+  const mode = useCheckersStore(state => state.mode)
+  const gameId = useCheckersStore(state => state.cooperativeGameData?.id)
 
-  const game = useGame()
   const ws = useWs()
   const moveAnimate = useMoveFigure()
 
@@ -36,7 +38,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
       if (activeFigure !== null) {
         setActiveFigure(null)
 
-        if (rules.requireKill) {
+        if (rules[Rules.requireKill]) {
           setRequiredFigures([])
         }
 
@@ -59,12 +61,12 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
           for (const { startCell, finishCell, figureId } of killCoords) {
             setKillingFigure(figureId)
 
-            if (ws && game?.id) {
+            if (ws && gameId && mode === GameMode.COUPLE) {
               const data: KillFigureRequestWebsocket['data'] = {
                 startCell,
                 finishCell,
                 figureId,
-                gameId: game.id
+                gameId
               }
 
               const killData: KillFigureRequestWebsocket = {
@@ -87,11 +89,11 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
             id
           })
 
-          if (ws && game?.id) {
+          if (ws && gameId && mode === GameMode.COUPLE) {
             const data: MoveFigureRequestWebsocket['data'] = {
               startCell,
               finishCell,
-              gameId: game.id
+              gameId: gameId
             }
 
             const moveData: MoveFigureRequestWebsocket = {
@@ -105,7 +107,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
           }
         }
 
-        if (rules.requireKill) {
+        if (rules[Rules.requireKill]) {
           // TODO: Нужен ли здесь useCheckersStore.getState() ?
           const cells = useCheckersStore.getState().cells
           const figures = useCheckersStore.getState().figures
@@ -121,19 +123,20 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
     },
     [
       activeFigure,
+      setActiveFigure,
+      rules,
+      allKillVariants,
+      setRequiredFigures,
       cells,
       figures,
-      game?.id,
-      killFigureFromBoard,
-      allKillVariants,
-      moveAnimate,
-      rules,
-      setActiveFigure,
       setKillingFigure,
-      setRequiredFigures,
+      ws,
+      gameId,
+      mode,
+      killFigureFromBoard,
+      moveAnimate,
       setStepColor,
-      stepColor,
-      ws
+      stepColor
     ]
   )
 }

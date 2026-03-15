@@ -7,14 +7,13 @@ import {
   type JoinGameRequestWebsocket,
   type JoinGameResponseWebsocket,
   GameType,
-  useGame,
-  useSetGame,
   type ErrorResponseWebsocket,
-  ActionType
+  ActionType,
+  GameMode,
+  GameStatus
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
 import {
-  CheckersRulesModal,
   type MoveFigureResponseWebsocket,
   type SaveGameResponseWebsocket,
   type KillFigureResponseWebsocket,
@@ -23,9 +22,8 @@ import {
   useUpdateBoard,
   CheckersActionType
 } from 'features/checkers'
-import { UsernameModal } from 'features/prepareToGame'
 import type { id as TId } from 'shared/const/router'
-import { useSetWs, useWs } from 'shared/store'
+import { useSetWs } from 'shared/store'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { Header } from 'widgets/Header'
@@ -39,20 +37,25 @@ const StyledMain = styled.main`
 `
 
 export const Checkers: FC = () => {
-  const game = useGame()
-  const setGame = useSetGame()
   const username = useUsername()
-  const ws = useWs()
   const setWs = useSetWs()
   const moveAnimate = useMoveFigure()
   const updateBoard = useUpdateBoard()
+
+  const mode = useCheckersStore(state => state.mode)
+  const status = useCheckersStore(state => state.cooperativeGameData?.status)
+  const setCooperativeGameData = useCheckersStore(
+    state => state.setCooperativeGameData
+  )
+  const setUserColor = useCheckersStore(state => state.setUserColor)
   const setStepColor = useCheckersStore(state => state.setStepColor)
+  const setMode = useCheckersStore(state => state.setMode)
   const killFigure = useCheckersStore(state => state.killFigure)
 
   const { id } = useParams<typeof TId>()
 
   useEffect(() => {
-    if (!id || !username) {
+    if (!id || !username || id === 'single-game') {
       return
     }
 
@@ -60,11 +63,11 @@ export const Checkers: FC = () => {
     setWs(wss)
 
     const joinGameData: JoinGameRequestWebsocket = {
+      type: CheckersActionType.JOIN_GAME,
       data: {
         username,
         game: { type: GameType.CHECKERS, id }
-      },
-      type: CheckersActionType.JOIN_GAME
+      }
     }
 
     wss.onopen = () => {
@@ -82,7 +85,11 @@ export const Checkers: FC = () => {
 
       switch (message.type) {
         case ActionType.JOIN_GAME:
-          setGame(message.data)
+          setCooperativeGameData({
+            status: message.data.status,
+            id: message.data.id
+          })
+          setUserColor(message.data.userData.color)
           setStepColor(message.data.gameData.currentTurn)
           break
         case CheckersActionType.MOVE_FIGURE:
@@ -112,24 +119,30 @@ export const Checkers: FC = () => {
     }
   }, [
     id,
-    setGame,
     setWs,
     setStepColor,
     username,
     moveAnimate,
     updateBoard,
-    killFigure
+    killFigure,
+    setCooperativeGameData,
+    setUserColor
   ])
+
+  useEffect(() => {
+    if (id === 'single-game') {
+      setMode(GameMode.SINGLE)
+    }
+  }, [id, setMode])
+
+  const isLoading = status === GameStatus.PENDING && mode === GameMode.COUPLE
 
   return (
     <>
-      {ws && game?.status === 'pending' && username && <Loader fullScreen />}
+      {isLoading && <Loader fullScreen />}
       <Header />
-      <StyledMain>
-        <CenteredBoard />
-      </StyledMain>
-      <CheckersRulesModal />
-      <UsernameModal />
+      <StyledMain>{!isLoading && <CenteredBoard />}</StyledMain>
+      {/*<UsernameModal />*/}
     </>
   )
 }

@@ -5,12 +5,13 @@ import type {
   WebsocketErrorConstructor
 } from 'shared/types'
 
-import type { GameType, GameStatus, ActionType } from '../const'
+import type { GameType, GameStatus, ActionType, GameMode } from '../const'
 
 export type TGameType = EnumValues<typeof GameType>
-type TGameStatus = EnumValues<typeof GameStatus>
+export type TGameMode = EnumValues<typeof GameMode>
+export type TGameStatus = EnumValues<typeof GameStatus>
 
-interface IBaseGame {
+export interface IBaseGame {
   id: string
   status: TGameStatus
 }
@@ -19,13 +20,25 @@ interface ICheckersUserData {
   color: IFigure['color']
 }
 
+interface ICheckersGameData {
+  currentTurn: IFigure['color']
+}
+
 interface ICheckersGame extends IBaseGame {
   type: typeof GameType.CHECKERS
   userData: ICheckersUserData
-  gameData: { currentTurn: IFigure['color'] }
+  gameData: ICheckersGameData
 }
 
 export type IGame = ICheckersGame
+
+export interface ICreateGameData {
+  type: TGameType
+  gameData: {
+    rules: Record<string, boolean>
+    color: IFigure['color']
+  }
+}
 
 export interface IJoinGameData {
   username: string
