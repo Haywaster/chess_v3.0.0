@@ -26,3 +26,5 @@ dist-ssr
 #Common files
 .env
 
+#DB files
+*.db

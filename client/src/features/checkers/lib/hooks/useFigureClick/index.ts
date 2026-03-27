@@ -21,18 +21,22 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const setKillingVariants = useCheckersStore(state => state.setKillingVariants)
   const mode = useCheckersStore(state => state.mode)
 
-  const checkGameMode = (id: IFigure['id']): boolean => {
-    switch (mode) {
-      case GameMode.SINGLE:
-        return stepColor === figures[id].color
-      case GameMode.COUPLE:
-        return (
-          userColor === figures[id].color && stepColor === figures[id].color
-        )
-      default:
-        return false
-    }
-  }
+  const checkGameMode = useCallback(
+    (id: IFigure['id']): boolean => {
+      switch (mode) {
+        case GameMode.SINGLE:
+        case GameMode.OFFLINE:
+          return stepColor === figures[id].color
+        case GameMode.COUPLE:
+          return (
+            userColor === figures[id].color && stepColor === figures[id].color
+          )
+        default:
+          return false
+      }
+    },
+    [figures, mode, stepColor, userColor]
+  )
 
   return useCallback(
     (id: IFigure['id']): void => {
@@ -64,14 +68,13 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
       activeFigure,
       animatedFigure.id,
       cells,
+      checkGameMode,
       figures,
       requiredFigures,
       rules,
       setActiveFigure,
       setCellsForMoving,
-      setKillingVariants,
-      stepColor,
-      userColor
+      setKillingVariants
     ]
   )
 }

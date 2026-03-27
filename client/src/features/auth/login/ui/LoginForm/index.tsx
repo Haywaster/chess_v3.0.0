@@ -43,15 +43,15 @@ export const LoginForm: FC = () => {
     if (userName && password) {
       try {
         await loginUser(userName, password)
-      } catch (e) {
+      } catch (error) {
         if (
           isAxiosError<{
             message: string
             type: EnumValues<typeof authErrors>
             errors: string[]
-          }>(e)
+          }>(error)
         ) {
-          switch (e.response?.data.type) {
+          switch (error.response?.data.type) {
             case 'USER_NOT_FOUND': {
               setIsOpenRegistrationModal(true)
             }

@@ -47,8 +47,8 @@ export const CheckersChooseRules: FC<IProps> = props => {
     setColor(checked ? 'black' : 'white')
 
   const onCreateGame = (): void => {
-    // Одиночный режим устанавливает правила сам, парный принимает их с сервера
-    if (mode === GameMode.SINGLE) {
+    // Офлайн режим устанавливает правила сам, парный принимает их с сервера
+    if (mode === GameMode.OFFLINE) {
       setGlobalMode(mode)
       setUserColor(color)
       setGlobalRules(rules)

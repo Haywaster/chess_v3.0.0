@@ -16,5 +16,6 @@ export const ActionType = {
 
 export const GameMode = {
   SINGLE: 'SINGLE',
-  COUPLE: 'COUPLE'
+  COUPLE: 'COUPLE',
+  OFFLINE: 'OFFLINE'
 } as const

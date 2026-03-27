@@ -1,6 +1,5 @@
 import { type FC, memo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
 
 import {
   GameMode,
@@ -21,10 +20,6 @@ import { games } from '../../const'
 interface IProps {
   onError: () => void
 }
-
-const InlineHeader = styled.h3`
-  display: inline;
-`
 
 export const ChooseGame: FC<IProps> = memo(props => {
   const { onError } = props
@@ -53,8 +48,8 @@ export const ChooseGame: FC<IProps> = memo(props => {
     gameData,
     mode
   }: ICreateGameData & { mode: TGameMode }): Promise<void> => {
-    if (mode === GameMode.SINGLE) {
-      navigate(`/${type.toLowerCase()}/single-game`, { replace: true })
+    if (mode === GameMode.OFFLINE) {
+      navigate(`/${type.toLowerCase()}/offline-game`, { replace: true })
     } else {
       const body: ICreateGameData = { type, gameData }
       const { data: gameId } = await gameService.createGame(body)
@@ -68,7 +63,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
       <VideoLinks videoLinks={games} onClick={chooseGame} />
       <Modal isOpen={!!gameType} onClose={closeModal}>
         <p>
-          <InlineHeader>Hello, {username}! </InlineHeader>
+          <b>Hello, {username}! </b>
           Do you really want to play <b>{gameType}</b>?
         </p>
         {gameType === GameType.CHECKERS && (

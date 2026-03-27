@@ -4,23 +4,31 @@ interface State {
   username: string
   token: string
   isAuth: boolean // прошла ли попытка refresh
+  online: boolean
 }
 
 interface Action {
-  setUserData: (data: Partial<State>) => void
+  setUserData: (data: Partial<Omit<State, 'online'>>) => void
+  setOnline: (online: State['online']) => void
   reset: () => void
 }
 
-const initialState: State = {
+const userInitialState: Omit<State, 'online'> = {
   username: '',
   token: '',
   isAuth: false
 }
 
+const initialState: State = {
+  ...userInitialState,
+  online: false
+}
+
 export const useUserStore = create<State & Action>(set => ({
   ...initialState,
   setUserData: data => set(prev => ({ ...prev, ...data })),
-  reset: () => set({ ...initialState })
+  setOnline: online => set({ online }),
+  reset: () => set({ ...userInitialState })
 }))
 
 export const useUsername = (): State['username'] =>

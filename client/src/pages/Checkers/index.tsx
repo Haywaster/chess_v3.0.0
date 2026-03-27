@@ -55,7 +55,7 @@ export const Checkers: FC = () => {
   const { id } = useParams<typeof TId>()
 
   useEffect(() => {
-    if (!id || !username || id === 'single-game') {
+    if (!id || !username || id === 'offline-game') {
       return
     }
 
@@ -130,8 +130,8 @@ export const Checkers: FC = () => {
   ])
 
   useEffect(() => {
-    if (id === 'single-game') {
-      setMode(GameMode.SINGLE)
+    if (id === 'offline-game') {
+      setMode(GameMode.OFFLINE)
     }
   }, [id, setMode])
 

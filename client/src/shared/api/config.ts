@@ -24,7 +24,7 @@ instance.interceptors.response.use(
     const originalRequest = error.config
     const isAuth = useUserStore.getState().isAuth
     if (
-      error.response.status === StatusCodes.UNAUTHORIZED &&
+      error.response?.status === StatusCodes.UNAUTHORIZED &&
       originalRequest &&
       !originalRequest._isRetry &&
       isAuth
@@ -46,6 +46,11 @@ instance.interceptors.response.use(
           .setUserData({ isAuth: false, token: '', username: '' })
       }
     }
+
+    // if (error.code === 'ERR_NETWORK') {
+    //
+    // }
+
     throw error
   }
 )
