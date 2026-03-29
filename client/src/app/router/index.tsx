@@ -2,6 +2,7 @@ import type { RouteObject } from 'react-router-dom'
 
 import { Checkers } from 'pages/Checkers'
 import { Main } from 'pages/Main'
+import { NotFound } from 'pages/NotFound'
 import { id, RouterPath } from 'shared/const/router'
 
 const getRouteWithId = (route: string, id?: string): string =>
@@ -15,5 +16,9 @@ export const AppRouter: RouteObject[] = [
   {
     path: getRouteWithId(RouterPath.CHECKERS, id),
     element: <Checkers />
+  },
+  {
+    path: '*',
+    element: <NotFound />
   }
 ]

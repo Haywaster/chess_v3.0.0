@@ -26,7 +26,7 @@ import type { id as TId } from 'shared/const/router'
 import { useSetWs } from 'shared/store'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
-import { Header } from 'widgets/Header'
+import { CheckersHeader } from 'widgets/Header'
 
 const CenteredBoard = styled(Board)`
   margin: 0 auto;
@@ -140,7 +140,7 @@ export const Checkers: FC = () => {
   return (
     <>
       {isLoading && <Loader fullScreen />}
-      <Header />
+      <CheckersHeader />
       <StyledMain>{!isLoading && <CenteredBoard />}</StyledMain>
       {/*<UsernameModal />*/}
     </>

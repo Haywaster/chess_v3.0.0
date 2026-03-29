@@ -50,11 +50,11 @@ export const ChooseGame: FC<IProps> = memo(props => {
     mode
   }: ICreateGameData & { mode: TGameMode }): Promise<void> => {
     if (mode === GameMode.OFFLINE) {
-      navigate(`/${type.toLowerCase()}/offline-game`, { replace: true })
+      navigate(`/${type.toLowerCase()}/offline-game`)
     } else {
       const body: ICreateGameData = { type, gameData }
       const { data: gameId } = await gameService.createGame(body)
-      navigate(`/${type.toLowerCase()}/${gameId}`, { replace: true })
+      navigate(`/${type.toLowerCase()}/${gameId}`)
     }
   }
 
