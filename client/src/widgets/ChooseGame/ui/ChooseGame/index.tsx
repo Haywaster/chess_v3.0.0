@@ -9,7 +9,7 @@ import {
   type TGameMode,
   type TGameType
 } from 'entities/Game'
-import { useIsAuth, useUsername } from 'entities/User'
+import { useIsAuth, useOnline, useUsername } from 'entities/User'
 import { LoginForm } from 'features/auth/login'
 import { CheckersChooseRules } from 'features/checkers'
 import { VideoLinks } from 'features/chooseVideoLink'
@@ -25,6 +25,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
   const { onError } = props
 
   const isAuth = useIsAuth()
+  const online = useOnline()
   const username = useUsername()
   const navigate = useNavigate()
 
@@ -32,7 +33,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
 
   const chooseGame = (type: TGameType): void => {
     // TODO: В планах сделать возможность играть без регистрации
-    if (!isAuth) {
+    if (!isAuth && online) {
       onError()
     } else {
       setGameType(type)
@@ -59,7 +60,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
 
   return (
     <Flex direction="column">
-      <LoginForm />
+      {online && <LoginForm />}
       <VideoLinks videoLinks={games} onClick={chooseGame} />
       <Modal isOpen={!!gameType} onClose={closeModal}>
         <p>

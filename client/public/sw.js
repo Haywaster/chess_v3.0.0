@@ -36,10 +36,10 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url)
 
   // Навигационные запросы (переходы по страницам) — стратегия: сеть → кэш
-  if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('/index.html')))
-    return
-  }
+  //  if (request.mode === 'navigate') {
+  //    event.respondWith(fetch(request).catch(() => caches.match('/index.html')))
+  //    return
+  //  }
 
   // Игнорируем запросы расширений браузера и devtools
   if (
@@ -64,6 +64,7 @@ self.addEventListener('fetch', event => {
 
       // Нет в кэше — пробуем сеть
       return fetch(request).then(networkRes => {
+        const clone = networkRes.clone()
         // Если ответ ок — кладём в кэш на будущее
         if (networkRes && networkRes.ok) {
           // Пропускаем частичные ответы (206)
@@ -73,7 +74,7 @@ self.addEventListener('fetch', event => {
           }
 
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(request, networkRes.clone())
+            cache.put(request, clone)
           })
         }
         return networkRes

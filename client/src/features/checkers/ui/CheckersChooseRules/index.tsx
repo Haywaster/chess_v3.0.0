@@ -8,6 +8,7 @@ import {
   type ICreateGameData,
   type TGameMode
 } from 'entities/Game'
+import { useOnline } from 'entities/User'
 import { useCheckersStore } from 'features/checkers'
 import { ruleDefaults, ruleTitles, type TRules } from 'features/checkers/model'
 import { Button, Flex, Switch } from 'shared/ui'
@@ -31,9 +32,12 @@ export const CheckersChooseRules: FC<IProps> = props => {
   const setGlobalMode = useCheckersStore(state => state.setMode)
   const setUserColor = useCheckersStore(state => state.setUserColor)
   const setGlobalRules = useCheckersStore(state => state.setRules)
+  const online = useOnline()
 
   const [color, setColor] = useState<IFigure['color']>('white')
-  const [mode, setMode] = useState<TGameMode>(GameMode.SINGLE)
+  const [onlineMode, setOnlineMode] = useState<Exclude<TGameMode, 'OFFLINE'>>(
+    GameMode.SINGLE
+  )
   const [rules, setRules] = useState<Record<TRules, boolean>>(ruleDefaults)
 
   const changeHandler: ComponentProps<typeof Switch>['onChange'] = useCallback(
@@ -42,21 +46,21 @@ export const CheckersChooseRules: FC<IProps> = props => {
   )
 
   const onChangeGameMode: ISwitchProps['onChange'] = ({ checked }) =>
-    setMode(checked ? GameMode.COUPLE : GameMode.SINGLE)
+    setOnlineMode(checked ? GameMode.COUPLE : GameMode.SINGLE)
   const onChangeColor: ISwitchProps['onChange'] = ({ checked }) =>
     setColor(checked ? 'black' : 'white')
 
   const onCreateGame = (): void => {
-    // Офлайн режим устанавливает правила сам, парный принимает их с сервера
-    if (mode === GameMode.OFFLINE) {
-      setGlobalMode(mode)
+    // Офлайн режим устанавливает правила сам
+    if (!online) {
+      setGlobalMode(onlineMode)
       setUserColor(color)
       setGlobalRules(rules)
     }
 
     createGame({
       type: GameType.CHECKERS,
-      mode,
+      mode: online ? onlineMode : GameMode.OFFLINE,
       gameData: { rules, color }
     })
   }
@@ -76,14 +80,16 @@ export const CheckersChooseRules: FC<IProps> = props => {
             />
           ))}
         </Flex>
-        <Flex direction="column">
-          <CenteredText>Do you want to play with your friends?</CenteredText>
-          <Switch
-            id="coupleGame"
-            label="Cooperative game"
-            onChange={onChangeGameMode}
-          />
-        </Flex>
+        {online && (
+          <Flex direction="column">
+            <CenteredText>Do you want to play with your friends?</CenteredText>
+            <Switch
+              id="coupleGame"
+              label="Cooperative game"
+              onChange={onChangeGameMode}
+            />
+          </Flex>
+        )}
         <Flex direction="column">
           <CenteredText>Prefer black color?</CenteredText>
           <Switch

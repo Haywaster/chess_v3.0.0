@@ -1,7 +1,7 @@
 import { type FC, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { useUsername } from 'entities/User'
+import { useOnline, useUsername } from 'entities/User'
 import { Flex } from 'shared/ui'
 
 import { ChooseGame } from '../ChooseGame'
@@ -28,9 +28,11 @@ const Span = styled.span<{ $hasUnderline: boolean }>`
 `
 
 const ANIMATION_DURATION = 1000
+const offlineTitle = 'Hello! Play offline game!'
 
 export const ChooseGameWithTitle: FC = () => {
   const username = useUsername()
+  const online = useOnline()
 
   const [hasUnderline, setHasUnderline] = useState(false)
   const writeRef = useRef<HTMLSpanElement | null>(null)
@@ -59,7 +61,7 @@ export const ChooseGameWithTitle: FC = () => {
 
   return (
     <Container as="main" direction="column">
-      <Title>{title}</Title>
+      <Title>{online ? title : offlineTitle}</Title>
       <ChooseGame onError={underline} />
     </Container>
   )
