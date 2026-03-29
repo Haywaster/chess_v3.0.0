@@ -36,8 +36,12 @@ export const useUsername = (): State['username'] =>
 export const useToken = (): State['token'] => useUserStore(state => state.token)
 export const useIsAuth = (): State['isAuth'] =>
   useUserStore(state => state.isAuth)
+export const useOnline = (): State['online'] =>
+  useUserStore(state => state.online)
 
 export const useSetUserData = (): Action['setUserData'] =>
   useUserStore(state => state.setUserData)
 export const useReset = (): Action['reset'] =>
   useUserStore(state => state.reset)
+export const useSetOnline = (): Action['setOnline'] =>
+  useUserStore(state => state.setOnline)

@@ -4,5 +4,7 @@ export {
   useIsAuth,
   useToken,
   useUserStore,
-  useReset
+  useReset,
+  useOnline,
+  useSetOnline
 } from './useUserStore'

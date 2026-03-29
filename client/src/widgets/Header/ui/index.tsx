@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { GameMode, GameStatus } from 'entities/Game'
-import { useUsername } from 'entities/User'
+import { useOnline, useUsername } from 'entities/User'
 import { LogoutButton } from 'features/auth/logout'
 import { useCheckersStore } from 'features/checkers'
 import { RotateBoardBtn } from 'features/rotateBoard'
@@ -42,12 +42,14 @@ const CheckersHeader: FC = () => {
 
 const MainHeader: FC = () => {
   const username = useUsername()
+  const online = useOnline()
 
   return (
     <>
       <SwitchButton />
       <h2>Haywaster's games</h2>
       {username && <LogoutButton />}
+      {!online && <p>You are offline, functionality may be limited</p>}
     </>
   )
 }

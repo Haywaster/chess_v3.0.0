@@ -22,7 +22,12 @@ instance.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config
-    const isAuth = useUserStore.getState().isAuth
+    const { isAuth, setOnline, setUserData } = useUserStore.getState()
+
+    if (error.code === 'ERR_NETWORK') {
+      setOnline(false)
+    }
+
     if (
       error.response?.status === StatusCodes.UNAUTHORIZED &&
       originalRequest &&
@@ -34,22 +39,16 @@ instance.interceptors.response.use(
         const { data } = await axios('/refresh', {
           withCredentials: true
         })
-        useUserStore.getState().setUserData({
+        setUserData({
           token: data.accessToken,
           isAuth: true,
           username: data.user
         })
         return instance.request(originalRequest)
       } catch {
-        useUserStore
-          .getState()
-          .setUserData({ isAuth: false, token: '', username: '' })
+        setUserData({ isAuth: false, token: '', username: '' })
       }
     }
-
-    // if (error.code === 'ERR_NETWORK') {
-    //
-    // }
 
     throw error
   }

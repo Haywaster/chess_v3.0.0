@@ -5,7 +5,7 @@ import { StatusCodes } from 'shared/const/statuses'
 import { getTimeIn } from 'shared/lib/utils/getTimeIn.ts'
 
 import { authService } from '../../service'
-import { useSetUserData } from '../../store'
+import { useSetOnline, useSetUserData } from '../../store'
 
 interface UseRefreshToken {
   startInterval: () => void
@@ -21,6 +21,7 @@ type UseRefreshTokenReturn = [
 
 export const useRefreshToken = (): UseRefreshTokenReturn => {
   const setUserData = useSetUserData()
+  const setOnline = useSetOnline()
   const intervalRef = useRef<NodeJS.Timeout>()
 
   const stopInterval = (): void => {
@@ -30,14 +31,18 @@ export const useRefreshToken = (): UseRefreshTokenReturn => {
   const refreshFunc = (): void => {
     authService
       .refresh()
-      .then(({ data }) =>
+      .then(({ data }) => {
         setUserData({
           token: data.accessToken,
           username: data.user,
           isAuth: true
         })
-      )
+        setOnline(true)
+      })
       .catch(err => {
+        const userOnline = err.code !== 'ERR_NETWORK'
+        setOnline(userOnline)
+
         if (isAxiosError(err) && err.status === StatusCodes.UNAUTHORIZED) {
           setUserData({ isAuth: false })
           stopInterval()

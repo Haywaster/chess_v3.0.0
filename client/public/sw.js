@@ -33,6 +33,7 @@ self.addEventListener('activate', event => {
 // 3. Перехват запросов
 self.addEventListener('fetch', event => {
   const { request } = event
+  const url = new URL(request.url)
 
   // Навигационные запросы (переходы по страницам) — стратегия: сеть → кэш
   if (request.mode === 'navigate') {
@@ -40,40 +41,43 @@ self.addEventListener('fetch', event => {
     return
   }
 
+  // Игнорируем запросы расширений браузера и devtools
+  if (
+    ['chrome-extension:', 'moz-extension:'].includes(url.protocol) ||
+    request.referrer?.includes('chrome-extension://')
+  ) {
+    return
+  }
+
+  // Не кешируем api запросы
+  if (url.pathname.startsWith('/api')) {
+    return
+  }
+
   // Для статики (JS, CSS, картинки) — стратегия: кэш → сеть
   event.respondWith(
-    caches
-      .match(request)
-      .then(cached => {
-        if (cached) {
-          // Есть в кэше — отдаём сразу
-          return cached
-        }
-        // Нет в кэше — пробуем сеть
-        return fetch(request).then(networkRes => {
-          // Если ответ ок — кладём в кэш на будущее
-          if (networkRes && networkRes.ok) {
-            const clone = networkRes.clone()
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(request, clone)
-            })
+    caches.match(request).then(cached => {
+      if (cached) {
+        // Есть в кэше — отдаём сразу
+        return cached
+      }
+
+      // Нет в кэше — пробуем сеть
+      return fetch(request).then(networkRes => {
+        // Если ответ ок — кладём в кэш на будущее
+        if (networkRes && networkRes.ok) {
+          // Пропускаем частичные ответы (206)
+          // Дополнительная проверка: Range запросы
+          if (networkRes.status === 206 || event.request.headers.get('Range')) {
+            return networkRes
           }
-          return networkRes
-        })
-      })
-      .catch(() => {
-        // Если совсем ничего нет — можно вернуть заглушку
-        // (например, для картинок или API)
-        if (request.destination === 'image') {
-          return caches.match('/offline-image.png') // опционально
-        }
-        // Для API можно вернуть JSON-ошибку
-        if (request.url.startsWith('/api/')) {
-          return new Response(JSON.stringify({ error: 'Нет соединения' }), {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' }
+
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(request, networkRes.clone())
           })
         }
+        return networkRes
       })
+    })
   )
 })
