@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import {
   type JoinGameRequestWebsocket,
   type JoinGameResponseWebsocket,
-  GameType,
   type ErrorResponseWebsocket,
   ActionType,
   GameMode,
@@ -15,7 +14,6 @@ import {
 import { useUsername } from 'entities/User'
 import {
   type MoveFigureResponseWebsocket,
-  type SaveGameResponseWebsocket,
   type KillFigureResponseWebsocket,
   useCheckersStore,
   useMoveFigure,
@@ -43,10 +41,8 @@ export const Checkers: FC = () => {
   const updateBoard = useUpdateBoard()
 
   const mode = useCheckersStore(state => state.mode)
-  const status = useCheckersStore(state => state.cooperativeGameData?.status)
-  const setCooperativeGameData = useCheckersStore(
-    state => state.setCooperativeGameData
-  )
+  const status = useCheckersStore(state => state.status)
+  const setStatus = useCheckersStore(state => state.setStatus)
   const setUserColor = useCheckersStore(state => state.setUserColor)
   const setStepColor = useCheckersStore(state => state.setStepColor)
   const setMode = useCheckersStore(state => state.setMode)
@@ -64,10 +60,7 @@ export const Checkers: FC = () => {
 
     const joinGameData: JoinGameRequestWebsocket = {
       type: CheckersActionType.JOIN_GAME,
-      data: {
-        username,
-        game: { type: GameType.CHECKERS, id }
-      }
+      data: { username, id }
     }
 
     wss.onopen = () => {
@@ -81,16 +74,13 @@ export const Checkers: FC = () => {
         | ErrorResponseWebsocket
         | MoveFigureResponseWebsocket
         | KillFigureResponseWebsocket
-        | SaveGameResponseWebsocket
 
       switch (message.type) {
         case ActionType.JOIN_GAME:
-          setCooperativeGameData({
-            status: message.data.status,
-            id: message.data.id
-          })
-          setUserColor(message.data.userData.color)
-          setStepColor(message.data.gameData.currentTurn)
+          setStatus(message.data.status)
+          setMode(message.data.mode)
+          setUserColor(message.data.userColor)
+          setStepColor(message.data.currentTurn)
           break
         case CheckersActionType.MOVE_FIGURE:
           await moveAnimate(message.data.startCell, message.data.finishCell)
@@ -104,9 +94,6 @@ export const Checkers: FC = () => {
         }
         case ActionType.ERROR:
           console.error('WebSocket server error:', message.error)
-          break
-        case CheckersActionType.SAVE_GAME:
-          updateBoard(message.data)
           break
         default:
           console.error('Unknown message type')
@@ -125,8 +112,9 @@ export const Checkers: FC = () => {
     moveAnimate,
     updateBoard,
     killFigure,
-    setCooperativeGameData,
-    setUserColor
+    setUserColor,
+    setStatus,
+    setMode
   ])
 
   useEffect(() => {

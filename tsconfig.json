@@ -1,0 +1,17 @@
+{
+	"files": [],
+	"references": [
+		{
+			"path": "./client"
+		},
+		{
+			"path": "./server"
+		},
+		{
+			"path": "./packages/shared"
+		},
+		{
+			"path": "./packages/checkers"
+		}
+	]
+}

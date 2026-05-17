@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import { isAxiosError } from 'axios'
 import { type FC, type FormEvent, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -17,7 +18,7 @@ const StyledForm = styled.form<{ $hidden: boolean }>`
 `
 
 export const LoginForm: FC = () => {
-  const formRef = useRef<HTMLFormElement>(null)
+  const formRef = useRef<HTMLFormElement | null>(null)
   const [isOpenRegistrationModal, setIsOpenRegistrationModal] =
     useState<boolean>(false)
   const isAuth = useIsAuth()
@@ -27,6 +28,7 @@ export const LoginForm: FC = () => {
 
   useEffect(() => {
     if (isAuth) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       closeModal()
     }
   }, [isAuth])

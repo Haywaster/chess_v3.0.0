@@ -6,7 +6,6 @@ import {
   gameService,
   GameType,
   type ICreateGameData,
-  type TGameMode,
   type TGameType
 } from 'entities/Game'
 import { useIsAuth, useOnline, useUsername } from 'entities/User'
@@ -44,17 +43,12 @@ export const ChooseGame: FC<IProps> = memo(props => {
     setGameType(null)
   }
 
-  const createGame = async ({
-    type,
-    gameData,
-    mode
-  }: ICreateGameData & { mode: TGameMode }): Promise<void> => {
-    if (mode === GameMode.OFFLINE) {
-      navigate(`/${type.toLowerCase()}/offline-game`)
+  const createGame = async (data: ICreateGameData): Promise<void> => {
+    if (data.mode === GameMode.OFFLINE) {
+      navigate(`/${data.type.toLowerCase()}/offline-game`)
     } else {
-      const body: ICreateGameData = { type, gameData }
-      const { data: gameId } = await gameService.createGame(body)
-      navigate(`/${type.toLowerCase()}/${gameId}`)
+      const { data: gameId } = await gameService.createGame(data)
+      navigate(`/${data.type.toLowerCase()}/${gameId}`)
     }
   }
 

@@ -1,7 +1,17 @@
 {
+	"extends": "../tsconfig.base.json",
 	"compilerOptions": {
-		"esModuleInterop": true,
-		"allowImportingTsExtensions": true,
-		"strict": true,
-	}
+		"composite": true,
+		"module": "NodeNext",
+		"moduleResolution": "Bundler",
+		"sourceMap": true,
+	},
+	"references": [
+		{
+			"path": "../packages/shared"
+		},
+		{
+			"path": "../packages/checkers"
+		},
+	],
 }

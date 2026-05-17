@@ -1,0 +1,50 @@
+{
+  "name": "game-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:shared": "npm run build -w @game-workspace/shared",
+    "build:checkers": "npm run build -w @game-workspace/checkers",
+    "prepare": "husky"
+  },
+  "workspaces": [
+    "client",
+    "server",
+    "packages/*"
+  ],
+  "author": "Haywaster",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "eslint-plugin-styled-components-a11y": "^2.2.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.5.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.6.1",
+    "lint-staged": "^17.0.5",
+    "prettier": "^3.8.3",
+    "stylelint": "^17.11.1",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-order": "^8.1.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "**/*.{css,scss}": [
+      "stylelint --fix",
+      "prettier --write --ignore-unknown"
+    ]
+  }
+}

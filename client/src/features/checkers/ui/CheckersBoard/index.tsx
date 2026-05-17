@@ -8,10 +8,10 @@ import { useCheckersStore } from '../../store'
 import { CheckersCell } from '../CheckersCell'
 
 const getFigure = (
-  id: IFigure['id'] | undefined,
+  id: IFigure['id'] | null,
   figures: IBoard['figures']
 ): IFigure | undefined => {
-  if (id !== undefined) {
+  if (id !== null) {
     return figures[id]
   }
 }

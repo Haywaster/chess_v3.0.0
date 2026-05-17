@@ -1,21 +1,2 @@
-export const GameType = {
-  CHECKERS: 'CHECKERS',
-  CHESS: 'CHESS'
-} as const
-
-export const GameStatus = {
-  PENDING: 'pending',
-  PLAYING: 'playing',
-  FINISHED: 'finished'
-} as const
-
-export const ActionType = {
-  JOIN_GAME: 'JOIN_GAME',
-  ERROR: 'ERROR'
-} as const
-
-export const GameMode = {
-  SINGLE: 'SINGLE',
-  COUPLE: 'COUPLE',
-  OFFLINE: 'OFFLINE'
-} as const
+export { GameType, GameStatus, GameMode } from '@game-workspace/shared'
+export { CheckersActionType as ActionType } from '@game-workspace/checkers'

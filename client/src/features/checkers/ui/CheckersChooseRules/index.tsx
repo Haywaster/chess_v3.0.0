@@ -23,7 +23,7 @@ const Wrapper = styled(Flex)`
 `
 
 interface IProps {
-  createGame: (data: ICreateGameData & { mode: TGameMode }) => void
+  createGame: (data: ICreateGameData) => void
 }
 
 export const CheckersChooseRules: FC<IProps> = props => {
@@ -60,8 +60,9 @@ export const CheckersChooseRules: FC<IProps> = props => {
 
     createGame({
       type: GameType.CHECKERS,
-      mode: online ? onlineMode : GameMode.OFFLINE,
-      gameData: { rules, color }
+      rules,
+      userColor: color,
+      mode: online ? onlineMode : GameMode.OFFLINE
     })
   }
 

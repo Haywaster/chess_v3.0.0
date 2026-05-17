@@ -4,6 +4,5 @@ export { useMoveFigure } from './lib'
 export {
   CheckersActionType,
   type MoveFigureResponseWebsocket,
-  type KillFigureResponseWebsocket,
-  type SaveGameResponseWebsocket
+  type KillFigureResponseWebsocket
 } from './model'

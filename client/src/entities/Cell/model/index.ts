@@ -1,1 +1,1 @@
-export type { ICell } from './types'
+export * from './types'

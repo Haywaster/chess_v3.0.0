@@ -7,6 +7,7 @@ import {
 import styled, { css } from 'styled-components'
 
 import Crown from '../assets/crown.svg?react'
+
 import type { IFigure } from '../model'
 
 interface IFigureWrapper extends Pick<IFigure, 'color'> {

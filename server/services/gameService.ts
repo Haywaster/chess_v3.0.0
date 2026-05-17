@@ -1,32 +1,27 @@
-import prisma from '../prisma/prismaClient.ts'
-import { ApiError } from '../exceptions/api-error.ts'
+import type { ICreateGameData } from '@game-workspace/checkers'
+import { GameStatus, GameType } from '@game-workspace/shared'
 
-export const GameType = {
-  CHECKERS: 'CHECKERS',
-  CHESS: 'CHESS'
-} as const
-
-export const GameStatus = {
-  PENDING: 'pending',
-  PLAYING: 'playing',
-  FINISHED: 'finished'
-} as const
+import { ApiError } from '../exceptions/api-error'
+import prisma from '../prisma/prismaClient'
 
 const errors = {
-  INCORRECT_GAME: 'INCORRECT_GAME',
+  INCORRECT_GAME: 'INCORRECT_GAME'
 }
 
 export const gameService = {
-  async createGame(userId: number, type: string) {
-    if (!(type in GameType)) {
-      throw ApiError.BadRequest('Тип игры указан неверно', errors.INCORRECT_GAME)
+  async createGame(userId: number, body: ICreateGameData) {
+    if (!(body.type in GameType)) {
+      throw ApiError.BadRequest(
+        'Тип игры указан неверно',
+        errors.INCORRECT_GAME
+      )
     }
 
     const { id: gameTypeId } = await prisma.gameType.upsert({
-      where: { name: type },
+      where: { name: body.type },
       update: {},
-      create: { name: type, minPlayers: 2, maxPlayers: 2 },
-    });
+      create: { name: body.type, minPlayers: 2, maxPlayers: 2 }
+    })
 
     const data = await prisma.game.create({
       data: {
@@ -38,15 +33,16 @@ export const gameService = {
               playerId: userId,
               colorParticipant: {
                 create: {
-                  color: 'white'
+                  color: body.userColor
                 }
               }
-            },
+            }
           ]
         },
         checkersGame: {
           create: {
             currentTurn: 'white',
+            mode: body.mode
           }
         }
       },
@@ -64,8 +60,8 @@ export const gameService = {
         checkersGame: true,
         gameType: true
       }
-    });
+    })
 
-    return { gameId: data.id, gameType: type }
+    return { gameId: data.id, gameType: body.type }
   }
 }

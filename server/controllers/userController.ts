@@ -1,5 +1,6 @@
-import { userService } from '../services/userService.ts'
-import { RequestHandler } from 'express'
+import { type RequestHandler } from 'express'
+
+import { userService } from '../services/userService'
 
 interface IUserController {
   registration: RequestHandler
@@ -14,26 +15,31 @@ export const userController: IUserController = {
     const { login, password } = req.body
 
     try {
-//      const errors = validationResult(req)
-//      if (!errors.isEmpty()) {
-//        return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
-//      }
+      //      const errors = validationResult(req)
+      //      if (!errors.isEmpty()) {
+      //        return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
+      //      }
       const userData = await userService.registration(login, password)
-      res.cookie('refreshToken', userData.refreshToken, {httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000})
+      res.cookie('refreshToken', userData.refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
+      })
       return res.json(userData)
-    } catch(e) {
+    } catch (e) {
       next(e)
     }
   },
   async login(req, res, next) {
-    const { login, password} = req.body
+    const { login, password } = req.body
 
     try {
       const userData = await userService.login(login, password)
-      res.cookie('refreshToken', userData.refreshToken, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 })
+      res.cookie('refreshToken', userData.refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
+      })
       return res.json(userData)
     } catch (e) {
-      console.log(e)
       next(e)
     }
   },
@@ -42,9 +48,12 @@ export const userController: IUserController = {
     try {
       const { refreshToken } = req.cookies
       const userData = await userService.refresh(refreshToken)
-      res.cookie('refreshToken', userData.refreshToken, {httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000})
+      res.cookie('refreshToken', userData.refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
+      })
       return res.json(userData)
-    } catch(e) {
+    } catch (e) {
       next(e)
     }
   },
@@ -53,18 +62,18 @@ export const userController: IUserController = {
     try {
       const users = await userService.getAllUsers()
       return res.json(users)
-    } catch(e) {
+    } catch (e) {
       next(e)
     }
   },
-  
+
   async logout(req, res, next) {
     try {
       const { refreshToken } = req.cookies
       await userService.logout(refreshToken)
       res.clearCookie('refreshToken')
       return res.sendStatus(200)
-    } catch(e) {
+    } catch (e) {
       next(e)
     }
   }

@@ -37,7 +37,7 @@ model GameType {
 model Game {
   id           String                @id @default(uuid())
   gameTypeId   Int
-  status       String             @default("active")
+  status       String             @default("pending")
   startedAt    DateTime           @default(now())
   finishedAt   DateTime?
   gameType     GameType           @relation(fields: [gameTypeId], references: [id], onDelete: Restrict)
@@ -74,6 +74,7 @@ model CheckersGame {
   currentTurn String?   // Можно заменить на Int, если currentTurn должен быть id пользователя
   moveCount   Int      @default(0)
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  mode        String
 }
 
 model ChessGame {

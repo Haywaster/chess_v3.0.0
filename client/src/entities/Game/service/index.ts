@@ -1,8 +1,7 @@
-import type { AxiosPromise } from 'axios'
-
 import $api from 'shared/api/config'
 
 import type { ICreateGameData } from '../model'
+import type { AxiosPromise } from 'axios'
 
 interface GameService {
   createGame(data: ICreateGameData): AxiosPromise<string>

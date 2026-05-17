@@ -1,26 +1,6 @@
-import { type AxiosPromise } from 'axios'
-
 import $api from 'shared/api/config'
 
-interface ITokenCouple {
-  accessToken: string
-  refreshToken: string
-}
-
-interface ILoginResult extends ITokenCouple {
-  user: string
-}
-
-interface IAuthService {
-  login(login: string, password: string): AxiosPromise<ILoginResult>
-  registration(login: string, password: string): AxiosPromise<ILoginResult>
-  logout(): AxiosPromise<void>
-  refresh(): AxiosPromise<ILoginResult>
-}
-
-interface UserService {
-  getUsers(): AxiosPromise<void>
-}
+import type { IAuthService } from '../model'
 
 export const authService: IAuthService = {
   async refresh() {
@@ -40,11 +20,5 @@ export const authService: IAuthService = {
   },
   async logout() {
     return await $api('/logout', { method: 'POST' })
-  }
-}
-
-export const userService: UserService = {
-  async getUsers() {
-    return await $api('/users')
   }
 }

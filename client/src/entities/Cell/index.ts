@@ -1,2 +1,2 @@
 export * from './model'
-export { Cell } from './ui'
+export * from './ui'

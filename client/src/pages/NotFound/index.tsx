@@ -1,10 +1,11 @@
-import type { FC } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { RouterPath } from 'shared/const/router.ts'
 import { Button, Flex } from 'shared/ui'
 import { MainHeader } from 'widgets/Header'
+
+import type { FC } from 'react'
 
 const Container = styled(Flex).attrs({
   direction: 'column',

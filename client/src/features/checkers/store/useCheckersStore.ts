@@ -1,9 +1,8 @@
-import type { CSSProperties } from 'react'
 import { create } from 'zustand'
 
 import type { ICell } from 'entities/Cell'
 import type { IFigure } from 'entities/Figure'
-import type { IBaseGame, TGameMode } from 'entities/Game'
+import type { TGameMode, TGameStatus } from 'entities/Game'
 
 import { changeBoardAfterKill, changeBoardAfterMove } from '../lib'
 import {
@@ -14,8 +13,11 @@ import {
   type TRules
 } from '../model'
 
+import type { CSSProperties } from 'react'
+
 interface State {
   mode: TGameMode | null
+  status: TGameStatus | null
   rulesModal: boolean
   rules: Record<TRules, boolean>
   figures: IBoard['figures']
@@ -31,12 +33,11 @@ interface State {
   stepColor: IFigure['color']
   userColor: IFigure['color'] | null
   requiredFigures: IFigure['id'][]
-  cooperativeGameData: IBaseGame | null // null в mode: SINGLE
 }
 
 interface Action {
-  setCooperativeGameData: (gameData: State['cooperativeGameData']) => void
-  setMode: (mode: TGameMode) => void
+  setMode: (mode: State['mode']) => void
+  setStatus: (status: State['status']) => void
   setRules: (rules: State['rules']) => void
   toggleRulesModal: () => void
   reset: () => void
@@ -58,9 +59,9 @@ interface Action {
 
 const initialState: State = {
   ...initialCells,
-  cooperativeGameData: null,
   userColor: null,
   mode: null,
+  status: null,
   rules: ruleDefaults,
   rulesModal: false,
   activeFigure: null,
@@ -77,19 +78,9 @@ const initialState: State = {
 
 export const useCheckersStore = create<State & Action>(set => ({
   ...initialState,
-  //  Если к-л кооперативные данные существуют, они перезапишутся, иначе обнулятся
-  setCooperativeGameData: gameData =>
-    set(state => {
-      if (gameData) {
-        return {
-          cooperativeGameData: { ...state.cooperativeGameData, ...gameData }
-        }
-      }
-
-      return { cooperativeGameData: null }
-    }),
-  setUserColor: color => set({ userColor: color }),
+  setUserColor: userColor => set({ userColor }),
   setMode: mode => set({ mode }),
+  setStatus: status => set({ status }),
   setRules: rules => set({ rules }),
   toggleRulesModal: () => set(state => ({ rulesModal: !state.rulesModal })),
   reset: () => set({ ...initialState }),
@@ -107,12 +98,12 @@ export const useCheckersStore = create<State & Action>(set => ({
     })
   },
   moveFigure: (startCellId, finishCellId) => {
-    set(state => {
-      const board: IBoard = { cells: state.cells, figures: state.figures }
+    set(({ cells, figures }) => {
+      const board: IBoard = { cells, figures }
       return changeBoardAfterMove(startCellId, finishCellId, board)
     })
   },
-  updateBoard: board => set({ cells: board.cells, figures: board.figures })
+  updateBoard: ({ cells, figures }) => set({ cells, figures })
 }))
 
 export const useMoveFigure = (): Action['moveFigure'] =>

@@ -1,1 +1,1 @@
-export type { IFigure } from './types'
+export * from './types'

@@ -1,5 +1,6 @@
-import { gameService } from '../services/gameService.ts'
-import { RequestHandler } from 'express'
+import { type RequestHandler } from 'express'
+
+import { gameService } from '../services/gameService'
 
 interface IGameController {
   createGame: RequestHandler
@@ -8,14 +9,12 @@ interface IGameController {
 export const gameController: IGameController = {
   async createGame(req, res, next) {
     try {
-      const { type } = req.body
-
-      if (type && req.user) {
-        const { gameId } = await gameService.createGame(req.user.id, type);
+      if (req.body && req.user) {
+        const { gameId } = await gameService.createGame(req.user.id, req.body)
         return res.json(gameId)
       }
-    } catch(e) {
+    } catch (e) {
       next(e)
     }
-  },
+  }
 }

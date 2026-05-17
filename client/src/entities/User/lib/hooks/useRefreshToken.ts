@@ -2,7 +2,7 @@ import { isAxiosError } from 'axios'
 import { useRef } from 'react'
 
 import { StatusCodes } from 'shared/const/statuses'
-import { getTimeIn } from 'shared/lib/utils/getTimeIn.ts'
+import { getTimeIn } from 'shared/lib'
 
 import { authService } from '../../service'
 import { useSetOnline, useSetUserData } from '../../store'

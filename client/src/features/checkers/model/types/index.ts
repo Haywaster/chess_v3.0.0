@@ -1,53 +1,12 @@
-import type { ICell } from 'entities/Cell'
-import type { IFigure } from 'entities/Figure'
-import type { IGame } from 'entities/Game'
-import type { EnumValues, WebsocketDataConstructor } from 'shared/types'
-
-import { type CheckersActionType, type Rules } from '../const'
-
-export type TRules = EnumValues<typeof Rules>
-
-export interface IBoard {
-  cells: Record<number, ICell>
-  figures: Record<number, IFigure>
-}
-
-export interface IKillVariant {
-  finishCellId: ICell['id']
-  figure: IFigure['id']
-}
-
-export interface IMoveFigure {
-  startCell: ICell
-  finishCell: ICell
-}
-export interface IKillFigure extends IMoveFigure {
-  figureId: IFigure['id']
-}
-
-export type MoveFigureRequestWebsocket = WebsocketDataConstructor<
-  typeof CheckersActionType.MOVE_FIGURE,
-  IMoveFigure & { gameId: IGame['id'] }
->
-export type MoveFigureResponseWebsocket = WebsocketDataConstructor<
-  typeof CheckersActionType.MOVE_FIGURE,
-  IMoveFigure & { currentTurn: IFigure['color'] }
->
-
-export type KillFigureRequestWebsocket = WebsocketDataConstructor<
-  typeof CheckersActionType.KILL_FIGURE,
-  IKillFigure & { gameId: IGame['id'] }
->
-export type KillFigureResponseWebsocket = WebsocketDataConstructor<
-  typeof CheckersActionType.KILL_FIGURE,
-  IKillFigure & { currentTurn: IFigure['color'] }
->
-
-export type SaveGameRequestWebsocket = WebsocketDataConstructor<
-  typeof CheckersActionType.SAVE_GAME,
-  IBoard & { gameId: IGame['id'] }
->
-export type SaveGameResponseWebsocket = WebsocketDataConstructor<
-  typeof CheckersActionType.SAVE_GAME,
-  IBoard
->
+export type {
+  IBoard,
+  ErrorResponseWebsocket,
+  IMoveFigure,
+  IKillFigure,
+  IKillVariant,
+  KillFigureRequestWebsocket,
+  KillFigureResponseWebsocket,
+  MoveFigureRequestWebsocket,
+  MoveFigureResponseWebsocket,
+  TCheckersRules as TRules
+} from '@game-workspace/checkers'
