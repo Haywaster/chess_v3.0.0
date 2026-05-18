@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "start": "concurrently --kill-others \"npm run dev:client\" \"npm run dev:server\"",
     "build:shared": "npm run build -w @game-workspace/shared",
     "build:checkers": "npm run build -w @game-workspace/checkers",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
+    "style": "stylelint \"**/*.scss\"",
+    "style:fix": "stylelint \"**/*.scss\" --fix",
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,scss,css,md,mjs}\""
   },
   "workspaces": [
     "client",
@@ -17,6 +25,7 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
