@@ -10,7 +10,7 @@ lerna-debug.log*
 
 node_modules
 dist
-.husky
+build
 dist-ssr
 *.local
 
@@ -27,6 +27,15 @@ dist-ssr
 
 #Common files
 .env
+.env.local
+.env.*
+!.env.example
 
 #DB files
 *.db
+
+#Test
+coverage
+
+#Vercel
+.vercel

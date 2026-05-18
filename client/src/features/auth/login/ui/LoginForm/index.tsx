@@ -1,9 +1,13 @@
-/* eslint-disable react-hooks/refs */
 import { isAxiosError } from 'axios'
-import { type FC, type FormEvent, useEffect, useRef, useState } from 'react'
+import { type FC, type FormEvent, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { type authErrors, useIsAuth, useLoginUser } from 'entities/User'
+import {
+  type authErrors,
+  useIsAuth,
+  useLoginUser,
+  useRegistrationUser
+} from 'entities/User'
 import { DoneIcon } from 'shared/assets'
 import { type EnumValues } from 'shared/types'
 import { Button, Flex, Input } from 'shared/ui'
@@ -18,20 +22,15 @@ const StyledForm = styled.form<{ $hidden: boolean }>`
 `
 
 export const LoginForm: FC = () => {
-  const formRef = useRef<HTMLFormElement | null>(null)
+  const isAuth = useIsAuth()
   const [isOpenRegistrationModal, setIsOpenRegistrationModal] =
     useState<boolean>(false)
-  const isAuth = useIsAuth()
-  const loginUser = useLoginUser()
+  const formRef = useRef<HTMLFormElement | null>(null)
+
+  const login = useLoginUser()
+  const registration = useRegistrationUser()
 
   const closeModal = (): void => setIsOpenRegistrationModal(false)
-
-  useEffect(() => {
-    if (isAuth) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      closeModal()
-    }
-  }, [isAuth])
 
   const submitHandler = async (
     e: FormEvent<HTMLFormElement>
@@ -44,7 +43,7 @@ export const LoginForm: FC = () => {
 
     if (userName && password) {
       try {
-        await loginUser(userName, password)
+        await login(userName, password)
       } catch (error) {
         if (
           isAxiosError<{
@@ -63,6 +62,13 @@ export const LoginForm: FC = () => {
     }
   }
 
+  const registerHandler = async (): Promise<void> => {
+    const password = formRef.current?.password.value
+    const username = formRef.current?.username.value
+
+    await registration(username, password)
+  }
+
   return (
     <StyledForm
       ref={formRef}
@@ -79,9 +85,8 @@ export const LoginForm: FC = () => {
       </Flex>
       <RegistrationModal
         isOpen={isOpenRegistrationModal}
-        password={formRef.current?.password.value}
-        username={formRef.current?.username.value}
         onClose={closeModal}
+        onRegister={registerHandler}
       />
     </StyledForm>
   )

@@ -234,6 +234,13 @@ const clientConfig: ConfigWithExtendsArray = [
           multiline: 'last'
         }
       ],
+      'react/jsx-no-useless-fragment': [
+        'error',
+        {
+          allowExpressions: false
+        }
+      ],
+      'react/no-unstable-nested-components': 'warn',
       'max-lines': ['warn', { max: 124 }]
       // Включать опционально
       // "arrow-body-style": ["error", "as-needed"]

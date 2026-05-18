@@ -23,17 +23,13 @@ export const CheckersBoard: FC = memo(() => {
   const onFigureClick = useFigureClick()
   const onCellClick = useCellClick()
 
-  return (
-    <>
-      {Object.values(cells).map(cell => (
-        <CheckersCell
-          key={cell.id}
-          cell={cell}
-          figure={getFigure(cell.figureId, figures)}
-          onCellClick={onCellClick}
-          onFigureClick={onFigureClick}
-        />
-      ))}
-    </>
-  )
+  return Object.values(cells).map(cell => (
+    <CheckersCell
+      key={cell.id}
+      cell={cell}
+      figure={getFigure(cell.figureId, figures)}
+      onCellClick={onCellClick}
+      onFigureClick={onFigureClick}
+    />
+  ))
 })

@@ -1,19 +1,18 @@
-import type { ComponentProps, FC } from 'react'
-
-import { useRegistrationUser } from 'entities/User'
 import { Button, Modal } from 'shared/ui'
 
+import type { ComponentProps, FC } from 'react'
+
 interface IProps extends ComponentProps<typeof Modal> {
-  username: string
-  password: string
+  onRegister: () => Promise<void>
 }
 
 export const RegistrationModal: FC<IProps> = props => {
-  const { username, password, ...modalProps } = props
-  const registration = useRegistrationUser()
+  const { onRegister, ...modalProps } = props
 
   const registrationHandler = async (): Promise<void> => {
-    await registration(username, password)
+    onRegister().then(() => {
+      modalProps.onClose?.()
+    })
   }
 
   return (
