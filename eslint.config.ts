@@ -257,7 +257,7 @@ const clientConfig: ConfigWithExtendsArray = [
 ]
 
 const eslintConfig: ConfigWithExtends = {
-  files: ['**/*.config.{js,ts,mts}'],
+  files: ['eslint.config.{js,ts,mts}'],
   extends: baseExtends,
   languageOptions: {
     parserOptions: {

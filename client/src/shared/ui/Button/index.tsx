@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import styled from 'styled-components'
 
 import { type Size } from 'shared/types'
 
 import { base, icon, isLink, mode, size } from './styles'
+
 import type { BtnMode } from './types.ts'
 
 interface IBaseProps {

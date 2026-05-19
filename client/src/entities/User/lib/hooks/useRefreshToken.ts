@@ -22,7 +22,7 @@ type UseRefreshTokenReturn = [
 export const useRefreshToken = (): UseRefreshTokenReturn => {
   const setUserData = useSetUserData()
   const setOnline = useSetOnline()
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<number>(undefined)
 
   const stopInterval = (): void => {
     clearInterval(intervalRef.current)

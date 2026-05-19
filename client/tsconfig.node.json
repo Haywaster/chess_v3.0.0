@@ -2,6 +2,7 @@
   "compilerOptions": {
     "lib": ["ES2023"],
     "module": "ESNext",
+    "skipLibCheck": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",

@@ -1,5 +1,6 @@
 import { type FC, useEffect } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 
 import { AppRouter } from 'app/router'
 import { useIsAuth, useRefreshToken } from 'entities/User'

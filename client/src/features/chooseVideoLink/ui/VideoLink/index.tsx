@@ -8,7 +8,7 @@ interface IProps {
   onClick: (game: TGameType) => void
 }
 
-const Wrapper = styled('div')`
+const Wrapper = styled.div`
   position: relative;
   display: flex;
   justify-content: center;

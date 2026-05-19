@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import styled from 'styled-components'
 
 import { RouterPath } from 'shared/const/router.ts'
@@ -21,7 +21,7 @@ const Container = styled(Flex).attrs({
 export const NotFound: FC = () => {
   const navigate = useNavigate()
 
-  const goBack = (): void => navigate(-1)
+  const goBack = (): ReturnType<typeof navigate> => navigate(-1)
 
   return (
     <>
