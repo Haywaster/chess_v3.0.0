@@ -99,7 +99,7 @@ class GameWebSocketService {
   ): Promise<void> {
     const { username, id: gameId } = message
     const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
-    console.log(123)
+
     if (!gameInDB) {
       this.sendError(ws, 'Game not found')
       return

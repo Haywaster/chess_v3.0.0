@@ -25,7 +25,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
   const rules = useCheckersStore(state => state.rules)
   const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
   const setKillingFigure = useCheckersStore(state => state.setKillingFigure)
-  const killFigureFromBoard = useCheckersStore(state => state.killFigure)
+  const killFigure = useCheckersStore(state => state.killFigure)
   const setStepColor = useCheckersStore(state => state.setStepColor)
   const setRequiredFigures = useCheckersStore(state => state.setRequiredFigures)
   const mode = useCheckersStore(state => state.mode)
@@ -72,13 +72,13 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
                 type: CheckersActionType.KILL_FIGURE,
                 data
               }
+              // TODO: Хотелось бы здесь получать данные, возвращаемые с сервера и работать с ними тут
               ws.send(JSON.stringify(killData))
             } else {
               await moveAnimate(startCell, finishCell)
+              killFigure(figureId)
+              setKillingFigure(null)
             }
-
-            killFigureFromBoard(figureId)
-            setKillingFigure(null)
           }
         } else {
           const { startCell, finishCell } = getMoveCoords({
@@ -130,7 +130,7 @@ export const useCellClick = (): ((id: ICell['id']) => Promise<void>) => {
       setKillingFigure,
       ws,
       mode,
-      killFigureFromBoard,
+      killFigure,
       moveAnimate,
       setStepColor,
       stepColor

@@ -47,6 +47,7 @@ export const Checkers: FC = () => {
   const setStepColor = useCheckersStore(state => state.setStepColor)
   const setMode = useCheckersStore(state => state.setMode)
   const killFigure = useCheckersStore(state => state.killFigure)
+  const setKillingFigure = useCheckersStore(state => state.setKillingFigure)
 
   const { id } = useParams<typeof TId>()
 
@@ -89,6 +90,7 @@ export const Checkers: FC = () => {
         case CheckersActionType.KILL_FIGURE: {
           await moveAnimate(message.data.startCell, message.data.finishCell)
           killFigure(message.data.figureId)
+          setKillingFigure(null)
           setStepColor(message.data.currentTurn)
           break
         }
