@@ -54,7 +54,7 @@ interface IJoinGameRequest extends Pick<IGeneralGame, 'id'> {
   username: string
 }
 interface IJoinGameResponse extends Pick<IGeneralGame, 'status' | 'mode'> {
-  figures: IBoard['figures']
+  board: IBoard
   userColor: IFigure['color']
   currentTurn: IFigure['color']
 }

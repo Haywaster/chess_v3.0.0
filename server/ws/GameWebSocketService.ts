@@ -9,7 +9,11 @@ import {
   type JoinGameRequestWebsocket,
   type MoveFigureRequestWebsocket,
   type KillFigureRequestWebsocket,
-  CheckersActionType
+  CheckersActionType,
+  initialCells,
+  changeBoardAfterMove,
+  changeBoardAfterKill,
+  type IBoard
 } from '@game-workspace/checkers'
 import {
   GameStatus,
@@ -83,7 +87,7 @@ class GameWebSocketService {
         await this.joinGame(ws, message.data)
         break
       case CheckersActionType.MOVE_FIGURE:
-        await this.handleMove(ws, message.data)
+        await this.moveFigure(ws, message.data)
         break
       case CheckersActionType.KILL_FIGURE:
         await this.killFigure(ws, message.data)
@@ -159,6 +163,13 @@ class GameWebSocketService {
         where: { id: gameId },
         data: { status: GameStatus.PLAYING }
       })
+
+      await prisma.checkersGame.update({
+        where: { gameId },
+        data: {
+          board: JSON.stringify(initialCells)
+        }
+      })
     }
     await this.sendJoinState(ws, nextStatus)
 
@@ -167,7 +178,7 @@ class GameWebSocketService {
     }
   }
 
-  private async handleMove(
+  private async moveFigure(
     ws: WebSocket,
     message: MoveFigureRequestWebsocket['data']
   ): Promise<void> {
@@ -181,15 +192,8 @@ class GameWebSocketService {
 
     const { gameId } = connection
 
-    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
-
-    if (!gameInDB) {
-      this.sendError(ws, 'Game not found')
-      return
-    }
-
     const currentCheckersGame = await prisma.checkersGame.findUnique({
-      where: { gameId: gameInDB.id }
+      where: { gameId }
     })
 
     if (!currentCheckersGame) {
@@ -197,11 +201,28 @@ class GameWebSocketService {
       return
     }
 
+    const { board, currentTurn } = currentCheckersGame
+
+    const typedBoard = (
+      typeof board === 'string' ? JSON.parse(board) : null
+    ) as IBoard | null
+
+    if (!typedBoard) {
+      this.sendError(ws, 'Board not found')
+      return
+    }
+
+    const boardAfterMove = changeBoardAfterMove(
+      startCell.id,
+      finishCell.id,
+      typedBoard
+    )
+
     const updatedCheckersGame = await prisma.checkersGame.update({
-      where: { id: currentCheckersGame.id },
+      where: { gameId },
       data: {
-        currentTurn:
-          currentCheckersGame.currentTurn === 'white' ? 'black' : 'white'
+        currentTurn: currentTurn === 'white' ? 'black' : 'white',
+        board: JSON.stringify(boardAfterMove)
       }
     })
 
@@ -229,15 +250,8 @@ class GameWebSocketService {
 
     const { gameId } = connection
 
-    const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
-
-    if (!gameInDB) {
-      this.sendError(ws, 'Game not found')
-      return
-    }
-
     const currentCheckersGame = await prisma.checkersGame.findUnique({
-      where: { gameId: gameInDB.id }
+      where: { gameId }
     })
 
     if (!currentCheckersGame) {
@@ -245,20 +259,39 @@ class GameWebSocketService {
       return
     }
 
+    const { currentTurn, board } = currentCheckersGame
+
+    const typedBoard = (
+      typeof board === 'string' ? JSON.parse(board) : null
+    ) as IBoard | null
+
+    if (!typedBoard) {
+      this.sendError(ws, 'Board not found')
+      return
+    }
+
+    const boardAfterMove = changeBoardAfterMove(
+      startCell.id,
+      finishCell.id,
+      typedBoard
+    )
+
+    const boardAfterKill = changeBoardAfterKill(figureId, boardAfterMove)
+
     const updatedCheckersGame = await prisma.checkersGame.update({
-      where: { id: currentCheckersGame.id },
+      where: { gameId },
       data: {
-        currentTurn:
-          currentCheckersGame.currentTurn === 'white' ? 'black' : 'white'
+        currentTurn: currentTurn === 'white' ? 'black' : 'white',
+        board: JSON.stringify(boardAfterKill)
       }
     })
 
     this.broadcastToRoom(gameId, {
       type: CheckersActionType.KILL_FIGURE,
       data: {
+        figureId,
         startCell,
         finishCell,
-        figureId,
         currentTurn: updatedCheckersGame.currentTurn
       }
     })
@@ -353,14 +386,14 @@ class GameWebSocketService {
       return
     }
 
-    const { currentTurn, mode, figures } = checkersGameDB
+    const { currentTurn, mode, board } = checkersGameDB
 
     this.sendJson(ws, {
       type: CheckersActionType.JOIN_GAME,
       data: {
         status,
         mode,
-        figures,
+        board: typeof board === 'string' ? JSON.parse(board) : initialCells,
         userColor,
         currentTurn
       }

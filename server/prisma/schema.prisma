@@ -70,7 +70,7 @@ model GameWithColorParticipant {
 model CheckersGame {
   id          Int      @id @default(autoincrement())
   gameId      String      @unique
-  figures     String   @default("[]")
+  board       Json?
   currentTurn String?   // Можно заменить на Int, если currentTurn должен быть id пользователя
   moveCount   Int      @default(0)
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)

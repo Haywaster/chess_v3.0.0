@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start": "concurrently --kill-others \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "npm run dev -w client",
     "dev:server": "npm run dev -w server",
-    "start": "concurrently --kill-others \"npm run dev:client\" \"npm run dev:server\"",
+
     "build:shared": "npm run build -w @game-workspace/shared",
     "build:checkers": "npm run build -w @game-workspace/checkers",
-    "prepare": "husky",
+
+    "migrate:create": "npm run prisma:migrate:create -w server",
+    "migrate:status": "npm run prisma:migrate:status -w server",
+    "migrate:reset": "npm run prisma:migrate:reset -w server",
+    "prisma:studio": "npm run prisma:studio -w server",
+    "prisma:generate": "npm run prisma:generate -w server",
+
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
     "style": "stylelint \"**/*.scss\"",
     "style:fix": "stylelint \"**/*.scss\" --fix",
-    "format": "prettier --write \"**/*.{js,ts,tsx,json,scss,css,md,mjs}\""
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,scss,css,md,mjs}\"",
+    "prepare": "husky"
   },
   "workspaces": [
     "client",

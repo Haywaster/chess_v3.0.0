@@ -10,8 +10,8 @@ import type { IBoard } from '../../model'
 
 export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const cells = useCheckersStore(state => state.cells)
-  const rules = useCheckersStore(state => state.rules)
   const figures = useCheckersStore(state => state.figures)
+  const rules = useCheckersStore(state => state.rules)
   const userColor = useCheckersStore(state => state.userColor)
   const activeFigure = useCheckersStore(state => state.activeFigure)
   const animatedFigure = useCheckersStore(state => state.animatedFigure)

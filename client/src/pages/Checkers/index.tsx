@@ -82,6 +82,7 @@ export const Checkers: FC = () => {
           setMode(message.data.mode)
           setUserColor(message.data.userColor)
           setStepColor(message.data.currentTurn)
+          updateBoard(message.data.board)
           break
         case CheckersActionType.MOVE_FIGURE:
           await moveAnimate(message.data.startCell, message.data.finishCell)
