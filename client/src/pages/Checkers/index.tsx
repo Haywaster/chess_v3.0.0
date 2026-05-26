@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { type FC, useEffect } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import styled from 'styled-components'
 
 import {
@@ -21,18 +21,22 @@ import {
   CheckersActionType
 } from 'features/checkers'
 import { useResetCheckers } from 'features/checkers/store/useCheckersStore.ts'
-import type { id as TId } from 'shared/const/router'
+import { type id as TId, RouterPath } from 'shared/const/router'
 import { useSetWs } from 'shared/store'
 import { Loader } from 'shared/ui'
 import { Board } from 'widgets/Board'
+import { GameInfo } from 'widgets/GameInfo'
 import { CheckersHeader } from 'widgets/Header'
 
-const CenteredBoard = styled(Board)`
-  margin: 0 auto;
+const StyledBoard = styled(Board)`
+  margin-top: 15px;
 `
 
 const StyledMain = styled.main`
   margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 export const Checkers: FC = () => {
@@ -44,6 +48,7 @@ export const Checkers: FC = () => {
 
   const mode = useCheckersStore(state => state.mode)
   const status = useCheckersStore(state => state.status)
+  const stepColor = useCheckersStore(state => state.stepColor)
   const setStatus = useCheckersStore(state => state.setStatus)
   const setUserColor = useCheckersStore(state => state.setUserColor)
   const setStepColor = useCheckersStore(state => state.setStepColor)
@@ -52,6 +57,7 @@ export const Checkers: FC = () => {
   const setKillingFigure = useCheckersStore(state => state.setKillingFigure)
 
   const { id } = useParams<typeof TId>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!id || !username || id === 'offline-game') {
@@ -97,9 +103,13 @@ export const Checkers: FC = () => {
           setStepColor(message.data.currentTurn)
           break
         }
-        case ActionType.ERROR:
+        case ActionType.ERROR: {
+          if (message.error === 'Game not found') {
+            navigate(RouterPath.HOME)
+          }
           console.error('WebSocket server error:', message.error)
           break
+        }
         default:
           console.error('Unknown message type')
       }
@@ -120,7 +130,8 @@ export const Checkers: FC = () => {
     setUserColor,
     setStatus,
     setMode,
-    setKillingFigure
+    setKillingFigure,
+    navigate
   ])
 
   useEffect(() => {
@@ -142,7 +153,8 @@ export const Checkers: FC = () => {
       {isLoading && <Loader fullScreen />}
       <CheckersHeader />
       <StyledMain>
-        <CenteredBoard />
+        <GameInfo currentMove={stepColor} />
+        <StyledBoard />
       </StyledMain>
       {/*<UsernameModal />*/}
     </>
