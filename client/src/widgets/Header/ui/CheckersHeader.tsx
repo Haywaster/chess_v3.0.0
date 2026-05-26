@@ -20,7 +20,7 @@ export const CheckersHeader: FC = () => {
 
   return (
     <HeaderWrapper>
-      <Flex size="xs">
+      <Flex align="center" size="xs">
         <SwitchButton />
         <p>{isLoading ? 'Loading...' : stepColor}</p>
         <Button as={Link} size="sm" to={RouterPath.HOME}>

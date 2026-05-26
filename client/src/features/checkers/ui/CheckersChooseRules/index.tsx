@@ -9,10 +9,16 @@ import {
   type TGameMode
 } from 'entities/Game'
 import { useOnline } from 'entities/User'
-import { useCheckersStore } from 'features/checkers'
-import { ruleDefaults, ruleTitles, type TRules } from 'features/checkers/model'
 import { Button, Flex, Switch } from 'shared/ui'
 import type { ISwitchProps } from 'shared/ui/Switch'
+
+import {
+  ruleDefaults,
+  ruleTitles,
+  type TRules,
+  initialBoard
+} from '../../model'
+import { useCheckersStore, useUpdateBoard } from '../../store'
 
 const CenteredText = styled.p`
   text-align: center;
@@ -32,6 +38,8 @@ export const CheckersChooseRules: FC<IProps> = props => {
   const setGlobalMode = useCheckersStore(state => state.setMode)
   const setUserColor = useCheckersStore(state => state.setUserColor)
   const setGlobalRules = useCheckersStore(state => state.setRules)
+  const updateBoard = useUpdateBoard()
+
   const online = useOnline()
 
   const [color, setColor] = useState<IFigure['color']>('white')
@@ -56,6 +64,7 @@ export const CheckersChooseRules: FC<IProps> = props => {
       setGlobalMode(onlineMode)
       setUserColor(color)
       setGlobalRules(rules)
+      updateBoard(initialBoard)
     }
 
     createGame({

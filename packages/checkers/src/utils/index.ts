@@ -1,4 +1,4 @@
-export { createBoard, boardCellsIds, initialCells } from './createBoard'
+export { boardCellsIds, initialBoard, emptyCells } from './createBoard'
 export { getVariants } from './getVariants'
 export { getRequiredFigures } from './getRequiredFigures'
 export { changeBoardAfterMove, changeBoardAfterKill } from './changeBoard'

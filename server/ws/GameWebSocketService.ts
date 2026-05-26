@@ -10,7 +10,7 @@ import {
   type MoveFigureRequestWebsocket,
   type KillFigureRequestWebsocket,
   CheckersActionType,
-  initialCells,
+  initialBoard,
   changeBoardAfterMove,
   changeBoardAfterKill,
   type IBoard
@@ -101,6 +101,7 @@ class GameWebSocketService {
     ws: WebSocket,
     message: JoinGameRequestWebsocket['data']
   ): Promise<void> {
+    // Общая логика
     const { username, id: gameId } = message
     const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
 
@@ -109,72 +110,111 @@ class GameWebSocketService {
       return
     }
 
-    const user = await prisma.user.findUnique({ where: { login: username } })
+    const currentUser = await prisma.user.findUnique({
+      where: { login: username }
+    })
 
-    if (!user) {
+    if (!currentUser) {
       this.sendError(ws, 'User not found')
       return
     }
 
-    let currentUser = await prisma.gameParticipant.findUnique({
-      where: { gameId_playerId: { gameId, playerId: user.id } }
+    const gameType = await prisma.gameType.findUnique({
+      where: { id: gameInDB.gameTypeId }
     })
 
-    if (!currentUser && gameInDB.status !== GameStatus.PENDING) {
-      this.sendError(ws, 'Game is already full')
+    if (!gameType) {
+      this.sendError(ws, "Game type doesn't exist")
       return
     }
 
-    if (!currentUser) {
-      currentUser = await prisma.gameParticipant.create({
+    const participant = await prisma.gameParticipant.findUnique({
+      where: { gameId_playerId: { gameId, playerId: currentUser.id } }
+    })
+
+    // Игрок не найден
+    if (!participant) {
+      const gameParticipants = await prisma.gameParticipant.findMany({
+        where: { gameId }
+      })
+
+      // Игрок залетел в пустую существующую комнату ()
+      if (!gameParticipants.length) {
+        // Игрок не найден по причине максимума игроков в игре (3-й лишний)
+        this.sendError(ws, 'Empty room')
+        return
+      }
+
+      if (
+        gameType.maxPlayers &&
+        gameParticipants.length >= gameType.maxPlayers
+      ) {
+        // Игрок не найден по причине максимума игроков в игре (3-й лишний)
+        this.sendError(ws, 'Game is already full')
+        return
+      }
+
+      // Добавляем игрока в игру
+      const { id: firstParticipantId } = gameParticipants[0]
+
+      const firstParticipantColor =
+        await prisma.gameWithColorParticipant.findUnique({
+          where: { participantId: firstParticipantId }
+        })
+
+      if (!firstParticipantColor) {
+        this.sendError(ws, 'First participant color not found')
+        return
+      }
+
+      const participantColor =
+        firstParticipantColor.color === 'white'
+          ? 'black'
+          : ('white' as IFigure['color'])
+
+      await prisma.gameParticipant.create({
         data: {
           gameId,
-          playerId: user.id,
+          playerId: currentUser.id,
           colorParticipant: {
             create: {
-              color: 'black'
+              color: participantColor
             }
           }
         }
       })
-    }
 
-    const participantColor = await this.getParticipantColor(currentUser.id)
-
-    if (!participantColor) {
-      this.sendError(ws, 'User color not found')
-      return
-    }
-
-    this.attachClientToGame(ws, gameId, {
-      userId: user.id,
-      username,
-      color: participantColor
-    })
-
-    const shouldStartGame =
-      gameInDB.status === GameStatus.PENDING && participantColor === 'black'
-    const nextStatus = shouldStartGame
-      ? GameStatus.PLAYING
-      : (gameInDB.status as TGameStatus)
-
-    if (shouldStartGame) {
       await prisma.game.update({
         where: { id: gameId },
         data: { status: GameStatus.PLAYING }
       })
 
-      await prisma.checkersGame.update({
-        where: { gameId },
-        data: {
-          board: JSON.stringify(initialCells)
-        }
+      this.attachClientToGame(ws, gameId, {
+        userId: currentUser.id,
+        username,
+        color: participantColor
       })
-    }
-    await this.sendJoinState(ws, nextStatus)
 
-    if (shouldStartGame) {
-      await this.broadcastJoinState(gameId, GameStatus.PLAYING, ws)
+      await this.broadcastJoinState(gameId, GameStatus.PLAYING)
+      // Игрок найден
+    } else {
+      const participantWithColor =
+        await prisma.gameWithColorParticipant.findUnique({
+          where: { participantId: participant.id }
+        })
+
+      if (!participantWithColor) {
+        this.sendError(ws, 'Participant with color not found')
+        return
+      }
+
+      this.attachClientToGame(ws, gameId, {
+        userId: currentUser.id,
+        username,
+        color: participantWithColor.color as IFigure['color']
+      })
+
+      await this.sendJoinState(ws, gameInDB.status as TGameStatus)
     }
   }
 
@@ -336,16 +376,6 @@ class GameWebSocketService {
     this.connectionState.delete(ws)
   }
 
-  private async getParticipantColor(
-    participantId: number
-  ): Promise<IFigure['color'] | null> {
-    const userWithColor = await prisma.gameWithColorParticipant.findUnique({
-      where: { participantId }
-    })
-
-    return (userWithColor?.color as IFigure['color'] | undefined) ?? null
-  }
-
   private async broadcastJoinState(
     gameId: string,
     status: TGameStatus,
@@ -393,7 +423,7 @@ class GameWebSocketService {
       data: {
         status,
         mode,
-        board: typeof board === 'string' ? JSON.parse(board) : initialCells,
+        board: typeof board === 'string' ? JSON.parse(board) : initialBoard,
         userColor,
         currentTurn
       }

@@ -1,5 +1,4 @@
 export {
-  createBoard,
   getVariants,
   getRequiredFigures,
   changeBoardAfterMove,

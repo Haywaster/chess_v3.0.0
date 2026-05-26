@@ -6,11 +6,10 @@ import type { TGameMode, TGameStatus } from 'entities/Game'
 
 import { changeBoardAfterKill, changeBoardAfterMove } from '../lib'
 import {
-  initialCells,
-  ruleDefaults,
   type IBoard,
   type IKillVariant,
-  type TRules
+  type TRules,
+  emptyCells
 } from '../model'
 
 import type { CSSProperties } from 'react'
@@ -58,11 +57,12 @@ interface Action {
 }
 
 const initialState: State = {
-  ...initialCells,
+  cells: emptyCells,
+  figures: {},
   userColor: null,
   mode: null,
   status: null,
-  rules: ruleDefaults,
+  rules: {} as State['rules'],
   rulesModal: false,
   activeFigure: null,
   cellsForMoving: [], // ячейки для перемещения
@@ -83,7 +83,7 @@ export const useCheckersStore = create<State & Action>(set => ({
   setStatus: status => set({ status }),
   setRules: rules => set({ rules }),
   toggleRulesModal: () => set(state => ({ rulesModal: !state.rulesModal })),
-  reset: () => set({ ...initialState }),
+  reset: () => set(initialState),
   setActiveFigure: id => set({ activeFigure: id }),
   setCellsForMoving: cells => set({ cellsForMoving: cells }),
   setAnimatedFigure: (id, styles) => set({ animatedFigure: { id, styles } }),
@@ -112,3 +112,5 @@ export const useSetAnimatedFigure = (): Action['setAnimatedFigure'] =>
   useCheckersStore(state => state.setAnimatedFigure)
 export const useUpdateBoard = (): Action['updateBoard'] =>
   useCheckersStore(state => state.updateBoard)
+export const useResetCheckers = (): Action['reset'] =>
+  useCheckersStore(state => state.reset)

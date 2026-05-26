@@ -7,7 +7,7 @@ const FIRST_ROW_WITHOUT_FIGURES = 4
 const SECOND_ROW_WITHOUT_FIGURES = 5
 const borders = [1, BOARD_SIZE]
 
-export const createBoard = (): IBoard => {
+const createBoard = (): IBoard => {
   const cells: ICell[] = []
   const figures: (IFigure | null)[] = []
 
@@ -64,8 +64,14 @@ export const createBoard = (): IBoard => {
   }
 }
 
-export const initialCells = createBoard()
+export const initialBoard = createBoard()
+export const emptyCells = Object.fromEntries(
+  Object.entries(initialBoard.cells).map(([id, cell]) => [
+    id,
+    { ...cell, figureId: null }
+  ])
+)
 
-export const boardCellsIds = Object.values(initialCells.cells)
+export const boardCellsIds = Object.values(initialBoard.cells)
   .filter(cell => borders.includes(cell.x) || borders.includes(cell.y))
   .map(cell => cell.id)

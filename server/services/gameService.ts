@@ -1,4 +1,4 @@
-import type { ICreateGameData } from '@game-workspace/checkers'
+import { type ICreateGameData, initialBoard } from '@game-workspace/checkers'
 import { GameStatus, GameType } from '@game-workspace/shared'
 
 import { ApiError } from '../exceptions/api-error'
@@ -42,7 +42,8 @@ export const gameService = {
         checkersGame: {
           create: {
             currentTurn: 'white',
-            mode: body.mode
+            mode: body.mode,
+            board: JSON.stringify(initialBoard)
           }
         }
       },

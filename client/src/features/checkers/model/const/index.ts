@@ -27,4 +27,8 @@ const CheckersActionType = {
 } as const
 
 export { RENDER_DURATION, Rules, ruleTitles, ruleDefaults, CheckersActionType }
-export { initialCells, boardCellsIds } from '@game-workspace/checkers'
+export {
+  initialBoard,
+  boardCellsIds,
+  emptyCells
+} from '@game-workspace/checkers'

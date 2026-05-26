@@ -20,6 +20,7 @@ import {
   useUpdateBoard,
   CheckersActionType
 } from 'features/checkers'
+import { useResetCheckers } from 'features/checkers/store/useCheckersStore.ts'
 import type { id as TId } from 'shared/const/router'
 import { useSetWs } from 'shared/store'
 import { Loader } from 'shared/ui'
@@ -39,6 +40,7 @@ export const Checkers: FC = () => {
   const setWs = useSetWs()
   const moveAnimate = useMoveFigure()
   const updateBoard = useUpdateBoard()
+  const resetCheckers = useResetCheckers()
 
   const mode = useCheckersStore(state => state.mode)
   const status = useCheckersStore(state => state.status)
@@ -117,7 +119,8 @@ export const Checkers: FC = () => {
     killFigure,
     setUserColor,
     setStatus,
-    setMode
+    setMode,
+    setKillingFigure
   ])
 
   useEffect(() => {
@@ -126,13 +129,21 @@ export const Checkers: FC = () => {
     }
   }, [id, setMode])
 
+  useEffect(() => {
+    return () => {
+      resetCheckers()
+    }
+  }, [resetCheckers])
+
   const isLoading = status === GameStatus.PENDING && mode === GameMode.COUPLE
 
   return (
     <>
       {isLoading && <Loader fullScreen />}
       <CheckersHeader />
-      <StyledMain>{!isLoading && <CenteredBoard />}</StyledMain>
+      <StyledMain>
+        <CenteredBoard />
+      </StyledMain>
       {/*<UsernameModal />*/}
     </>
   )
