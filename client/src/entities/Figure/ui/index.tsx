@@ -26,7 +26,6 @@ const FigureWrapper = styled.div<IFigureWrapper>`
   aspect-ratio: 1;
   width: 60%;
   border-radius: 50%;
-  cursor: pointer;
   background-color: ${p =>
     p.color === 'white' ? 'var(--white-figure)' : 'var(--black-figure)'};
   transition: all 0.2s ease;

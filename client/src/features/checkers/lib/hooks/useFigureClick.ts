@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
+import toast from 'react-hot-toast'
 
 import type { IFigure } from 'entities/Figure'
-import { GameMode } from 'entities/Game'
+import { GameMode, GameStatus } from 'entities/Game'
 
 import { useCheckersStore } from '../../store'
 import { getVariants } from '../utils'
@@ -17,10 +18,11 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
   const animatedFigure = useCheckersStore(state => state.animatedFigure)
   const stepColor = useCheckersStore(state => state.stepColor)
   const requiredFigures = useCheckersStore(state => state.requiredFigures)
+  const mode = useCheckersStore(state => state.mode)
+  const status = useCheckersStore(state => state.status)
   const setActiveFigure = useCheckersStore(state => state.setActiveFigure)
   const setCellsForMoving = useCheckersStore(state => state.setCellsForMoving)
   const setKillingVariants = useCheckersStore(state => state.setKillingVariants)
-  const mode = useCheckersStore(state => state.mode)
 
   const checkGameMode = useCallback(
     (id: IFigure['id']): boolean => {
@@ -39,6 +41,8 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
     [figures, mode, stepColor, userColor]
   )
 
+  const isLoading = status === GameStatus.PENDING && mode === GameMode.COUPLE
+
   return useCallback(
     (id: IFigure['id']): void => {
       const baseRulesClick =
@@ -48,6 +52,11 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
       const isRequiredFigure = requiredFigures.includes(id)
 
       if (!baseRulesClick && !isRequiredFigure) {
+        return
+      }
+
+      if (isLoading) {
+        toast.error('Ход невозможен. Дождитесь второго игрока')
         return
       }
 
@@ -74,6 +83,7 @@ export const useFigureClick = (): ((id: IFigure['id']) => void) => {
       cells,
       checkGameMode,
       figures,
+      isLoading,
       requiredFigures,
       rules,
       setActiveFigure,

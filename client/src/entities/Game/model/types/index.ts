@@ -8,5 +8,7 @@ export type {
   ICreateGameData,
   JoinGameRequestWebsocket,
   JoinGameResponseWebsocket,
-  ErrorResponseWebsocket
+  ErrorResponseWebsocket,
+  GameInfoRequestWebsocket,
+  GameInfoResponseWebsocket
 } from '@game-workspace/checkers'

@@ -13,7 +13,8 @@ import {
   initialBoard,
   changeBoardAfterMove,
   changeBoardAfterKill,
-  type IBoard
+  type IBoard,
+  type GameInfoRequestWebsocket
 } from '@game-workspace/checkers'
 import {
   GameStatus,
@@ -24,6 +25,7 @@ import {
 import prisma from '../prisma/prismaClient'
 
 type IncomingWebsocketMessage =
+  | GameInfoRequestWebsocket
   | JoinGameRequestWebsocket
   | MoveFigureRequestWebsocket
   | KillFigureRequestWebsocket
@@ -83,6 +85,9 @@ class GameWebSocketService {
     message: IncomingWebsocketMessage
   ): Promise<void> {
     switch (message.type) {
+      case CheckersActionType.GAME_INFO:
+        await this.gameInfo(ws, message.data)
+        break
       case CheckersActionType.JOIN_GAME:
         await this.joinGame(ws, message.data)
         break
@@ -95,6 +100,28 @@ class GameWebSocketService {
       default:
         this.sendError(ws, 'Unknown message type')
     }
+  }
+
+  private async gameInfo(
+    ws: WebSocket,
+    message: GameInfoRequestWebsocket['data']
+  ): Promise<void> {
+    const { id: gameId } = message
+    const checkersGame = await prisma.checkersGame.findUnique({
+      where: { gameId }
+    })
+
+    if (!checkersGame) {
+      this.sendError(ws, 'Game not found')
+      return
+    }
+
+    const { mode } = checkersGame
+
+    this.sendJson(ws, {
+      type: CheckersActionType.GAME_INFO,
+      data: { mode }
+    })
   }
 
   private async joinGame(
@@ -416,13 +443,12 @@ class GameWebSocketService {
       return
     }
 
-    const { currentTurn, mode, board } = checkersGameDB
+    const { currentTurn, board } = checkersGameDB
 
     this.sendJson(ws, {
       type: CheckersActionType.JOIN_GAME,
       data: {
         status,
-        mode,
         board: typeof board === 'string' ? JSON.parse(board) : initialBoard,
         userColor,
         currentTurn

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { type FC, useEffect } from 'react'
+import { type FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import styled from 'styled-components'
 
@@ -7,11 +7,14 @@ import {
   type JoinGameRequestWebsocket,
   type JoinGameResponseWebsocket,
   type ErrorResponseWebsocket,
+  type GameInfoRequestWebsocket,
+  type GameInfoResponseWebsocket,
   ActionType,
   GameMode,
   GameStatus
 } from 'entities/Game'
 import { useUsername } from 'entities/User'
+import { LoginForm, UnAuthUserModal } from 'features/auth/login'
 import {
   type MoveFigureResponseWebsocket,
   type KillFigureResponseWebsocket,
@@ -22,8 +25,8 @@ import {
 } from 'features/checkers'
 import { useResetCheckers } from 'features/checkers/store/useCheckersStore.ts'
 import { type id as TId, RouterPath } from 'shared/const/router'
-import { useSetWs } from 'shared/store'
-import { Loader } from 'shared/ui'
+import { useSetWs, useWs } from 'shared/store'
+import { Button, Flex } from 'shared/ui'
 import { Board } from 'widgets/Board'
 import { GameInfo } from 'widgets/GameInfo'
 import { CheckersHeader } from 'widgets/Header'
@@ -41,6 +44,7 @@ const StyledMain = styled.main`
 
 export const Checkers: FC = () => {
   const username = useUsername()
+  const ws = useWs()
   const setWs = useSetWs()
   const moveAnimate = useMoveFigure()
   const updateBoard = useUpdateBoard()
@@ -56,38 +60,57 @@ export const Checkers: FC = () => {
   const killFigure = useCheckersStore(state => state.killFigure)
   const setKillingFigure = useCheckersStore(state => state.setKillingFigure)
 
+  const [isOpenAuthModal, setIsOpenAuthModal] = useState(false)
+
   const { id } = useParams<typeof TId>()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!id || !username || id === 'offline-game') {
+    if (!id || id === 'offline-game') {
       return
     }
 
     const wss = new WebSocket('/ws')
     setWs(wss)
 
-    const joinGameData: JoinGameRequestWebsocket = {
-      type: CheckersActionType.JOIN_GAME,
-      data: { username, id }
+    const gameInfoData: GameInfoRequestWebsocket = {
+      type: CheckersActionType.GAME_INFO,
+      data: { id }
     }
 
     wss.onopen = () => {
-      wss.send(JSON.stringify(joinGameData))
+      setStatus(GameStatus.PENDING)
+      wss.send(JSON.stringify(gameInfoData))
     }
 
     wss.onmessage = async (event: MessageEvent<string>): Promise<void> => {
       const { data: rawData } = event
       const message = JSON.parse(rawData.toString()) as
+        | GameInfoResponseWebsocket
         | JoinGameResponseWebsocket
         | ErrorResponseWebsocket
         | MoveFigureResponseWebsocket
         | KillFigureResponseWebsocket
 
       switch (message.type) {
+        case ActionType.GAME_INFO: {
+          const { mode } = message.data
+
+          setMode(mode)
+
+          if (username && mode === GameMode.COUPLE) {
+            const joinGameData: JoinGameRequestWebsocket = {
+              type: CheckersActionType.JOIN_GAME,
+              data: { username, id }
+            }
+
+            wss.send(JSON.stringify(joinGameData))
+          }
+
+          break
+        }
         case ActionType.JOIN_GAME:
           setStatus(message.data.status)
-          setMode(message.data.mode)
           setUserColor(message.data.userColor)
           setStepColor(message.data.currentTurn)
           updateBoard(message.data.board)
@@ -148,15 +171,43 @@ export const Checkers: FC = () => {
 
   const isLoading = status === GameStatus.PENDING && mode === GameMode.COUPLE
 
+  const playUnAuthUser = (): void => {
+    if (!ws || !id) {
+      return
+    }
+
+    const joinGameData: JoinGameRequestWebsocket = {
+      type: CheckersActionType.JOIN_GAME,
+      data: { username, id }
+    }
+
+    ws.send(JSON.stringify(joinGameData))
+  }
+
   return (
     <>
-      {isLoading && <Loader fullScreen />}
       <CheckersHeader />
       <StyledMain>
-        <GameInfo currentMove={stepColor} />
+        <GameInfo currentMove={stepColor} isLoading={isLoading} />
         <StyledBoard />
       </StyledMain>
-      {/*<UsernameModal />*/}
+      <UnAuthUserModal isOpen={mode === GameMode.COUPLE}>
+        <p>Пользователь не авторизован. Играть без авторизации?</p>
+        <Flex>
+          <Button onClick={() => setIsOpenAuthModal(true)}>
+            Авторизоваться
+          </Button>
+          <Button mode="ghost" onClick={playUnAuthUser}>
+            Играть
+          </Button>
+        </Flex>
+      </UnAuthUserModal>
+      <UnAuthUserModal isOpen={isOpenAuthModal}>
+        <Flex direction="column">
+          <LoginForm />
+          <Button onClick={() => setIsOpenAuthModal(false)}>Отмена</Button>
+        </Flex>
+      </UnAuthUserModal>
     </>
   )
 }

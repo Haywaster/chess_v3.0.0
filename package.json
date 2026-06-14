@@ -6,16 +6,13 @@
     "start": "concurrently --kill-others \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "npm run dev -w client",
     "dev:server": "npm run dev -w server",
-
     "build:shared": "npm run build -w @game-workspace/shared",
     "build:checkers": "npm run build -w @game-workspace/checkers",
-
     "migrate:create": "npm run prisma:migrate:create -w server",
     "migrate:status": "npm run prisma:migrate:status -w server",
     "migrate:reset": "npm run prisma:migrate:reset -w server",
     "prisma:studio": "npm run prisma:studio -w server",
     "prisma:generate": "npm run prisma:generate -w server",
-
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
     "style": "stylelint \"**/*.scss\"",
@@ -33,7 +30,7 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.3",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",

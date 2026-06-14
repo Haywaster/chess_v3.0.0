@@ -18,14 +18,17 @@ const LoaderContainer = styled.div.withConfig({
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ backgroundColor }) =>
-    backgroundColor || 'color-mix(in sRGB, var(--white) 70%, transparent)'};
+  background-color: ${({ fullScreen, backgroundColor }) =>
+    backgroundColor ||
+    (fullScreen
+      ? 'color-mix(in sRGB, var(--white) 70%, transparent)'
+      : 'transparent')};
   position: ${({ fullScreen }) => (fullScreen ? 'fixed' : 'relative')};
   top: 0;
   left: 0;
-  width: ${({ fullScreen }) => (fullScreen ? '100vw' : '100%')};
+  width: ${({ fullScreen }) => (fullScreen ? '100vw' : 'auto')};
   height: ${({ fullScreen }) => (fullScreen ? '100vh' : '100%')};
-  z-index: 9999;
+  z-index: ${({ fullScreen }) => (fullScreen ? '9999' : '0')};
 `
 
 const LoaderSpinner = styled.div<{ loaderColor?: string; size?: number }>`

@@ -1,4 +1,5 @@
 import { type FC, useEffect } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
@@ -23,5 +24,10 @@ export const App: FC = () => {
     }
   }, [startInterval, stopInterval, refreshFunc, isAuth])
 
-  return <RouterProvider router={router} />
+  return (
+    <>
+      <Toaster />
+      <RouterProvider router={router} />
+    </>
+  )
 }

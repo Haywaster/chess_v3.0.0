@@ -1,4 +1,5 @@
 export const CheckersActionType = {
+  GAME_INFO: 'GAME_INFO',
   JOIN_GAME: 'JOIN_GAME',
   MOVE_FIGURE: 'MOVE_FIGURE',
   KILL_FIGURE: 'KILL_FIGURE',

@@ -6,7 +6,8 @@ import {
   useState,
   type FC,
   type MouseEvent,
-  type PropsWithChildren
+  type PropsWithChildren,
+  type ComponentProps
 } from 'react'
 
 import { Portal } from '../../lib'
@@ -73,3 +74,5 @@ export const Modal: FC<IProps> = memo(props => {
     </Portal>
   )
 })
+
+export type ModalProps = ComponentProps<typeof Modal>

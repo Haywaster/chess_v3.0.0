@@ -49,11 +49,24 @@ export interface ICreateGameData {
   userColor: IFigure['color']
 }
 
+// WS (Info)
+type IGameInfoRequest = Pick<IGeneralGame, 'id'>
+type IGameInfoResponse = Pick<IGeneralGame, 'mode'>
+
+export type GameInfoRequestWebsocket = WebsocketDataConstructor<
+  typeof CheckersActionType.GAME_INFO,
+  IGameInfoRequest
+>
+export type GameInfoResponseWebsocket = WebsocketDataConstructor<
+  typeof CheckersActionType.GAME_INFO,
+  IGameInfoResponse
+>
+
 // WS (Join)
 interface IJoinGameRequest extends Pick<IGeneralGame, 'id'> {
   username: string
 }
-interface IJoinGameResponse extends Pick<IGeneralGame, 'status' | 'mode'> {
+interface IJoinGameResponse extends Pick<IGeneralGame, 'status'> {
   board: IBoard
   userColor: IFigure['color']
   currentTurn: IFigure['color']
