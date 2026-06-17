@@ -112,8 +112,7 @@ class GameWebSocketService {
     })
 
     if (!checkersGame) {
-      this.sendError(ws, 'Game not found')
-      return
+      return this.sendError(ws, 'Game not found')
     }
 
     const { mode } = checkersGame
@@ -133,8 +132,7 @@ class GameWebSocketService {
     const gameInDB = await prisma.game.findUnique({ where: { id: gameId } })
 
     if (!gameInDB) {
-      this.sendError(ws, 'Game not found')
-      return
+      return this.sendError(ws, 'Game not found')
     }
 
     const currentUser = await prisma.user.findUnique({
@@ -142,8 +140,7 @@ class GameWebSocketService {
     })
 
     if (!currentUser) {
-      this.sendError(ws, 'User not found')
-      return
+      return this.sendError(ws, 'User not found')
     }
 
     const gameType = await prisma.gameType.findUnique({
@@ -151,36 +148,30 @@ class GameWebSocketService {
     })
 
     if (!gameType) {
-      this.sendError(ws, "Game type doesn't exist")
-      return
+      return this.sendError(ws, "Game type doesn't exist")
     }
 
     const participant = await prisma.gameParticipant.findUnique({
       where: { gameId_playerId: { gameId, playerId: currentUser.id } }
     })
 
+    const gameParticipants = await prisma.gameParticipant.findMany({
+      where: { gameId }
+    })
+
     // Игрок не найден
     if (!participant) {
-      const gameParticipants = await prisma.gameParticipant.findMany({
-        where: { gameId }
-      })
-
-      // Игрок залетел в пустую существующую комнату ()
+      // Игрок залетел в пустую существующую комнату
       if (!gameParticipants.length) {
-        // Игрок не найден по причине максимума игроков в игре (3-й лишний)
-        this.sendError(ws, 'Empty room')
-        return
+        return this.sendError(ws, 'Empty room')
       }
-
+      // Игрок не найден по причине максимума игроков в игре (3-й лишний)
       if (
         gameType.maxPlayers &&
         gameParticipants.length >= gameType.maxPlayers
       ) {
-        // Игрок не найден по причине максимума игроков в игре (3-й лишний)
-        this.sendError(ws, 'Game is already full')
-        return
+        return this.sendError(ws, 'Game is already full')
       }
-
       // Добавляем игрока в игру
       const { id: firstParticipantId } = gameParticipants[0]
 
@@ -190,8 +181,7 @@ class GameWebSocketService {
         })
 
       if (!firstParticipantColor) {
-        this.sendError(ws, 'First participant color not found')
-        return
+        return this.sendError(ws, 'First participant color not found')
       }
 
       const participantColor =
@@ -222,7 +212,7 @@ class GameWebSocketService {
         color: participantColor
       })
 
-      await this.broadcastJoinState(gameId, GameStatus.PLAYING)
+      this.broadcastJoinState(gameId, GameStatus.PLAYING)
       // Игрок найден
     } else {
       const participantWithColor =
@@ -231,8 +221,7 @@ class GameWebSocketService {
         })
 
       if (!participantWithColor) {
-        this.sendError(ws, 'Participant with color not found')
-        return
+        return this.sendError(ws, 'Participant with color not found')
       }
 
       this.attachClientToGame(ws, gameId, {
@@ -241,7 +230,27 @@ class GameWebSocketService {
         color: participantWithColor.color as IFigure['color']
       })
 
-      await this.sendJoinState(ws, gameInDB.status as TGameStatus)
+      const gameRoom = this.gameRooms.get(gameId)
+
+      if (!gameRoom) {
+        return this.sendError(ws, 'Game not found')
+      }
+
+      // Игрок отключился от игры, но подключился заново
+      if (
+        gameType.maxPlayers &&
+        gameRoom.size >= gameType.maxPlayers &&
+        gameInDB.status === GameStatus.PENDING
+      ) {
+        await prisma.game.update({
+          where: { id: gameId },
+          data: { status: GameStatus.PLAYING }
+        })
+
+        this.broadcastJoinState(gameId, GameStatus.PLAYING)
+      } else {
+        this.sendJoinState(ws, gameInDB.status as TGameStatus)
+      }
     }
   }
 
@@ -253,8 +262,7 @@ class GameWebSocketService {
     const connection = this.connectionState.get(ws)
 
     if (!connection) {
-      this.sendError(ws, 'Socket is not connected to this game')
-      return
+      return this.sendError(ws, 'Socket is not connected to this game')
     }
 
     const { gameId } = connection
@@ -264,8 +272,7 @@ class GameWebSocketService {
     })
 
     if (!currentCheckersGame) {
-      this.sendError(ws, 'Game not found')
-      return
+      return this.sendError(ws, 'Game not found')
     }
 
     const { board, currentTurn } = currentCheckersGame
@@ -275,8 +282,7 @@ class GameWebSocketService {
     ) as IBoard | null
 
     if (!typedBoard) {
-      this.sendError(ws, 'Board not found')
-      return
+      return this.sendError(ws, 'Board not found')
     }
 
     const boardAfterMove = changeBoardAfterMove(
@@ -311,8 +317,7 @@ class GameWebSocketService {
     const connection = this.connectionState.get(ws)
 
     if (!connection) {
-      this.sendError(ws, 'Socket is not connected to this game')
-      return
+      return this.sendError(ws, 'Socket is not connected to this game')
     }
 
     const { gameId } = connection
@@ -322,8 +327,7 @@ class GameWebSocketService {
     })
 
     if (!currentCheckersGame) {
-      this.sendError(ws, 'Game not found')
-      return
+      return this.sendError(ws, 'Game not found')
     }
 
     const { currentTurn, board } = currentCheckersGame
@@ -333,8 +337,7 @@ class GameWebSocketService {
     ) as IBoard | null
 
     if (!typedBoard) {
-      this.sendError(ws, 'Board not found')
-      return
+      return this.sendError(ws, 'Board not found')
     }
 
     const boardAfterMove = changeBoardAfterMove(
@@ -393,12 +396,23 @@ class GameWebSocketService {
     room.delete(ws)
 
     if (room.size === 0) {
-      this.gameRooms.delete(connection.gameId)
       this.connectionState.delete(ws)
     }
   }
 
-  private handleDisconnect(ws: WebSocket): void {
+  private async handleDisconnect(ws: WebSocket): Promise<void> {
+    const connection = this.connectionState.get(ws)
+
+    if (!connection?.gameId) {
+      return
+    }
+
+    await prisma.game.update({
+      where: { id: connection.gameId },
+      data: { status: GameStatus.PENDING }
+    })
+
+    this.broadcastJoinState(connection.gameId, GameStatus.PENDING, ws)
     this.detachClientFromGame(ws)
     this.connectionState.delete(ws)
   }
@@ -428,8 +442,7 @@ class GameWebSocketService {
     const checkersGameGeneralData = this.connectionState.get(ws)
 
     if (!checkersGameGeneralData) {
-      this.sendError(ws, 'Game not found')
-      return
+      return this.sendError(ws, 'Game not found')
     }
 
     const { gameId, color: userColor } = checkersGameGeneralData
@@ -439,8 +452,7 @@ class GameWebSocketService {
     })
 
     if (!checkersGameDB) {
-      this.sendError(ws, 'Game not found')
-      return
+      return this.sendError(ws, 'Game not found')
     }
 
     const { currentTurn, board } = checkersGameDB

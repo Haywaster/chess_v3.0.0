@@ -192,21 +192,24 @@ export const Checkers: FC = () => {
         <StyledBoard />
       </StyledMain>
       <UnAuthUserModal isOpen={mode === GameMode.COUPLE}>
-        <p>Пользователь не авторизован. Играть без авторизации?</p>
-        <Flex>
-          <Button onClick={() => setIsOpenAuthModal(true)}>
-            Авторизоваться
-          </Button>
-          <Button mode="ghost" onClick={playUnAuthUser}>
-            Играть
-          </Button>
-        </Flex>
-      </UnAuthUserModal>
-      <UnAuthUserModal isOpen={isOpenAuthModal}>
-        <Flex direction="column">
-          <LoginForm />
-          <Button onClick={() => setIsOpenAuthModal(false)}>Отмена</Button>
-        </Flex>
+        {!isOpenAuthModal ? (
+          <>
+            <p>Пользователь не авторизован. Играть без авторизации?</p>
+            <Flex>
+              <Button onClick={() => setIsOpenAuthModal(true)}>
+                Авторизоваться
+              </Button>
+              <Button mode="ghost" onClick={playUnAuthUser}>
+                Играть
+              </Button>
+            </Flex>
+          </>
+        ) : (
+          <Flex direction="column">
+            <LoginForm />
+            <Button onClick={() => setIsOpenAuthModal(false)}>Отмена</Button>
+          </Flex>
+        )}
       </UnAuthUserModal>
     </>
   )
