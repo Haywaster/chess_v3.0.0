@@ -2,14 +2,15 @@ import { authService } from '../../service'
 import { useSetUserData } from '../../store'
 
 export const useRegistrationUser = () => {
-  const setUsername = useSetUserData()
+  const setUserData = useSetUserData()
 
   return async (username: string, password: string) => {
-    const { data } = await authService.registration(username, password)
-    setUsername({
-      username: data.user,
-      token: data.accessToken,
-      isAuth: true
+    authService.registration(username, password).then(({ data }) => {
+      setUserData({
+        username: data.user,
+        token: data.accessToken,
+        isAuth: true
+      })
     })
   }
 }

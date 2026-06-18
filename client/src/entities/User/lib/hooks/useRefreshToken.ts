@@ -40,11 +40,7 @@ export const useRefreshToken = (): UseRefreshTokenReturn => {
         setOnline(true)
       })
       .catch(err => {
-        const userOnline = err.code !== 'ERR_NETWORK'
-        setOnline(userOnline)
-
         if (isAxiosError(err) && err.status === StatusCodes.UNAUTHORIZED) {
-          setUserData({ isAuth: false })
           stopInterval()
         }
       })

@@ -1,4 +1,4 @@
-import $api from 'shared/api/config'
+import $api from 'shared/api'
 
 import type { IAuthService } from '../model'
 

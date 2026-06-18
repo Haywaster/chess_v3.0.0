@@ -1,4 +1,4 @@
-import { type FC, useEffect } from 'react'
+import { type FC, useEffect, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
@@ -10,19 +10,25 @@ const router = createBrowserRouter(AppRouter)
 
 export const App: FC = () => {
   const isAuth = useIsAuth()
+  const authChecked = useRef(false)
+
   const [startInterval, stopInterval, refreshFunc] = useRefreshToken()
 
   useEffect(() => {
-    if (isAuth) {
+    if (authChecked.current) {
       startInterval()
-    } else {
+
+      return () => {
+        stopInterval()
+      }
+    }
+
+    if (!isAuth) {
       refreshFunc()
     }
 
-    return () => {
-      stopInterval()
-    }
-  }, [startInterval, stopInterval, refreshFunc, isAuth])
+    authChecked.current = true
+  }, [isAuth, startInterval, stopInterval, refreshFunc])
 
   return (
     <>
