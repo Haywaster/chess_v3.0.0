@@ -5,7 +5,7 @@ import { type Size } from 'shared/types'
 
 import { base, icon, isLink, mode, size } from './styles'
 
-import type { BtnMode } from './types.ts'
+import type { BtnMode } from './types'
 
 interface IBaseProps {
   isActive?: boolean

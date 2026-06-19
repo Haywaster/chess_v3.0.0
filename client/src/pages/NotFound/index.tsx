@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router'
 import styled from 'styled-components'
 
-import { RouterPath } from 'shared/const/router.ts'
+import { RouterPath } from 'shared/const/router'
 import { Button, Flex } from 'shared/ui'
 import { MainHeader } from 'widgets/Header'
 

@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 
 import { RotateBoardBtn } from 'features/rotateBoard'
 import { SwitchButton } from 'features/switchTheme'
-import { RouterPath } from 'shared/const/router.ts'
+import { RouterPath } from 'shared/const/router'
 import { Button, Flex } from 'shared/ui'
 
 import { HeaderWrapper } from './HeaderWrapper'

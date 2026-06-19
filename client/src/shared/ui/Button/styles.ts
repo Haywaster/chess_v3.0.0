@@ -2,7 +2,7 @@ import { css, type RuleSet } from 'styled-components'
 
 import type { Size } from 'shared/types'
 
-import type { BtnMode } from './types.ts'
+import type { BtnMode } from './types'
 
 // base
 export const base = css`

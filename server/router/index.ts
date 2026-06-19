@@ -1,7 +1,8 @@
 import { Router } from 'express'
-import { userController } from '../controllers/userController.ts'
-import { gameController } from '../controllers/gameController.ts'
-import authMiddleware from '../middlewares/authMiddleware.ts'
+
+import { gameController } from '../controllers/gameController'
+import { userController } from '../controllers/userController'
+import authMiddleware from '../middlewares/authMiddleware'
 //const {body} = require('express-validator')
 //const userController = require('../controllers/user-controller')
 //const authMiddleware = require('../middlewares/auth-middleware')
@@ -21,4 +22,4 @@ router.get('/users', authMiddleware, userController.getAllUsers)
 router.post('/logout', authMiddleware, userController.logout)
 router.post('/game', authMiddleware, gameController.createGame)
 
-export default router;
+export default router

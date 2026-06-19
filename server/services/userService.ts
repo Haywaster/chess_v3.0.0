@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt'
-import { tokenService } from '../services/tokenService.ts'
-import prisma from '../prisma/prismaClient.ts'
-import { ApiError } from '../exceptions/api-error.ts'
-import type { User, RefreshToken } from '../types/scheme.ts'
+
+import { ApiError } from '../exceptions/api-error'
+import prisma from '../prisma/prismaClient'
+import { tokenService } from '../services/tokenService'
+
+import type { User, RefreshToken } from '../types/scheme'
 
 export const authErrors = {
   USER_NOT_FOUND: 'USER_NOT_FOUND',
@@ -10,47 +12,73 @@ export const authErrors = {
   USER_ALREADY_EXISTS: 'USER_ALREADY_EXISTS'
 } as const
 
+interface IUserResponse {
+  accessToken: string
+  refreshToken: string
+  user: User['login']
+}
+
 interface IUserService {
-  registration: (login: User['login'], password: User['password']) => Promise<User>
-  login: (login: User['login'], password: User['password']) => Promise<User>
-  refresh: (refreshToken: RefreshToken['refreshToken']) => Promise<User>
+  registration: (
+    login: User['login'],
+    password: User['password']
+  ) => Promise<IUserResponse>
+  login: (
+    login: User['login'],
+    password: User['password']
+  ) => Promise<IUserResponse>
+  refresh: (
+    refreshToken: RefreshToken['refreshToken']
+  ) => Promise<IUserResponse>
   getAllUsers: () => Promise<User[]>
   logout: (refreshToken: RefreshToken['refreshToken']) => Promise<void>
 }
 
-export const userService = {
-  async registration(login: User['login'], password: User['password']) {
+export const userService: IUserService = {
+  async registration(login, password) {
     const candidate = await prisma.user.findUnique({ where: { login } })
 
     if (candidate) {
-      throw ApiError.BadRequest(`Пользователь с login ${login} уже существует`, authErrors.USER_ALREADY_EXISTS)
+      throw ApiError.BadRequest(
+        `Пользователь с login ${login} уже существует`,
+        authErrors.USER_ALREADY_EXISTS
+      )
     }
-    
-    const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await prisma.user.create({ data: { login, password: hashPassword } })
+
+    const ROUND = 10
+    const hashPassword = await bcrypt.hash(password, ROUND)
+    const newUser = await prisma.user.create({
+      data: { login, password: hashPassword }
+    })
     const tokens = tokenService.generate(newUser)
     await tokenService.saveToken(newUser.id, tokens.refreshToken)
 
-    return {...tokens, user: login}
+    return { ...tokens, user: login }
   },
 
-  async login(login: User['login'], password: User['password']) {
+  async login(login, password) {
     const candidate = await prisma.user.findUnique({ where: { login } })
 
     if (!candidate) {
-      throw ApiError.BadRequest(`Пользователь с login ${login} не найден`, authErrors.USER_NOT_FOUND)
+      throw ApiError.BadRequest(
+        `Пользователь с login ${login} не найден`,
+        authErrors.USER_NOT_FOUND
+      )
     }
 
     const isCompare = await bcrypt.compare(password, candidate.password)
 
     if (!isCompare) {
-      throw ApiError.BadRequest(`Для пользователя ${login} неверно указан пароль`, authErrors.WRONG_PASSWORD)
+      throw ApiError.BadRequest(
+        `Для пользователя ${login} неверно указан пароль`,
+        authErrors.WRONG_PASSWORD
+      )
     }
 
     const tokens = tokenService.generate(candidate)
     await tokenService.saveToken(candidate.id, tokens.refreshToken)
 
-    return {...tokens, user: login}
+    return { ...tokens, user: login }
   },
 
   async refresh(refreshToken: RefreshToken['refreshToken'] | null) {
@@ -66,22 +94,25 @@ export const userService = {
     }
 
     const user = await prisma.user.findUnique({ where: { id: userData.id } })
-    
+
     if (!user) {
-      throw ApiError.BadRequest('Пользователь не найден', authErrors.USER_NOT_FOUND)
+      throw ApiError.BadRequest(
+        'Пользователь не найден',
+        authErrors.USER_NOT_FOUND
+      )
     }
-    
+
     const tokens = tokenService.generate(user)
 
     await tokenService.saveToken(user.id, tokens.refreshToken)
 
-    return {...tokens, user: user.login}
+    return { ...tokens, user: user.login }
   },
 
   async getAllUsers() {
     return prisma.user.findMany()
   },
-  
+
   async logout(refreshToken: RefreshToken['refreshToken'] | null) {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError()

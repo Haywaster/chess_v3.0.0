@@ -1,11 +1,11 @@
-import type { User } from './scheme.ts'
+import type { User } from './scheme'
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User;
+      user?: User
     }
   }
 }
 
-export {};
+export {}
