@@ -4,7 +4,7 @@ import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
 import { AppRouter } from 'app/router'
-import { useIsAuth, useRefreshToken } from 'entities/User'
+import { useIsAuth, useRefreshToken } from 'features/auth'
 
 const router = createBrowserRouter(AppRouter)
 

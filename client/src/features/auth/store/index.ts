@@ -3,8 +3,8 @@ export {
   useSetUserData,
   useIsAuth,
   useToken,
-  useUserStore,
+  useAuthStore,
   useReset,
   useOnline,
   useSetOnline
-} from './useUserStore'
+} from './useAuthStore'

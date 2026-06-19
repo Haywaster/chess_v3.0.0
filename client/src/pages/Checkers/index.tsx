@@ -13,17 +13,16 @@ import {
   GameMode,
   GameStatus
 } from 'entities/Game'
-import { useUsername } from 'entities/User'
-import { LoginForm, UnAuthUserModal } from 'features/auth/login'
+import { LoginForm, UnAuthUserModal, useUsername } from 'features/auth'
 import {
   type MoveFigureResponseWebsocket,
   type KillFigureResponseWebsocket,
   useCheckersStore,
   useMoveFigure,
   useUpdateBoard,
-  CheckersActionType
+  CheckersActionType,
+  useResetCheckers
 } from 'features/checkers'
-import { useResetCheckers } from 'features/checkers/store/useCheckersStore.ts'
 import { type id as TId, RouterPath } from 'shared/const/router'
 import { useSetWs, useWs } from 'shared/store'
 import { Button, Flex } from 'shared/ui'

@@ -8,8 +8,7 @@ import {
   type ICreateGameData,
   type TGameType
 } from 'entities/Game'
-import { useIsAuth, useOnline, useUsername } from 'entities/User'
-import { LoginForm } from 'features/auth/login'
+import { useIsAuth, useOnline, useUsername, LoginForm } from 'features/auth'
 import { CheckersChooseRules } from 'features/checkers'
 import { VideoLinks } from 'features/chooseVideoLink'
 import { Flex, Modal } from 'shared/ui'
@@ -62,7 +61,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
           Do you really want to play <b>{gameType}</b>?
         </p>
         {gameType === GameType.CHECKERS && (
-          <CheckersChooseRules createGame={createGame} />
+          <CheckersChooseRules createGame={createGame} online={online} />
         )}
       </Modal>
     </Flex>

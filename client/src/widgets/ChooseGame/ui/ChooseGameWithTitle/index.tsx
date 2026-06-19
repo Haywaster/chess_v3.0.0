@@ -1,7 +1,7 @@
 import { type FC, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { useOnline, useUsername } from 'entities/User'
+import { useOnline, useUsername } from 'features/auth'
 import { Flex } from 'shared/ui'
 
 import { ChooseGame } from '../ChooseGame'

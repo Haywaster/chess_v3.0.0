@@ -1,4 +1,4 @@
-import type { useUserStore } from 'entities/User'
+import type { useAuthStore } from 'features/auth'
 import { StatusCodes } from 'shared/const/statuses'
 
 import { rawApi } from './rawApi'
@@ -7,7 +7,7 @@ import type { AxiosInstance } from 'axios'
 
 export const setupInterceptors = (
   instance: AxiosInstance,
-  store: typeof useUserStore
+  store: typeof useAuthStore
 ): AxiosInstance => {
   instance.interceptors.request.use(
     config => {

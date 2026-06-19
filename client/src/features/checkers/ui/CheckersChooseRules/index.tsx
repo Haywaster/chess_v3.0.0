@@ -8,7 +8,6 @@ import {
   type ICreateGameData,
   type TGameMode
 } from 'entities/Game'
-import { useOnline } from 'entities/User'
 import { Button, Flex, Switch } from 'shared/ui'
 import type { ISwitchProps } from 'shared/ui/Switch'
 
@@ -30,17 +29,16 @@ const Wrapper = styled(Flex)`
 
 interface IProps {
   createGame: (data: ICreateGameData) => void
+  online: boolean
 }
 
 export const CheckersChooseRules: FC<IProps> = props => {
-  const { createGame } = props
+  const { createGame, online } = props
 
   const setGlobalMode = useCheckersStore(state => state.setMode)
   const setUserColor = useCheckersStore(state => state.setUserColor)
   const setGlobalRules = useCheckersStore(state => state.setRules)
   const updateBoard = useUpdateBoard()
-
-  const online = useOnline()
 
   const [color, setColor] = useState<IFigure['color']>('white')
   const [onlineMode, setOnlineMode] = useState<Exclude<TGameMode, 'OFFLINE'>>(

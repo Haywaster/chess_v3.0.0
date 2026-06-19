@@ -1,8 +1,9 @@
 import { type FC } from 'react'
 
-import { useIsAuth, useOnline } from 'entities/User'
 import { Modal } from 'shared/ui'
 import { type ModalProps } from 'shared/ui/Modal'
+
+import { useIsAuth, useOnline } from '../../store'
 
 interface IProps extends ModalProps {
   isOpen: boolean

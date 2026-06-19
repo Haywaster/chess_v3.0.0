@@ -1,9 +1,9 @@
-import type { ComponentProps, FC, MouseEventHandler } from 'react'
-
-import { useLogoutUser } from 'entities/User'
 import { Button } from 'shared/ui'
 
-import { LogoutIcon } from '../assets'
+import { LogoutIcon } from '../../assets'
+import { useLogoutUser } from '../../lib'
+
+import type { ComponentProps, FC, MouseEventHandler } from 'react'
 
 type IProps = ComponentProps<typeof Button>
 

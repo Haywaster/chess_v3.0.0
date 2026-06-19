@@ -1,18 +1,16 @@
 import { isAxiosError } from 'axios'
-import { type FC, type FormEvent, useRef, useState } from 'react'
+import { type FC, type SubmitEventHandler, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  type authErrors,
-  useIsAuth,
-  useLoginUser,
-  useRegistrationUser
-} from 'entities/User'
 import { DoneIcon } from 'shared/assets'
 import { type EnumValues } from 'shared/types'
 import { Button, Flex, Input } from 'shared/ui'
 
+import { useLoginUser, useRegistrationUser } from '../../lib'
+import { useIsAuth } from '../../store'
 import { RegistrationModal } from '../RegistrationModal'
+
+import type { authErrors } from '../../model'
 
 const StyledForm = styled.form<{ $hidden: boolean }>`
   display: grid;
@@ -32,9 +30,7 @@ export const LoginForm: FC = () => {
 
   const closeModal = (): void => setIsOpenRegistrationModal(false)
 
-  const submitHandler = async (
-    e: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const submitHandler: SubmitEventHandler<HTMLFormElement> = e => {
     e.preventDefault()
 
     const formData = new FormData(e.target as HTMLFormElement)
@@ -43,7 +39,7 @@ export const LoginForm: FC = () => {
 
     if (userName && password) {
       try {
-        await login(userName, password)
+        login(userName, password)
       } catch (error) {
         if (
           isAxiosError<{

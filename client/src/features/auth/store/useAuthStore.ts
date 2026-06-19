@@ -24,7 +24,7 @@ const initialState: State = {
   online: false
 }
 
-export const useUserStore = create<State & Action>(set => ({
+export const useAuthStore = create<State & Action>(set => ({
   ...initialState,
   setUserData: data => set(prev => ({ ...prev, ...data })),
   setOnline: online => set({ online }),
@@ -32,16 +32,16 @@ export const useUserStore = create<State & Action>(set => ({
 }))
 
 export const useUsername = (): State['username'] =>
-  useUserStore(state => state.username)
-export const useToken = (): State['token'] => useUserStore(state => state.token)
+  useAuthStore(state => state.username)
+export const useToken = (): State['token'] => useAuthStore(state => state.token)
 export const useIsAuth = (): State['isAuth'] =>
-  useUserStore(state => state.isAuth)
+  useAuthStore(state => state.isAuth)
 export const useOnline = (): State['online'] =>
-  useUserStore(state => state.online)
+  useAuthStore(state => state.online)
 
 export const useSetUserData = (): Action['setUserData'] =>
-  useUserStore(state => state.setUserData)
+  useAuthStore(state => state.setUserData)
 export const useReset = (): Action['reset'] =>
-  useUserStore(state => state.reset)
+  useAuthStore(state => state.reset)
 export const useSetOnline = (): Action['setOnline'] =>
-  useUserStore(state => state.setOnline)
+  useAuthStore(state => state.setOnline)

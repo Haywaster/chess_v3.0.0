@@ -1,7 +1,6 @@
 import { type FC } from 'react'
 
-import { useOnline, useUsername } from 'entities/User'
-import { LogoutButton } from 'features/auth/logout'
+import { useOnline, useUsername, LogoutButton } from 'features/auth'
 import { SwitchButton } from 'features/switchTheme'
 
 import { HeaderWrapper } from './HeaderWrapper'
