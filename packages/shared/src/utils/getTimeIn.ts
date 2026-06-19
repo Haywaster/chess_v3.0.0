@@ -1,5 +1,5 @@
-import { baseTimeInMs } from 'shared/const/numbers'
-import { type TimeUnits } from 'shared/types'
+import { baseTimeInMs } from '../const'
+import { type TimeUnits } from '../types'
 
 export const getTimeIn = (
   value: number,

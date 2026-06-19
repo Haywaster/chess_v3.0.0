@@ -278,7 +278,7 @@ const eslintConfig: ConfigWithExtends = {
 }
 
 export default defineConfig([
-  { ignores: ['node_modules', '.husky'] },
+  { ignores: ['node_modules', '.husky', '**/dist'] },
   packagesConfig,
   ...clientConfig,
   serverConfig,

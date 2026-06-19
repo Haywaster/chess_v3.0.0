@@ -1,5 +1,7 @@
 import { type RequestHandler } from 'express'
 
+import { getTimeIn, StatusCodes } from '@game-workspace/shared'
+
 import { userService } from '../services/userService'
 
 interface IUserController {
@@ -9,6 +11,9 @@ interface IUserController {
   getAllUsers: RequestHandler
   logout: RequestHandler
 }
+
+const MAX_DAYS = 30
+const MAX_AGE_MS = getTimeIn(MAX_DAYS, 'DAY', 'MS')
 
 export const userController: IUserController = {
   async registration(req, res, next) {
@@ -22,7 +27,7 @@ export const userController: IUserController = {
       const userData = await userService.registration(login, password)
       res.cookie('refreshToken', userData.refreshToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000
+        maxAge: MAX_AGE_MS
       })
       return res.json(userData)
     } catch (e) {
@@ -36,7 +41,7 @@ export const userController: IUserController = {
       const userData = await userService.login(login, password)
       res.cookie('refreshToken', userData.refreshToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000
+        maxAge: MAX_AGE_MS
       })
       return res.json(userData)
     } catch (e) {
@@ -50,7 +55,7 @@ export const userController: IUserController = {
       const userData = await userService.refresh(refreshToken)
       res.cookie('refreshToken', userData.refreshToken, {
         httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000
+        maxAge: MAX_AGE_MS
       })
       return res.json(userData)
     } catch (e) {
@@ -72,7 +77,7 @@ export const userController: IUserController = {
       const { refreshToken } = req.cookies
       await userService.logout(refreshToken)
       res.clearCookie('refreshToken')
-      return res.sendStatus(200)
+      return res.sendStatus(StatusCodes.SUCCESS)
     } catch (e) {
       next(e)
     }

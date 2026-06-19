@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'react'
 import styled from 'styled-components'
 
 import { type Size } from 'shared/types'
+
+import type { CSSProperties } from 'react'
 
 interface IProps {
   size?: Size | number

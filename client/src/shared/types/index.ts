@@ -6,7 +6,6 @@ export type Size = 'lg' | 'sm' | 'xs'
 
 export type TWebSocketStatus = EnumValues<typeof WebSocketStatus>
 export type Theme = EnumValues<typeof Themes>
-export type TimeUnits = 'MS' | 'SECOND' | 'MINUTE' | 'HOUR' | 'DAY'
 export type {
   WebsocketDataConstructor,
   WebsocketErrorConstructor

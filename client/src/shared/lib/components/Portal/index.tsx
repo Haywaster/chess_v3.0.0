@@ -1,5 +1,6 @@
-import type { FC, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+
+import type { FC, ReactNode } from 'react'
 
 interface IProps {
   children: ReactNode

@@ -1,5 +1,6 @@
+import { StatusCodes } from '@game-workspace/shared'
+
 import type { useAuthStore } from 'features/auth'
-import { StatusCodes } from 'shared/const/statuses'
 
 import { rawApi } from './rawApi'
 

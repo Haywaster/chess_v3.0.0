@@ -1,8 +1,7 @@
 import { isAxiosError } from 'axios'
 import { useRef } from 'react'
 
-import { StatusCodes } from 'shared/const/statuses'
-import { getTimeIn } from 'shared/lib'
+import { StatusCodes, getTimeIn } from '@game-workspace/shared'
 
 import { authService } from '../../service'
 import { useSetOnline, useSetUserData } from '../../store'

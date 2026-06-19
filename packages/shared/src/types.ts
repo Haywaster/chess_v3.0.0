@@ -34,3 +34,5 @@ export interface IGeneralGame {
   status: TGameStatus
   mode: TGameMode
 }
+
+export type TimeUnits = 'MS' | 'SECOND' | 'MINUTE' | 'HOUR' | 'DAY'

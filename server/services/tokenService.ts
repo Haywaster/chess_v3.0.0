@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 
-import { Statuses } from '../const'
+import { getTimeIn, StatusCodes } from '@game-workspace/shared'
+
 import { ApiError } from '../exceptions/api-error'
 import prisma from '../prisma/prismaClient'
 
@@ -13,7 +14,7 @@ export const tokenService = {
 
     if (!accessKey || !refreshKey) {
       throw new ApiError(
-        Statuses.SERVER_ERROR,
+        StatusCodes.SERVER_ERROR,
         'Не удалось сгенерировать токены',
         'UnknownError'
       )
@@ -44,7 +45,7 @@ export const tokenService = {
       data: {
         userId,
         refreshToken,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24)
+        expiresAt: new Date(Date.now() + getTimeIn(1, 'DAY', 'MS'))
       }
     })
   },
@@ -54,7 +55,7 @@ export const tokenService = {
 
     if (!accessKey) {
       throw new ApiError(
-        Statuses.SERVER_ERROR,
+        StatusCodes.SERVER_ERROR,
         'Не удалось проверить токен',
         'UnknownError'
       )
@@ -72,7 +73,7 @@ export const tokenService = {
 
     if (!refreshKey) {
       throw new ApiError(
-        Statuses.SERVER_ERROR,
+        StatusCodes.SERVER_ERROR,
         'Не удалось проверить токен',
         'UnknownError'
       )

@@ -1,6 +1,7 @@
 import { type ErrorRequestHandler } from 'express'
 
-import { Statuses } from '../const'
+import { StatusCodes } from '@game-workspace/shared'
+
 import { ApiError } from '../exceptions/api-error'
 
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
@@ -9,7 +10,7 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
     return res.status(err.status).json({ message, type, errors })
   }
 
-  res.status(Statuses.SERVER_ERROR).json({
+  res.status(StatusCodes.SERVER_ERROR).json({
     message: 'Непредвиденная ошибка',
     type: 'UnknownError'
   })
