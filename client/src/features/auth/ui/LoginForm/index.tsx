@@ -38,9 +38,7 @@ export const LoginForm: FC = () => {
     const password = (formData.get('password') as string).trim()
 
     if (userName && password) {
-      try {
-        login(userName, password)
-      } catch (error) {
+      login(userName, password).catch(error => {
         if (
           isAxiosError<{
             message: string
@@ -54,7 +52,7 @@ export const LoginForm: FC = () => {
             }
           }
         }
-      }
+      })
     }
   }
 

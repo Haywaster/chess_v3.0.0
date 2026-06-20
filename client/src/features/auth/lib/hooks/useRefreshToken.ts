@@ -4,12 +4,12 @@ import { useRef } from 'react'
 import { StatusCodes, getTimeIn } from '@game-workspace/shared'
 
 import { authService } from '../../service'
-import { useSetOnline, useSetUserData } from '../../store'
+import { useReset, useSetOnline, useSetUserData } from '../../store'
 
 interface UseRefreshToken {
   startInterval: () => void
   stopInterval: () => void
-  refreshFunc: () => void
+  refreshFunc: () => Promise<void>
 }
 
 type UseRefreshTokenReturn = [
@@ -21,13 +21,14 @@ type UseRefreshTokenReturn = [
 export const useRefreshToken = (): UseRefreshTokenReturn => {
   const setUserData = useSetUserData()
   const setOnline = useSetOnline()
+  const resetUserData = useReset()
   const intervalRef = useRef<number>(undefined)
 
   const stopInterval = (): void => {
     clearInterval(intervalRef.current)
   }
 
-  const refreshFunc = (): void => {
+  const refreshFunc = (): Promise<void> =>
     authService
       .refresh()
       .then(({ data }) => {
@@ -41,9 +42,12 @@ export const useRefreshToken = (): UseRefreshTokenReturn => {
       .catch(err => {
         if (isAxiosError(err) && err.status === StatusCodes.UNAUTHORIZED) {
           stopInterval()
+          resetUserData()
         }
+
+        const onlineStatus = err.code !== 'ERR_NETWORK'
+        setOnline(onlineStatus)
       })
-  }
 
   const startInterval = (): void => {
     intervalRef.current = setInterval(refreshFunc, getTimeIn(1, 'DAY', 'MS'))
