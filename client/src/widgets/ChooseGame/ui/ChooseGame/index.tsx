@@ -44,7 +44,7 @@ export const ChooseGame: FC = memo(() => {
       <VideoLinks videoLinks={games} onClick={chooseGame} />
       <Modal isOpen={!!gameType} onClose={closeModal}>
         <p>
-          <b>Hello, {username}! </b>
+          <b>Hello{username ? `, ${username}` : ''}! </b>
           Do you really want to play <b>{gameType}</b>?
         </p>
         {gameType === GameType.CHECKERS && (

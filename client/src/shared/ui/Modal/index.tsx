@@ -2,11 +2,12 @@ import classNames from 'classnames'
 import {
   memo,
   useEffect,
-  useState,
   type FC,
   type MouseEvent,
   type PropsWithChildren,
-  type ComponentProps
+  type ComponentProps,
+  type PointerEvent,
+  useRef
 } from 'react'
 
 import { Portal } from '../../lib'
@@ -23,13 +24,9 @@ interface IProps extends PropsWithChildren {
 
 export const Modal: FC<IProps> = memo(props => {
   const { children, onClose, isOpen, destroyOnClose, width, className } = props
-  const [isMounted, setIsMounted] = useState(false)
 
-  const [isMaskEnter, setIsMaskEnter] = useState(false)
-  const [isMaskDown, setIsMaskDown] = useState(false)
-
-  const [isContentEnter, setIsContentEnter] = useState(false)
-  const [isContentDown, setIsContentDown] = useState(false)
+  const overlayPressed = useRef(false)
+  const mouseInContent = useRef(false)
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent): void => {
@@ -38,65 +35,44 @@ export const Modal: FC<IProps> = memo(props => {
       }
     }
 
-    if (isOpen) {
-      window.addEventListener('keydown', onKeyDown)
-      document.documentElement.style.overflowY = 'hidden'
-    }
-
-    setIsMounted(isOpen)
+    window.addEventListener('keydown', onKeyDown)
+    document.documentElement.style.overflowY = 'hidden'
 
     return () => {
       window.removeEventListener('keydown', onKeyDown)
       document.documentElement.removeAttribute('style')
     }
-  }, [isOpen, onClose])
+  }, [onClose])
 
-  const onContentClick = (e: MouseEvent): void => {
-    e.stopPropagation()
-  }
-
-  const contentEnter = (): void => setIsContentEnter(true)
-  const contentDown = (): void => {
-    setIsContentDown(true)
-  }
-  const contentLeave = (): void => setIsContentEnter(false)
-  const contentUp = (): number =>
-    setTimeout(() => {
-      if (isMaskDown) {
-        setIsMaskDown(false)
-      }
-      setIsContentDown(false)
-    })
-
-  const maskEnter = (): void => setIsMaskEnter(true)
-  const maskDown = (): void => setIsMaskDown(true)
-  const maskLeave = (): void => setIsMaskEnter(false)
-  const maskUp = (): number =>
-    setTimeout(() => {
-      if (isContentDown) {
-        setIsContentDown(false)
-      }
-      setIsMaskDown(false)
-    })
-
-  // console.log(isMaskDown, isContentDown)
-  const closeModalOnOverlay = (): void => {
-    if (isMaskDown && isContentEnter) {
-      return
+  const onOverlayClick = (e: MouseEvent<HTMLDivElement>): void => {
+    if (
+      overlayPressed.current &&
+      !mouseInContent.current &&
+      e.target === e.currentTarget
+    ) {
+      onClose?.()
     }
 
-    if (isContentDown && isMaskEnter) {
-      return
-    }
+    overlayPressed.current = false
+    mouseInContent.current = false
+  }
 
-    onClose?.()
+  const onOverlayPointerDown = (e: PointerEvent): void => {
+    overlayPressed.current = e.target === e.currentTarget
+  }
+
+  const onContentPointerEnter = (): void => {
+    mouseInContent.current = true
+  }
+  const onContentPointerLeave = (): void => {
+    mouseInContent.current = false
   }
 
   const mods = {
     [module.open]: isOpen
   }
 
-  if (destroyOnClose && !isMounted) {
+  if (destroyOnClose && !isOpen) {
     return null
   }
 
@@ -105,20 +81,14 @@ export const Modal: FC<IProps> = memo(props => {
       <div className={classNames(module.modal, mods)}>
         <div
           className={module.overlay}
-          onClick={closeModalOnOverlay}
-          onPointerDown={maskDown}
-          onPointerEnter={maskEnter}
-          onPointerLeave={maskLeave}
-          onPointerUp={maskUp}
+          onClick={onOverlayClick}
+          onPointerDown={onOverlayPointerDown}
         >
           <div
             className={classNames(module.content, className)}
             style={{ width }}
-            onClick={onContentClick}
-            onPointerDown={contentDown}
-            onPointerEnter={contentEnter}
-            onPointerLeave={contentLeave}
-            onPointerUp={contentUp}
+            onPointerEnter={onContentPointerEnter}
+            onPointerLeave={onContentPointerLeave}
           >
             {children}
           </div>
