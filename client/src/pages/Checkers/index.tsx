@@ -13,7 +13,7 @@ import {
   GameMode,
   GameStatus
 } from 'entities/Game'
-import { LoginForm, UnAuthUserModal, useUsername } from 'features/auth'
+import { AuthForm, UnAuthUserModal, useUsername } from 'features/auth'
 import {
   type MoveFigureResponseWebsocket,
   type KillFigureResponseWebsocket,
@@ -205,7 +205,7 @@ export const Checkers: FC = () => {
           </>
         ) : (
           <Flex direction="column">
-            <LoginForm />
+            <AuthForm />
             <Button onClick={() => setIsOpenAuthModal(false)}>Отмена</Button>
           </Flex>
         )}

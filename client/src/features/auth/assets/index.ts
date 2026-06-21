@@ -1,1 +1,1 @@
-export { default as LogoutIcon } from './logout.svg?react'
+export { default as DoorIcon } from './door.svg?react'

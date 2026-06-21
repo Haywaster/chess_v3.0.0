@@ -1,3 +1,6 @@
+import { type EnumValues } from '@game-workspace/shared'
+
+import type { authErrors } from './const'
 import type { AxiosPromise } from 'axios'
 
 interface ITokenCouple {
@@ -15,3 +18,5 @@ export interface IAuthService {
   logout(): AxiosPromise<void>
   refresh(): AxiosPromise<ILoginResult>
 }
+
+export type TAuthErrors = EnumValues<typeof authErrors>

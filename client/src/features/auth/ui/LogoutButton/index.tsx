@@ -1,22 +1,22 @@
 import { Button } from 'shared/ui'
 
-import { LogoutIcon } from '../../assets'
+import { DoorIcon } from '../../assets'
 import { useLogoutUser } from '../../lib'
 
-import type { ComponentProps, FC, MouseEventHandler } from 'react'
+import type { ComponentProps, FC } from 'react'
 
 type IProps = ComponentProps<typeof Button>
 
 export const LogoutButton: FC<IProps> = props => {
   const logout = useLogoutUser()
 
-  const logoutHandler: MouseEventHandler<HTMLButtonElement> = () => {
+  const logoutHandler = (): void => {
     logout()
   }
 
   return (
     <Button icon mode="white" size="sm" onClick={logoutHandler} {...props}>
-      <LogoutIcon />
+      <DoorIcon />
     </Button>
   )
 }

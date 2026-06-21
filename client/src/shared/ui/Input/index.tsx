@@ -29,6 +29,10 @@ const StyledInput = styled.input.attrs(props => ({
     outline: none;
   }
 
+  &:disabled {
+    background-color: #aaa;
+  }
+
   &::placeholder {
     color: #aaa;
   }

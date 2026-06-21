@@ -1,19 +1,19 @@
 import { type FC } from 'react'
 
-import { useOnline, useUsername, LogoutButton } from 'features/auth'
+import { useOnline, LogoutButton, useIsAuth, AuthButton } from 'features/auth'
 import { SwitchButton } from 'features/switchTheme'
 
 import { HeaderWrapper } from './HeaderWrapper'
 
 export const MainHeader: FC = () => {
-  const username = useUsername()
+  const isAuth = useIsAuth()
   const online = useOnline()
 
   return (
     <HeaderWrapper>
       <SwitchButton />
       <h2>Haywaster's games</h2>
-      {username && <LogoutButton />}
+      {isAuth ? <LogoutButton /> : <AuthButton />}
       {!online && <p>You are offline, functionality may be limited</p>}
     </HeaderWrapper>
   )

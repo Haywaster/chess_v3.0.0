@@ -8,21 +8,14 @@ import {
   type ICreateGameData,
   type TGameType
 } from 'entities/Game'
-import { useIsAuth, useOnline, useUsername, LoginForm } from 'features/auth'
+import { useOnline, useUsername } from 'features/auth'
 import { CheckersChooseRules } from 'features/checkers'
 import { VideoLinks } from 'features/chooseVideoLink'
 import { Flex, Modal } from 'shared/ui'
 
 import { games } from '../../const'
 
-interface IProps {
-  onError: () => void
-}
-
-export const ChooseGame: FC<IProps> = memo(props => {
-  const { onError } = props
-
-  const isAuth = useIsAuth()
+export const ChooseGame: FC = memo(() => {
   const online = useOnline()
   const username = useUsername()
   const navigate = useNavigate()
@@ -30,12 +23,7 @@ export const ChooseGame: FC<IProps> = memo(props => {
   const [gameType, setGameType] = useState<TGameType | null>(null)
 
   const chooseGame = (type: TGameType): void => {
-    // TODO: В планах сделать возможность играть без регистрации
-    if (!isAuth && online) {
-      onError()
-    } else {
-      setGameType(type)
-    }
+    setGameType(type)
   }
 
   const closeModal = (): void => {
@@ -53,7 +41,6 @@ export const ChooseGame: FC<IProps> = memo(props => {
 
   return (
     <Flex direction="column">
-      {online && <LoginForm />}
       <VideoLinks videoLinks={games} onClick={chooseGame} />
       <Modal isOpen={!!gameType} onClose={closeModal}>
         <p>
