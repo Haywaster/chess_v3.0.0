@@ -20,13 +20,13 @@ const ruleDefaults = {
   [Rules.stopAfterKill]: false
 } as const
 
-const CheckersActionType = {
-  ...ActionType,
-  MOVE_FIGURE: 'MOVE_FIGURE',
-  KILL_FIGURE: 'KILL_FIGURE'
-} as const
-
-export { RENDER_DURATION, Rules, ruleTitles, ruleDefaults, CheckersActionType }
+export {
+  RENDER_DURATION,
+  Rules,
+  ruleTitles,
+  ruleDefaults,
+  ActionType as CheckersActionType
+}
 export {
   initialBoard,
   boardCellsIds,

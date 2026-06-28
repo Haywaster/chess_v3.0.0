@@ -49,10 +49,10 @@ model Game {
 model GameParticipant {
   id          Int      @id @default(autoincrement())
   gameId      String
-  playerId    Int
+  playerId    Int?
   joinedAt    DateTime @default(now())
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  player      User     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  player      User?     @relation(fields: [playerId], references: [id], onDelete: Cascade)
   colorParticipant GameWithColorParticipant?
 
   @@index([gameId])

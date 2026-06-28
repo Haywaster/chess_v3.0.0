@@ -9,7 +9,7 @@ const errors = {
 }
 
 export const gameService = {
-  async createGame(userId: number, body: ICreateGameData) {
+  async createGame(userId: number | undefined, body: ICreateGameData) {
     if (!(body.type in GameType)) {
       throw ApiError.BadRequest(
         'Тип игры указан неверно',

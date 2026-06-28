@@ -1,7 +1,10 @@
 /* eslint-disable no-console */
 import { type FC, useEffect, useState } from 'react'
+import toast, { type ToastOptions, type ToastType } from 'react-hot-toast'
 import { useNavigate, useParams } from 'react-router'
 import styled from 'styled-components'
+
+import { type MessageResponseWebsocket } from '@game-workspace/checkers'
 
 import {
   type JoinGameRequestWebsocket,
@@ -90,8 +93,16 @@ export const Checkers: FC = () => {
         | ErrorResponseWebsocket
         | MoveFigureResponseWebsocket
         | KillFigureResponseWebsocket
+        | MessageResponseWebsocket
 
       switch (message.type) {
+        case ActionType.MESSAGE: {
+          toast[message.data.type as Exclude<ToastType, 'blank'>](
+            message.data.message,
+            message.data.options as ToastOptions
+          )
+          break
+        }
         case ActionType.GAME_INFO: {
           const { mode } = message.data
 
@@ -205,7 +216,7 @@ export const Checkers: FC = () => {
           </>
         ) : (
           <Flex direction="column">
-            <AuthForm />
+            <AuthForm afterSuccess={playUnAuthUser} />
             <Button onClick={() => setIsOpenAuthModal(false)}>Отмена</Button>
           </Flex>
         )}

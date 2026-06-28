@@ -3,6 +3,7 @@ export const CheckersActionType = {
   JOIN_GAME: 'JOIN_GAME',
   MOVE_FIGURE: 'MOVE_FIGURE',
   KILL_FIGURE: 'KILL_FIGURE',
+  MESSAGE: 'MESSAGE',
   ERROR: 'ERROR'
 } as const
 

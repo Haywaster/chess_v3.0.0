@@ -14,7 +14,8 @@ import {
   changeBoardAfterMove,
   changeBoardAfterKill,
   type IBoard,
-  type GameInfoRequestWebsocket
+  type GameInfoRequestWebsocket,
+  type MessageResponseWebsocket
 } from '@game-workspace/checkers'
 import {
   GameStatus,
@@ -248,6 +249,14 @@ class GameWebSocketService {
         })
 
         this.broadcastJoinState(gameId, GameStatus.PLAYING)
+        this.sendMessage(
+          gameId,
+          {
+            type: 'success',
+            message: 'User connected'
+          },
+          ws
+        )
       } else {
         this.sendJoinState(ws, gameInDB.status as TGameStatus)
       }
@@ -413,6 +422,14 @@ class GameWebSocketService {
     })
 
     this.broadcastJoinState(connection.gameId, GameStatus.PENDING, ws)
+    this.sendMessage(
+      connection.gameId,
+      {
+        type: 'error',
+        message: 'User disconnected'
+      },
+      ws
+    )
     this.detachClientFromGame(ws)
     this.connectionState.delete(ws)
   }
@@ -494,6 +511,21 @@ class GameWebSocketService {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(payload))
     }
+  }
+
+  private sendMessage(
+    gameId: string,
+    messageData: MessageResponseWebsocket['data'],
+    excludeWs?: WebSocket
+  ): void {
+    this.broadcastToRoom(
+      gameId,
+      {
+        type: CheckersActionType.MESSAGE,
+        data: messageData
+      },
+      excludeWs
+    )
   }
 }
 

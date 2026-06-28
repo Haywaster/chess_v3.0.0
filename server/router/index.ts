@@ -18,8 +18,8 @@ const router = Router()
 router.post('/registration', userController.registration)
 router.post('/login', userController.login)
 router.get('/refresh', userController.refresh)
+router.post('/game', gameController.createGame)
 router.get('/users', authMiddleware, userController.getAllUsers)
 router.post('/logout', authMiddleware, userController.logout)
-router.post('/game', authMiddleware, gameController.createGame)
 
 export default router

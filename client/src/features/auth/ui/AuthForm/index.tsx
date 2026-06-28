@@ -21,7 +21,11 @@ const errorLabels: Record<TAuthErrors, string> = {
   WRONG_PASSWORD: "The user's password is incorrect"
 }
 
-export const AuthForm: FC = () => {
+interface IProps {
+  afterSuccess?: () => void
+}
+
+export const AuthForm: FC<IProps> = ({ afterSuccess }) => {
   const isAuth = useIsAuth()
   const [errorType, setErrorType] = useState<TAuthErrors | null>(null)
   const formRef = useRef<HTMLFormElement | null>(null)
@@ -32,33 +36,37 @@ export const AuthForm: FC = () => {
   const isRegistrationError = errorType === 'USER_NOT_FOUND'
 
   const submitHandler: SubmitEventHandler<HTMLFormElement> = e => {
-    e.preventDefault()
+    try {
+      e.preventDefault()
 
-    const formData = new FormData(e.target as HTMLFormElement)
-    const userName = (formData.get('username') as string).trim()
-    const password = (formData.get('password') as string).trim()
+      const formData = new FormData(e.target as HTMLFormElement)
+      const userName = (formData.get('username') as string).trim()
+      const password = (formData.get('password') as string).trim()
 
-    if (!userName || !password) {
-      return
-    }
-
-    if (isRegistrationError) {
-      registration(userName, password)
-      return
-    }
-
-    login(userName, password).catch(error => {
-      if (
-        isAxiosError<{
-          message: string
-          type: TAuthErrors
-          errors: string[]
-        }>(error) &&
-        error.response?.data.type
-      ) {
-        setErrorType(error.response.data.type)
+      if (!userName || !password) {
+        return
       }
-    })
+
+      if (isRegistrationError) {
+        registration(userName, password)
+        return
+      }
+
+      login(userName, password).catch(error => {
+        if (
+          isAxiosError<{
+            message: string
+            type: TAuthErrors
+            errors: string[]
+          }>(error) &&
+          error.response?.data.type
+        ) {
+          setErrorType(error.response.data.type)
+        }
+      })
+    } finally {
+      afterSuccess?.()
+    }
   }
 
   return (
