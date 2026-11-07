@@ -13,6 +13,7 @@
     "migrate:reset": "npm run prisma:migrate:reset -w server",
     "prisma:studio": "npm run prisma:studio -w server",
     "prisma:generate": "npm run prisma:generate -w server",
+    "prisma:format": "npm run prisma:format -w server",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
     "style": "stylelint \"**/*.scss\"",

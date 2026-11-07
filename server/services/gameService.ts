@@ -41,7 +41,6 @@ export const gameService = {
         },
         checkersGame: {
           create: {
-            currentTurn: 'white',
             mode: body.mode,
             board: JSON.stringify(initialBoard)
           }

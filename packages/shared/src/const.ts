@@ -17,6 +17,14 @@ export const GameMode = {
   OFFLINE: 'OFFLINE'
 } as const
 
+export const GameActionType = {
+  GAME_INFO: 'GAME_INFO',
+  JOIN_GAME: 'JOIN_GAME',
+  CHANGE_STATUS: 'CHANGE_STATUS',
+  MESSAGE: 'MESSAGE',
+  ERROR: 'ERROR'
+} as const
+
 export const StatusCodes = {
   SUCCESS: 200,
   CLIENT_ERROR: 400,

@@ -10,7 +10,8 @@
     "prisma:generate": "dotenv -e ../.env -- npx prisma generate",
     "prisma:migrate:create": "dotenv -e ../.env prisma migrate dev",
     "prisma:migrate:status": "dotenv -e ../.env prisma migrate status",
-    "prisma:migrate:reset": "dotenv -e ../.env prisma migrate reset"
+    "prisma:migrate:reset": "dotenv -e ../.env prisma migrate reset",
+    "prisma:format": "dotenv -e ../.env prisma format"
   },
   "keywords": [],
   "author": "",

@@ -2,13 +2,13 @@ export type {
   TGameMode,
   TGameType,
   TGameStatus,
-  IGeneralGame
+  IGeneralGame,
+  ErrorResponseWebsocket,
+  GameInfoRequestWebsocket,
+  GameInfoResponseWebsocket
 } from '@game-workspace/shared'
 export type {
   ICreateGameData,
   JoinGameRequestWebsocket,
-  JoinGameResponseWebsocket,
-  ErrorResponseWebsocket,
-  GameInfoRequestWebsocket,
-  GameInfoResponseWebsocket
+  JoinGameResponseWebsocket
 } from '@game-workspace/checkers'

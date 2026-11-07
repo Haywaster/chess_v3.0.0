@@ -8,11 +8,11 @@ datasource db {
 }
 
 model User {
-  id            Int              @id @default(autoincrement())
-  login         String           @unique
-  password      String
-  createdAt     DateTime         @default(now())
-  refreshToken  RefreshToken?
+  id             Int               @id @default(autoincrement())
+  login          String            @unique
+  password       String
+  createdAt      DateTime          @default(now())
+  refreshToken   RefreshToken?
   participations GameParticipant[]
 }
 
@@ -26,8 +26,8 @@ model RefreshToken {
 }
 
 model GameType {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
   minPlayers  Int
   maxPlayers  Int?
   description String?
@@ -35,29 +35,29 @@ model GameType {
 }
 
 model Game {
-  id           String                @id @default(uuid())
+  id           String            @id @default(uuid())
   gameTypeId   Int
-  status       String             @default("pending")
-  startedAt    DateTime           @default(now())
+  status       String            @default("pending")
+  startedAt    DateTime          @default(now())
   finishedAt   DateTime?
-  gameType     GameType           @relation(fields: [gameTypeId], references: [id], onDelete: Restrict)
+  gameType     GameType          @relation(fields: [gameTypeId], references: [id], onDelete: Restrict)
   participants GameParticipant[]
   checkersGame CheckersGame?
   chessGame    ChessGame?
 }
 
 model GameParticipant {
-  id          Int      @id @default(autoincrement())
-  gameId      String
-  playerId    Int?
-  joinedAt    DateTime @default(now())
-  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  player      User?     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  id               Int                       @id @default(autoincrement())
+  gameId           String
+  playerId         Int?
+  joinedAt         DateTime                  @default(now())
+  game             Game                      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player           User?                     @relation(fields: [playerId], references: [id], onDelete: Cascade)
   colorParticipant GameWithColorParticipant?
 
+  @@unique([gameId, playerId])
   @@index([gameId])
   @@index([playerId])
-  @@unique([gameId, playerId])
 }
 
 model GameWithColorParticipant {
@@ -68,17 +68,21 @@ model GameWithColorParticipant {
 }
 
 model CheckersGame {
-  id          Int      @id @default(autoincrement())
-  gameId      String      @unique
+  id          Int     @id @default(autoincrement())
+  gameId      String  @unique
   board       Json?
-  currentTurn String?   // Можно заменить на Int, если currentTurn должен быть id пользователя
-  moveCount   Int      @default(0)
-  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  currentTurn String  @default("white") // Можно заменить на Int, если currentTurn должен быть id пользователя
+  moveCount   Int     @default(0)
+  game        Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
   mode        String
 }
 
 model ChessGame {
-  id      Int   @id @default(autoincrement())
-  gameId  String   @unique
-  game    Game  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  id          Int     @id @default(autoincrement())
+  gameId      String  @unique
+  board       Json?
+  currentTurn String  @default("white") // Можно заменить на Int, если currentTurn должен быть id пользователя
+  moveCount   Int     @default(0)
+  game        Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  mode        String
 }

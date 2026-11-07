@@ -4,7 +4,10 @@ import toast, { type ToastOptions, type ToastType } from 'react-hot-toast'
 import { useNavigate, useParams } from 'react-router'
 import styled from 'styled-components'
 
-import { type MessageResponseWebsocket } from '@game-workspace/checkers'
+import type {
+  ChangeStatusResponseWebsocket,
+  MessageResponseWebsocket
+} from '@game-workspace/shared'
 
 import {
   type JoinGameRequestWebsocket,
@@ -94,6 +97,7 @@ export const Checkers: FC = () => {
         | MoveFigureResponseWebsocket
         | KillFigureResponseWebsocket
         | MessageResponseWebsocket
+        | ChangeStatusResponseWebsocket
 
       switch (message.type) {
         case ActionType.MESSAGE: {
@@ -101,6 +105,10 @@ export const Checkers: FC = () => {
             message.data.message,
             message.data.options as ToastOptions
           )
+          break
+        }
+        case ActionType.CHANGE_STATUS: {
+          setStatus(message.data.status)
           break
         }
         case ActionType.GAME_INFO: {

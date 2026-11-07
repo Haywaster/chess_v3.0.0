@@ -1,12 +1,9 @@
-import { type CSSProperties } from 'react'
-
 import type {
   EnumValues,
   IGeneralGame,
   TGameMode,
   TGameType,
-  WebsocketDataConstructor,
-  WebsocketErrorConstructor
+  WebsocketDataConstructor
 } from '@game-workspace/shared'
 
 import type { CheckersActionType, CheckersRules } from './const'
@@ -51,19 +48,6 @@ export interface ICreateGameData {
   userColor: IFigure['color']
 }
 
-// WS (Info)
-type IGameInfoRequest = Pick<IGeneralGame, 'id'>
-type IGameInfoResponse = Pick<IGeneralGame, 'mode'>
-
-export type GameInfoRequestWebsocket = WebsocketDataConstructor<
-  Extract<TCheckersActions, 'GAME_INFO'>,
-  IGameInfoRequest
->
-export type GameInfoResponseWebsocket = WebsocketDataConstructor<
-  Extract<TCheckersActions, 'GAME_INFO'>,
-  IGameInfoResponse
->
-
 // WS (Join)
 interface IJoinGameRequest extends Pick<IGeneralGame, 'id'> {
   username: string
@@ -72,7 +56,6 @@ interface IJoinGameResponse extends Pick<IGeneralGame, 'status'> {
   board: IBoard
   userColor: IFigure['color']
   currentTurn: IFigure['color']
-  message?: string
 }
 export type JoinGameRequestWebsocket = WebsocketDataConstructor<
   Extract<TCheckersActions, 'JOIN_GAME'>,
@@ -114,39 +97,4 @@ export type KillFigureRequestWebsocket = WebsocketDataConstructor<
 export type KillFigureResponseWebsocket = WebsocketDataConstructor<
   Extract<TCheckersActions, 'KILL_FIGURE'>,
   IKillFigureResponse
->
-
-// WS (Message)
-interface IMessageResponse {
-  type: 'error' | 'success'
-  message: string
-  options?: {
-    id: string
-    toasterId?: string
-    icon?: string
-    duration?: number
-    pauseDuration: number
-    position?: string
-    removeDelay?: number
-    ariaProps: {
-      role: 'status' | 'alert'
-      'aria-live': 'assertive' | 'off' | 'polite'
-    }
-    style?: CSSProperties
-    className?: string
-    createdAt: number
-    visible: boolean
-    dismissed: boolean
-    height?: number
-  }
-}
-export type MessageResponseWebsocket = WebsocketDataConstructor<
-  Extract<TCheckersActions, 'MESSAGE'>,
-  IMessageResponse
->
-
-// WS (Error)
-export type ErrorResponseWebsocket = WebsocketErrorConstructor<
-  Extract<TCheckersActions, 'ERROR'>,
-  string
 >

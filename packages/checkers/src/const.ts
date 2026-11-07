@@ -1,10 +1,9 @@
+import { GameActionType } from '@game-workspace/shared'
+
 export const CheckersActionType = {
-  GAME_INFO: 'GAME_INFO',
-  JOIN_GAME: 'JOIN_GAME',
+  ...GameActionType,
   MOVE_FIGURE: 'MOVE_FIGURE',
-  KILL_FIGURE: 'KILL_FIGURE',
-  MESSAGE: 'MESSAGE',
-  ERROR: 'ERROR'
+  KILL_FIGURE: 'KILL_FIGURE'
 } as const
 
 export const CheckersRules = {
